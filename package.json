@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "npx tsc ",
-    "dev": "NODE_ENV=development npx ts-node ./src",
+    "dev": " npx ts-node ./src",
     "dev:hot": "nodemon --exec \"npm run dev\" --watch ./src -e ts",
     "lint": "npx eslint ./src",
     "lint:tests": "npx eslint ./spec",
