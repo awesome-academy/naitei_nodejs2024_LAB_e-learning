@@ -146,3 +146,11 @@ export async function getCourseById(id: number) {
     where: { id: id },
   });
 }
+
+export async function saveCourse(course: Course) {
+  return await courseRepository.save(course)
+}
+
+export async function deleteCourse(course: Course) {
+  return await courseRepository.remove(course)
+}
