@@ -1,0 +1,22 @@
+﻿extends ../layout
+
+block content
+  <!-- Admin Panel Start -->
+  nav.navbar.navbar-expand-lg.bg-white.navbar-light.shadow.sticky-top.p-0
+    a.navbar-brand.d-flex.align-items-center.px-4.px-lg-5(href='/admin')
+      h1 Admin Panel
+    button.navbar-toggler.me-4(type='button' data-bs-toggle='collapse' data-bs-target='#navbarCollapse')
+      span.navbar-toggler-icon
+    #navbarCollapse.collapse.navbar-collapse
+      .navbar-nav.ms-auto.p-4.p-lg-0
+        a.nav-item.nav-link(href="/admin/users") #{t('admin.user')}
+        a.nav-item.nav-link(href="/admin/courses") #{t('admin.course')}
+        a.nav-item.nav-link(href="/admin/sections") #{t('admin.section')}
+        a.nav-item.nav-link(href="/admin/lessons") #{t('admin.lesson')}
+        a.nav-item.nav-link(href="/admin/reviews") #{t('admin.review')}
+        a.nav-item.nav-link(href="/admin/comments") #{t('admin.comment')}
+      .nav-item.nav-link
+        a.item-lang(href='/?lang=en' data-lang='en') En
+        span   |  
+        a.item-lang(href='/?lang=vi' data-lang='vi') Vi
+  <!-- Admin Panel End -->

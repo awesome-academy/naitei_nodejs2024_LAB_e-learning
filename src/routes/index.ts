@@ -5,6 +5,11 @@ import setLocaleMiddleware from "../middleware/setLocaleMiddleware";
 import courseRoute from "./course.routes";
 import homeRoute from "./home.routes";
 import userRouter from "../routes/user.routes";
+import paymentRouter from "../routes/payment.routes"
+import commentRouter from "../routes/comment.routes"
+import reviewRouter from "../routes/review.routes"
+import enrollmentRouter from "../routes/enrollment.routes"
+import lessonRouter from "../routes/lesson.routes"
 
 const router = Router();
 
@@ -15,5 +20,11 @@ router.use("/", homeRoute);
 
 router.use("/courses", courseRoute);
 router.use("/", userRouter);
+
+router.use('/payment', paymentRouter)
+router.use('/comments', commentRouter)
+router.use('/reviews', reviewRouter);
+router.use('/enrollments', enrollmentRouter);
+router.use('/lessons', lessonRouter);
 
 export default router;

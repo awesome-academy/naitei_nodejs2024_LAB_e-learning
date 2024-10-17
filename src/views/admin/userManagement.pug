@@ -1,0 +1,143 @@
+﻿extends ../layout
+
+block content
+  include partial/adminPanel
+  .container-xxl.py-2.mt-4
+    .container
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
+        h2 #{t('admin-user.management')}
+        .admin-container
+          .create-btn
+            button(onclick="showCreateForm()") #{t('admin.create')}
+          center
+            table.admin-table
+              thead
+                tr
+                  th #{t('admin-user.#')}
+                  th #{t('admin-user.ID')}
+                  th #{t('admin-user.name')}
+                  th #{t('admin-user.email')}
+                  th #{t('admin-user.password')}
+                  th #{t('admin-user.role')}
+                  th #{t('admin.edit')}
+                  th #{t('admin.delete')}
+              tbody
+                tr
+                  td 1
+                  td 1
+                  td John Doe
+                  td john@example.com
+                  td 12345678
+                  td Admin
+                  td: .edit-btn: button(onclick="showEditForm('John Doe', 'john@example.com', 'Admin')") #{t('admin.edit')}
+                  td: .delete-btn: button(onclick="showDeleteForm(1)") #{t('admin.delete')}
+                tr
+                  td 2
+                  td 2
+                  td Jane Smith
+                  td jane@example.com
+                  td 12345678
+                  td User
+                  td: .edit-btn: button(onclick="showEditForm('Jane Smith', 'jane@example.com', 'User')") #{t('admin.edit')}
+                  td: .delete-btn: button(onclick="showDeleteForm(2)") #{t('admin.delete')}
+
+  <!-- Create Form start -->
+    #createModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.create')}
+        form(action="/admin/users/create" method="POST")
+          .form-group
+            label(for="name") #{t('admin-user.name')}
+            input(type="text" name="name" id="name" required)
+          .form-group
+            label(for="email") #{t('admin-user.email')}
+            input(type="email" name="email" id="email" required)
+          .form-group
+            label(for="password") #{t('admin-user.password')}
+            input(type="password" name="password" id="password" required)
+          .form-group
+            label(for="role") #{t('admin-user.role')}
+            select(name="role" id="role")
+              option(value="Admin") #{t('admin-user.admin')}
+              option(value="User") #{t('admin-user.user')}
+              option(value="Professor") #{t('admin-user.professor')}
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
+
+  script.
+    function showCreateForm() {
+      document.getElementById('createModal').classList.remove('hidden');
+    }
+
+    function hideCreateForm() {
+      document.getElementById('createModal').classList.add('hidden');
+    }
+  <!-- Create Form end -->
+
+  <!-- Edit Form start -->
+    #editModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.edit')}
+        form(action="/admin/users/edit" method="POST")
+          .form-group
+            label(for="name") #{t('admin-user.name')}
+            input(type="text" name="name" id="editName" required)
+          .form-group
+            label(for="email") #{t('admin-user.email')}
+            input(type="email" name="email" id="editEmail" required)
+          .form-group
+            label(for="role") #{t('admin-user.role')}
+            select(name="role" id="editRole")
+              option(value="Admin") #{t('admin-user.admin')}
+              option(value="User") #{t('admin-user.user')}
+              option(value="Professor") #{t('admin-user.professor')}
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
+
+  script.
+    function showEditForm(name, email, role) {
+      document.getElementById('editName').value = name;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('editRole').value = role;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+    function hideEditForm() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+  <!-- Edit Form end -->
+
+  <!-- Delete Form start -->
+    #deleteModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-message-user')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
+
+  script.
+    let userIdToDelete = null;  
+    function showDeleteForm(userId) {
+      userIdToDelete = userId;  
+      document.getElementById('deleteModal').classList.remove('hidden');  
+    }
+    function hideDeleteForm() {
+      document.getElementById('deleteModal').classList.add('hidden');  
+    }
+    function confirmDelete() {
+      if (userIdToDelete) {
+        fetch(`/admin/users/delete/${userIdToDelete}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              const row = document.getElementById(`userRow-${userIdToDelete}`);
+              row.remove();
+            } else {
+              console.error('Failed to delete user');
+            }
+          });
+      }
+      hideDeleteForm();
+    }
+  <!-- Delete Form end -->
