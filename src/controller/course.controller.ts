@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
+import { createPayment } from '@src/service/payment.service';
+import { getUserById } from '@src/service/user.service';
 import { getCoursesWithSectionsAndHours, filterAndSortCourses, getSectionsWithLessons, getCourseById, countEnrolledUsersInCourse, getProfessorByCourse} from '../service/course.service';
 
 export const filterAndSort = asyncHandler(async (req: Request, res: Response) => {
@@ -75,4 +77,25 @@ export const getCourseDetail = asyncHandler(async (req: Request, res: Response) 
     totalStudents,
     t: req.t
   });
+});
+
+export const createPaymentRecord = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { course_id } = req.params
+  const userId = req.user.id
+
+  const user = await getUserById(userId);
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  const course = await getCourseById(parseInt(course_id))
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  const payment = await createPayment(user, course);
+
+  res.status(201).json(payment);
 });

@@ -64,3 +64,9 @@ export const userLogin = async (email: string, password: string) => {
 export const decodeJwtToken = (token: string) => {
   return Jwt.verify(token, process.env.JWT_SECRET!);
 };
+
+export const getUserById = async (id: number) => {
+    return await userRepository.findOne({
+        where: { id: id }
+    })
+}

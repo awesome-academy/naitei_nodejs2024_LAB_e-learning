@@ -5,6 +5,7 @@ import setLocaleMiddleware from "../middleware/setLocaleMiddleware";
 import courseRoute from "./course.routes";
 import homeRoute from "./home.routes";
 import userRouter from "../routes/user.routes";
+import paymentRoute from "./payment.routes"
 
 const router = Router();
 
@@ -15,5 +16,7 @@ router.use("/", homeRoute);
 
 router.use("/courses", courseRoute);
 router.use("/", userRouter);
+
+router.use('/payment', paymentRoute)
 
 export default router;
