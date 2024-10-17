@@ -99,5 +99,60 @@
     "certificate": "Chứng chỉ",
     "yes": "Có",
     "share": "Chia sẻ khóa học này"
+  },
+  "user": {
+    "email": "Email",
+    "username": "Tên người dùng",
+    "password": "Mật khẩu",
+    "role": "Vai trò"
+  },
+  "admin": {
+    "user": "Người dùng",
+    "course": "Khóa học",
+    "section": "Chương",
+    "lesson": "Bài học",
+    "review": "Đánh giá",
+    "comment": "Bình luận",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "create": "Tạo mới",
+    "confirm-delete": "Xác nhận xóa",
+    "confirm-message-user": "Bạn có chắc chắn muốn xóa người dùng này không?",
+    "confirm-delete-course": "Bạn có chắc chắn muốn xóa khóa học này không?",
+    "confirm-delete-section": "Bạn có chắc chắn muốn xóa chương này không?"
+  },
+  "admin-user": {
+    "management": "Quản lý người dùng",
+    "#": "#",
+    "ID": "ID",
+    "name": "Tên người dùng",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "role": "Vai trò",
+    "user": "Người dùng",
+    "admin": "Quản lý",
+    "professor": "Giáo sư"
+  },
+  "admin-course": {
+    "management": "Quản lý khóa học",
+    "#": "#",
+    "ID": "ID",
+    "name": "Tên khóa học",
+    "description": "Mô tả",
+    "section": "Chương",
+    "professor": "Giáo sư",
+    "price": "Giá",
+    "rating": "Đánh giá"
+  },
+  "admin-section": {
+    "management": "Quản lý chương",
+    "#": "#",
+    "ID": "ID",
+    "name": "Tên chương",
+    "course": "Tên khóa học",
+    "total-time": "Tổng thời gian",
+    "total-lesson": "Tổng bài học"
   }
 }

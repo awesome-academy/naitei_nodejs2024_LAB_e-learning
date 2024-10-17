@@ -1,0 +1,145 @@
+﻿extends ../layout
+
+block content
+  include partial/adminPanel
+  .container-xxl.py-2.mt-4
+    .container
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
+        h2 #{t('admin-section.management')}
+        .admin-container
+          .create-btn
+            button(onclick="showCreateForm()") #{t('admin.create')}
+          center
+            table.admin-table
+              thead
+                tr
+                  th #{t('admin-section.#')}
+                  th #{t('admin-section.ID')}
+                  th #{t('admin-section.name')}
+                  th #{t('admin-section.course')}
+                  th #{t('admin-section.total-time')}
+                  th #{t('admin-section.total-lesson')}
+                  th #{t('admin.edit')}
+                  th #{t('admin.delete')}
+              tbody
+                tr
+                  td 1
+                  td 1
+                  td Section A1
+                  td Course A
+                  td 120
+                  td 10
+                  td: .edit-btn
+                    button(onclick="showEditForm(1, 'Section A1', 'Course A', 120, 10)") #{t('admin.edit')}
+                  td: .delete-btn
+                    button(onclick="showDeleteForm(1)") #{t('admin.delete')}
+                tr
+                  td 2
+                  td 2
+                  td Section B1
+                  td Course B
+                  td 90
+                  td 8
+                  td: .edit-btn
+                    button(onclick="showEditForm(2, 'Section B1', 'Course B', 90, 8)") #{t('admin.edit')}
+                  td: .delete-btn
+                    button(onclick="showDeleteForm(2)") #{t('admin.delete')}
+
+  <!-- Create Form start -->
+    #createModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.create')}
+        form(action="/admin/sections/create" method="POST")
+          .form-group
+            label(for="name") #{t('admin-section.name')}
+            input(type="text" name="name" id="name" required)
+          .form-group
+            label(for="course") #{t('admin-section.course')}
+            input(type="text" name="course" id="course" required)
+          .form-group
+            label(for="total_time") #{t('admin-section.total-time')}
+            input(type="number" name="total_time" id="total-time" required)
+          .form-group
+            label(for="total_time") #{t('admin-section.total-lesson')}
+            input(type="number" name="total_lesson" id="total-lesson" required)
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
+
+  script.
+    function showCreateForm() {
+      document.getElementById('createModal').classList.remove('hidden');
+    }
+    function hideCreateForm() {
+      document.getElementById('createModal').classList.add('hidden');
+    }
+  <!-- Create Form end -->
+
+  <!-- Edit Form start -->
+    #editModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.edit')}
+        form(action="/admin/sections/edit" method="POST")
+          .form-group
+            label(for="edit-section-name") #{t('admin-section.name')}
+            input(type="text" name="section-name" id="edit-section-name" required)
+          .form-group
+            label(for="edit-course") #{t('admin-section.course')}
+            input(type="text" name="course" id="edit-course" required)
+          .form-group
+            label(for="edit-total-time") #{t('admin-section.total-time')}
+            input(type="number" name="total-time" id="edit-total-time" required)
+          .form-group
+            label(for="edit-total-lessons") #{t('admin-section.total-lesson')}
+            input(type="number" name="total-lessons" id="edit-total-lessons" required)          
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
+
+  script.
+    function showEditForm(id, sectionName, course, totalTime, totalLessons) {
+      document.getElementById('edit-section-name').value = sectionName;
+      document.getElementById('edit-course').value = course;
+      document.getElementById('edit-total-time').value = totalTime;
+      document.getElementById('edit-total-lessons').value = totalLessons;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function hideEditForm() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+  <!-- Edit Form end -->
+
+  <!-- Delete Form start -->
+    #deleteModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-delete-section')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
+
+  script.
+    let sectionIdToDelete = null;  
+    function showDeleteForm(sectionId) {
+      sectionIdToDelete = sectionId;  
+      document.getElementById('deleteModal').classList.remove('hidden');  
+    }
+    function hideDeleteForm() {
+      document.getElementById('deleteModal').classList.add('hidden');  
+    }
+    function confirmDelete() {
+      if (sectionIdToDelete) {
+        fetch(`/admin/sections/delete/${sectionIdToDelete}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              const row = document.getElementById(`sectionRow-${sectionIdToDelete}`);
+              row.remove();
+            } else {
+              console.error('Failed to delete section');
+            }
+          });
+      }
+      hideDeleteForm();
+    }
+  <!-- Delete Form end -->

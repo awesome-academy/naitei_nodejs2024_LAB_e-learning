@@ -1,0 +1,163 @@
+﻿extends ../layout
+
+block content
+  include partial/adminPanel
+  .container-xxl.py-2.mt-4
+    .container
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
+        h2 #{t('admin-course.management')}
+        .admin-container
+          .create-btn
+            button(onclick="showCreateForm()") #{t('admin.create')}
+          center
+            table.admin-table
+              thead
+                tr
+                  th #{t('admin-course.#')}
+                  th #{t('admin-course.ID')}
+                  th #{t('admin-course.name')}
+                  th #{t('admin-course.description')}
+                  th #{t('admin-course.professor')}
+                  th #{t('admin-course.price')}
+                  th #{t('admin-course.rating')}
+                  th #{t('admin.edit')}
+                  th #{t('admin.delete')}
+              tbody
+                tr
+                  td 1
+                  td 1
+                  td Course A
+                  td "Description of Course A"
+                  td John Doe
+                  td $200
+                  td 4.7
+                  td 
+                    .edit-btn: button(onclick="showEditForm('Course A', 'Description of Course A', 'John Doe', '200', '4.7')") #{t('admin.edit')}
+                  td
+                    .delete-btn: button(onclick="showDeleteForm(1)") #{t('admin.delete')}
+                tr
+                  td 2
+                  td 2
+                  td Course B
+                  td "Description of Course B"
+                  td John Smith
+                  td $150
+                  td 4.5
+                  td: .edit-btn
+                    button(onclick="showEditForm('Course B', 'Description of Course B', 'John Smith', '150', '4.5')") #{t('admin.edit')}
+                  td: .delete-btn
+                    button(onclick="showDeleteForm(2)") #{t('admin.delete')}
+
+
+  <!-- Create Form start -->
+    #createModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.create')}
+        form(action="/admin/courses/create" method="POST")
+          .form-group
+            label(for="name") #{t('admin-course.name')}
+            input(type="text" name="name" id="name" required)
+          .form-group
+            label(for="description") #{t('admin-course.description')}
+            textarea(name="description" id="description" required)
+          .form-group
+            label(for="professor") #{t('admin-course.professor')}
+            input(type="text" name="professor" id="professor" required)
+          .form-group
+            label(for="price") #{t('admin-course.price')}
+            input(type="number" name="price" id="price" required)
+          .form-group
+            label(for="rating") #{t('admin-course.rating')}
+            input(type="number" step="0.1" name="rating" id="rating" required)
+            .btn-group-admin
+              .save-btn: button(type="submit") #{t('admin.save')}
+              .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
+
+  script.
+    function showCreateForm() {
+      document.getElementById('createModal').classList.remove('hidden');
+    }
+    function hideCreateForm() {
+      document.getElementById('createModal').classList.add('hidden');
+      resetForm(); 
+    }
+  <!-- Create Form end -->
+
+  <!-- Edit Form start -->
+    #editModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.edit')}
+        form(action="/admin/courses/edit" method="POST")
+          .form-group
+            label(for="edit-name") #{t('admin-course.name')}
+            input(type="text" name="name" id="edit-name" required)
+          .form-group
+            label(for="edit-description") #{t('admin-course.description')}
+            textarea(name="description" id="edit-description" required)
+          .form-group
+            label(for="edit-professor") #{t('admin-course.professor')}
+            input(type="text" name="professor" id="edit-professor" required)
+          .form-group
+            label(for="edit-price") #{t('admin-course.price')}
+            input(type="number" name="price" id="edit-price" required)
+          .form-group
+            label(for="edit-rating") #{t('admin-course.rating')}
+            input(type="number" step="0.1" name="rating" id="edit-rating" required)
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
+
+  script.
+    function showEditForm(courseName, description, professor, price, rating) {
+      document.getElementById('editModal').classList.remove('hidden');
+
+      document.getElementById('edit-name').value = courseName;
+      document.getElementById('edit-description').value = description;
+      document.getElementById('edit-professor').value = professor;
+      document.getElementById('edit-price').value = price;
+      document.getElementById('edit-rating').value = rating;
+
+      const sectionWrapper = document.getElementById('edit-section-wrapper');
+      sectionWrapper.innerHTML = ''; 
+    }
+    function hideEditForm() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+  <!-- Edit Form end -->
+
+  <!-- Delete Form start -->
+    #deleteModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-delete-course')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
+
+  script.
+    let courseIdToDelete = null;
+    function showDeleteForm(courseId) {
+      courseIdToDelete = courseId; 
+      document.getElementById('deleteModal').classList.remove('hidden'); 
+    }
+    function hideDeleteForm() {
+      document.getElementById('deleteModal').classList.add('hidden'); 
+    }
+    function confirmDelete() {
+      if (courseIdToDelete) {
+        fetch(`/admin/courses/delete/${courseIdToDelete}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              const row = document.getElementById(`courseRow-${courseIdToDelete}`);
+              if (row) {
+                row.remove();
+              }
+            } else {
+              console.error('Failed to delete course');
+            }
+          });
+      }
+      hideDeleteForm(); 
+    }
+  <!-- Delete Form end -->
