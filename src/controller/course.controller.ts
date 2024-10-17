@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { getCoursesWithSectionsAndHours, filterAndSortCourses, getSectionsWithLessons, getCourseById, countEnrolledUsersInCourse, getProfessorByCourse} from '../service/course.service';
+import { Course } from '../entity/Course';
+import { getCoursesWithSectionsAndHours, filterAndSortCourses, getSectionsWithLessons, getCourseById, countEnrolledUsersInCourse, getProfessorByCourse, getAllCourses, saveCourse, deleteCourse} from '../service/course.service'
 
 export const filterAndSort = asyncHandler(async (req: Request, res: Response) => {
       try {
@@ -76,3 +77,101 @@ export const getCourseDetail = asyncHandler(async (req: Request, res: Response) 
     t: req.t
   });
 });
+
+// user admin crud 
+// List all courses
+export const courseList = async (req: Request, res: Response): Promise<void> => {
+  const courses = await getAllCourses()
+  res.json(courses); // Alternatively, render a view for admins
+};
+
+// Get course details
+export const courseDetails = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const course = await getCourseById(parseInt(id))
+
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  res.json(course); // Alternatively, render a detailed view for admins
+};
+
+// Render course creation form (if needed)
+export const courseCreateGet = (req: Request, res: Response): void => {
+  res.render('courseCreateForm'); // Render a view (if needed)
+};
+
+// Handle course creation
+export const courseCreatePost = async (req: Request, res: Response): Promise<void> => {
+  const { name, price, description, professor_id } = req.body;
+
+  const newCourse = new Course({
+    name,
+    price: parseFloat(price),
+    description,
+    professor_id: parseInt(professor_id),
+    average_rating: 0,
+  });
+
+  await saveCourse(newCourse);
+  res.status(201).json(newCourse); // Alternatively, redirect or render a success page
+};
+
+// Render course deletion confirmation form (if needed)
+export const courseDeleteGet = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const course = await getCourseById(parseInt(id))
+
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  res.render('courseDeleteForm', { course }); // Render a view (if needed)
+};
+
+// Handle course deletion
+export const courseDeletePost = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const course = await getCourseById(parseInt(id))
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  await deleteCourse(course)
+  res.json({ message: 'Course deleted' }); // Alternatively, redirect or render a success page
+};
+
+// Render course update form (if needed)
+export const courseUpdateGet = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const course = await getCourseById(parseInt(id))
+
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  res.render('courseUpdateForm', { course }); // Render a view (if needed)
+};
+
+// Handle course update
+export const courseUpdatePost = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { name, price, description } = req.body;
+  const course = await getCourseById(parseInt(id))
+  if (!course) {
+    res.status(404).json({ message: 'Course not found' });
+    return;
+  }
+
+  course.name = name;
+  course.price = parseFloat(price);
+  course.description = description;
+
+  await saveCourse(course)
+  res.json(course); // Alternatively, redirect or render a success page
+};

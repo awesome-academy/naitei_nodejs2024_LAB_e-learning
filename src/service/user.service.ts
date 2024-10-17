@@ -1,9 +1,38 @@
-import { AppDataSource } from "../repos/db";
-import { User } from "../entity/User";
+import { AppDataSource } from '../repos/db';
+import { User } from '../entity/User';
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 
 const userRepository = AppDataSource.getRepository(User);
+
+export const getAllUsers = async () => {
+  return await userRepository.find({
+    order: { name: 'ASC'},
+  });
+};
+
+export const getUserById = async (id: number) => {
+  return await userRepository.findOne({
+    where: { id: id },
+  });
+};
+
+export const createUser = async (userData: Partial<User>) => {
+  return await userRepository.save(new User(userData));
+};
+
+export const updateUser = async (userToUpdate: User, userData: Partial<User>) => {
+  Object.assign(userToUpdate, userData);
+  return await userRepository.save(userToUpdate);
+};
+
+export const deleteUser = async (id: number) => {
+  return await userRepository.delete(id);
+};
+
+export const saveUser = async (user: User) => {
+  return await userRepository
+}
 
 export const userRegister = async (
   name: string,
@@ -64,3 +93,4 @@ export const userLogin = async (email: string, password: string) => {
 export const decodeJwtToken = (token: string) => {
   return Jwt.verify(token, process.env.JWT_SECRET!);
 };
+

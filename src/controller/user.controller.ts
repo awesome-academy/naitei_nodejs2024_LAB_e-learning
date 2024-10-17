@@ -5,6 +5,7 @@ import {
   userLogin,
   decodeJwtToken,
 } from "../service/user.service";
+import { createUser, deleteUser, getAllUsers, getUserById, saveUser } from "../service/user.service";
 
 // Register a new user
 export const register = asyncHandler(async (req: Request, res: Response) => {
@@ -53,3 +54,63 @@ export const verifyUser = asyncHandler((req: Request, res: Response) => {
       .status(401)
       .json({ status: 401, message: req.t("login.not-authentication") });
 });
+
+// crud
+// Get all users
+export const userList = async (req: Request, res: Response): Promise<void> => {
+  const users = await getAllUsers();
+  res.json(users);
+};
+
+// Get a specific user by ID
+export const userDetails = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const user = await getUserById(parseInt(id))
+
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  res.json(user);
+};
+
+// Create a new user
+export const userCreatePost = async (req: Request, res: Response): Promise<void> => {
+  const { name, email, password, role } = req.body;
+  const newUser = createUser({ name, email, password, role })
+  res.status(201).json(newUser);
+};
+
+// Update an existing user
+export const userUpdatePost = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { name, email, role } = req.body;
+  const user = await getUserById(parseInt(id))
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  user.name = name;
+  user.email = email;
+  user.role = role;
+
+  await saveUser(user)
+
+  res.json(user);
+};
+
+// Delete a user
+export const userDeletePost = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const user = await getUserById(parseInt(id))
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+    return;
+  }
+
+  await deleteUser(parseInt(id))
+
+  res.status(204).json({ message: 'User deleted successfully' });
+};
