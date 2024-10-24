@@ -78,3 +78,13 @@ export async function getAllUser() {
     order: {name: 'ASC'},
    }); 
 };
+
+export const getUserById = async (userId: number) => {
+  return await userRepository.findOne({
+    where: { id: userId }
+  });
+}
+
+export async function saveUserDetails(user: User) {
+  return await userRepository.save(user)
+}

@@ -4,6 +4,8 @@ import {
   userRegister,
   userLogin,
   decodeJwtToken,
+  getUserById,
+  saveUserDetails
 } from "../service/user.service";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
@@ -75,5 +77,53 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.status(500).json({ status: 500, message: req.t("logout.failure") });
+  }
+});
+
+export const getUserDetails = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.session!.user?.id;
+
+  if (!userId) {
+    res.status(400).send('User not authenticated');
+  }
+
+  try {
+    const user = await getUserById(parseInt(userId))
+    if (user) {
+      res.render('user-details', { user });
+    } else {
+      res.status(404).send('User not found');
+    }
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
+
+export const updateUserDetails = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.session!.user?.id;
+  if (!userId) {
+    res.status(400).send('User not authenticated');
+  }
+  const { name, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info } = req.body;
+
+  try {
+    const user = await getUserById(parseInt(userId))
+    if (user) {
+      user.name = name;
+      user.phone_number = phone_number;
+      user.avatar = avatar;
+      user.date_of_birth = new Date(date_of_birth);
+      user.gender = gender;
+      user.address = address;
+      user.identity_card = identity_card;
+      user.additional_info = additional_info;
+
+      await saveUserDetails(user);
+      res.redirect('/account');
+    } else {
+      res.status(404).send('User not found');
+    }
+  } catch (error) {
+    res.status(500).send('Error updating user details');
   }
 });
