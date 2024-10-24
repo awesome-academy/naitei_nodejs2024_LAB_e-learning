@@ -26,11 +26,11 @@ export class Section {
   @Column()
   name!: string;
 
-  @Column('integer')
-  total_time!: number;
+  @Column('integer', { nullable: true })
+  total_time!:  number | null;
 
-  @Column('integer')
-  total_lesson!: number;
+  @Column('integer', { nullable: true })
+  total_lesson!: number | null;
 
   @Column({ type: 'bigint' })
   course_id!: number;

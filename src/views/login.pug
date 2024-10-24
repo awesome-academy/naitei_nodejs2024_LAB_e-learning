@@ -72,7 +72,7 @@ block content
           const toastElement = document.getElementById("toastNoAutohideSuccess");
           toastElement.style.removeProperty("display");
 
-          const redirectUrl = response.user.role === "admin" ? "/admins/users" : "/";
+          const redirectUrl = response.user.role === "admin" ? "/admins/users" : response.user.role === "professor" ? "/professors/courses" : "/";
           setTimeout(() => {
             window.location.href = redirectUrl;
           }, 2000);

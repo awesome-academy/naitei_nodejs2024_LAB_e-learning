@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  <!-- Professor Panel Start -->
+  nav.navbar.navbar-expand-lg.bg-white.navbar-light.shadow.sticky-top.p-0
+    a.navbar-brand.d-flex.align-items-center.px-4.px-lg-5(href='/professors/courses')
+      h1 Professor Panel
+    button.navbar-toggler.me-4(type='button' data-bs-toggle='collapse' data-bs-target='#navbarCollapse')
+      span.navbar-toggler-icon
+    #navbarCollapse.collapse.navbar-collapse
+      .navbar-nav.ms-auto.p-4.p-lg-0
+        a.nav-item.nav-link(href="/professors/users") #{t('admin.user')}
+        a.nav-item.nav-link(href="/professors/courses") #{t('admin.course')}
+        a.nav-item.nav-link(href="/professors/sections") #{t('admin.section')}
+        a.nav-item.nav-link(href="/professors/lessons") #{t('admin.lesson')}
+        a.nav-item.nav-link(href="/professors/payments") #{t('admin.payment')}
+        a.nav-item.nav-link(href="/professors/reviews") #{t('admin.review')}
+        a.nav-item.nav-link(href="/professors/comments") #{t('admin.comment')}
+        a.nav-item.nav-link(href='' id='userDropdown')
+          i.fa.fa-user
+        ul.dropdown-menu-nav-notLoggedIn(class= isLoggedIn ? '' : 'active')
+          li
+            a(href='/login') #{t('home.login')}
+          li
+            a(href='/signup') #{t('home.signup')}
+
+        ul.dropdown-menu-nav-loggedIn(class= isLoggedIn ? 'active' : '')
+          li
+            a(href='/account') #{t('home.account')}
+          li
+            a#logout(href='/logout') #{t('home.logout')}
+        .nav-item.nav-link
+          a.item-lang(href='/?lang=en' data-lang='en') En
+          span   |  
+          a.item-lang(href='/?lang=vi' data-lang='vi') Vi
+  <!-- Admin Panel End -->
+  script(src='/views/partial/navbar.pug')

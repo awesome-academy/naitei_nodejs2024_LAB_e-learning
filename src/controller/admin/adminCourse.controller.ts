@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { getUserPurchasedCourses, getCoursesWithSectionsAndHours, createCourse, updateCourse, deleteCourse} from 'src/service/course.service';
+import { getUserPurchasedCourses, getCoursesWithSectionsAndHours} from 'src/service/course.service';
 
 export const adminCourseShowGet = asyncHandler(async (req: Request, res: Response) => {
   try {
@@ -25,55 +25,4 @@ export const adminCourseShowGet = asyncHandler(async (req: Request, res: Respons
   }
 });
 
-export const adminCreateCourse = async (req: Request, res: Response) => {
-  try {
-      const professorId = parseInt(req.body.professorId);
-      if (isNaN(professorId)) {
-          throw new Error("Invalid professorId");
-      }
-
-      const course = await createCourse({
-          name: req.body.name,
-          description: req.body.description,
-          professor_id: professorId, 
-          price: req.body.price,
-          average_rating: req.body.average_rating
-      });
-
-      res.redirect(`/admins/courses`);
-  } catch (error) {
-      res.status(400).json({ message: error.message });
-  }
-};
-
-  
-export const adminUpdateCourse = async (req: Request, res: Response) => {
-  try {
-    const courseId = Number(req.body.id);
-    const updatedCourse = await updateCourse(Number(courseId), req.body);
-    if (!updatedCourse) {
-        res.status(404).json({ message: 'Course not found.' });
-        return;
-    }
-    res.redirect(`/admins/courses`);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-  
-export const adminDeleteCourse = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const success = await deleteCourse(Number(id)); 
-
-    if (!success) {
-      res.status(404).json({ message: 'Course not found.' });
-      return;
-    }
-    
-    res.status(204).send(); 
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
   

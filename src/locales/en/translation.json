@@ -90,6 +90,16 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "date-of-bỉth": "Day of Birth",
+    "role": "Role",
+    "address": "Address",
+    "department": "Department",
+    "identity-card": "Identity Card",
+    "additional-info": "Additional Info",
+    "years-of-experience": "Years Of Experience",
     "login": "Already have an account?",
     "signup-success": "Registration successful",
     "signup-failure": "Registration failed",
@@ -137,9 +147,6 @@
     "enrollment_not_found": "Enrollment Not Found",
     "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
     "lesson_not_found": "Lesson not found",
-    "enrollment_not_found": "Enrollment Not Found",
-    "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
-    "lesson_not_found": "Lesson not found",
     "all": "All courses",
     "noCourse": "No courses available"
   },
@@ -171,12 +178,13 @@
     "lesson": "Lessons",
     "review": "Reviews",
     "comment": "Comments",
-    "payment": "Payments",
     "edit": "Edit",
     "delete": "Delete",
     "save": "Save",
     "cancel": "Cancel",
     "create": "Create",
+    "add-more": "Add",
+    "selectCategory": "Select Category",
     "confirm-delete": "Confirm delete",
     "confirm-delete-user": "Are you sure you want to delete this user?",
     "confirm-delete-course": "Are you sure you want to delete this course?",
@@ -222,7 +230,8 @@
     "section": "Section",
     "professor": "Professor",
     "price": "Price",
-    "rating": "Averaged rating"
+    "rating": "Averaged rating",
+    "categoryId": "CategoryId"
   },
   "admin-section": {
     "management": "Section management",
@@ -239,7 +248,7 @@
     "ID": "ID",
     "name": "Lesson name",
     "section": "Section name",
-    "type": "Total time",
+    "type": "Type",
     "content": "Content",
     "description": "Description",
     "time": "Time"
@@ -263,6 +272,10 @@
     "remove": "Remove",
     "total_amount": "Total Amount:",
     "checkout": "Checkout",
-    "empty": "Your cart is empty!"
+    "empty": "Your cart is empty!",
+  },
+  "professor": {
+    "update_error": "You are not authorized to update this course.",
+    "section_not_found": "Section not found"
   }
 }

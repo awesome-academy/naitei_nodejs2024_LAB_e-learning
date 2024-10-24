@@ -40,22 +40,34 @@ block content
               .col-12
                 .form-floating
                   input#phone_number.form-control(type='tel' placeholder='Phone Number' name='phone_number' required)
-                  label(for='phone_number') #{t('signup.phone-number')}
+                  label(for='phone_number') #{t('admin-user.phone_number')}
               .col-12
                 .form-floating
                   input#date_of_birth.form-control(type='date' name='date_of_birth')
-                  label(for='date_of_birth') #{t('signup.date-of-birth')}
+                  label(for='date_of_birth') #{t('admin-user.date_of_birth')}
               .col-12
                 .form-floating
                   select#gender.form-select(name='gender')
                     option(value='male') #{t('signup.male')}
                     option(value='female') #{t('signup.female')}
                     option(value='other') #{t('signup.other')}
-                  label(for='gender') #{t('signup.gender')}
+                  label(for='gender') #{t('admin-user.gender')}
               .col-12
                 .form-floating
                   input#address.form-control(type='text' placeholder='Address' name='address')
                   label(for='address') #{t('signup.address')}
+              .col-12
+                .form-floating
+                  select#role.form-select(name='role' required)
+                    option(value='user') #{t('admin-user.user')}
+                    option(value='professor') #{t('admin-user.professor')}
+                  label(for='role') #{t('signup.role')}
+              .col-12.form-floating.department-field(style='display: none;')
+                 input#department.form-control(type='text' placeholder='Department' name='department')
+                 label(for='department') #{t('signup.department')}
+              .col-12.form-floating.years-experience-field(style='display: none;')
+                 input#years_of_experience.form-control(type='number' placeholder='Years of Experience' name='years_of_experience')
+                 label(for='years_of_experience') #{t('signup.years-of-experience')}
               .col-12
                 .form-floating
                   input#password.form-control(type='password' placeholder='Password' name='password' required)
@@ -84,6 +96,7 @@ block content
       const data = {
         name: formData.get("name"),
         email: formData.get("email"),
+        role: formData.get("role"),
         password: formData.get("password"),
         phone_number: formData.get("phone_number"),
         date_of_birth: formData.get("date_of_birth"),
@@ -91,6 +104,9 @@ block content
         address: formData.get("address"),
         identity_card: formData.get("identity_card"),
         additional_info: formData.get("additional_info"),
+        department: formData.get("department"),
+        years_of_experience: formData.get("years_of_experience"),
+
       };
 
       try {
@@ -115,4 +131,9 @@ block content
           toastElement.style.display = "none";
         }, 2000);
       }
+    });
+    document.querySelector("#role").addEventListener("change", function () {
+      const isProfessor = this.value === "professor";
+      document.querySelector(".department-field").style.display = isProfessor ? "block" : "none";
+      document.querySelector(".years-experience-field").style.display = isProfessor ? "block" : "none";
     });

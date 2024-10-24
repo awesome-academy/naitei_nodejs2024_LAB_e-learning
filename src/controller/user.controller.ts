@@ -13,18 +13,26 @@ import { getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
 import { getSectionsWithLessons, countEnrolledUsersInCourse } from '../service/course.service';
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, password, role, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info } = req.body;
+  const {
+    name, email, password, role, phone_number, avatar, date_of_birth,
+    gender, address, identity_card, additional_info, department, years_of_experience
+  } = req.body;
+
   try {
-    const user = await userRegister(name, email, password, role, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info);
+    const user = await userRegister(
+      name, email, password, role, phone_number, avatar, date_of_birth,
+      gender, address, identity_card, additional_info, department, years_of_experience
+    );
+
     res.status(201).json({ status: 201, message: req.t("signup.signup-success"), user });
   } catch (error) {
-    if (error.message === "User already exists with this email or username") {
-      res.status(400).json({ status: 400, message: error.message });
-    } else {
-      res.status(400).json({ status: 400, message: req.t("signup.signup-failure") });
-    }
+    const message = error.message === "User already exists with this email or username"
+      ? error.message
+      : req.t("signup.signup-failure");
+    res.status(400).json({ status: 400, message });
   }
 });
+
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
