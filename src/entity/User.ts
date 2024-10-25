@@ -2,9 +2,11 @@ import { Entity,
   Column, 
   PrimaryGeneratedColumn, 
   CreateDateColumn, 
-  UpdateDateColumn 
+  UpdateDateColumn,
+  OneToMany 
 } from 'typeorm';
 import { UserRoleType, UserGenderType } from '../enum/user.enum';
+import { Cart } from './Cart';
 
 @Entity('users')
 export class User {
@@ -28,7 +30,7 @@ export class User {
       role!: string;
 
     @Column() 
-    phone_number!: number;
+    phone_number!: string;
 
     @Column({ nullable: true }) 
     avatar!: string;
@@ -57,6 +59,9 @@ export class User {
 
     @UpdateDateColumn({ type: 'datetime' })
       updated_at!: Date;
+
+    @OneToMany(() => Cart, (cart) => cart.user)
+    cart!: Cart[];
 
     constructor(userData?: Partial<User>) {
       userData && Object.assign(this, userData);

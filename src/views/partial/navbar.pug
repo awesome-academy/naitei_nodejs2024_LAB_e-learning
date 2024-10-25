@@ -11,6 +11,11 @@ block content
       .navbar-nav.ms-auto.p-4.p-lg-0
         a.nav-item.nav-link(href='/') #{t('home.home')}
         a.nav-item.nav-link(href='/courses') #{t('home.course')}
+        a.nav-item.nav-link(href='/cart', style='position: relative;')
+          i.fa.fa-shopping-cart 
+          span.ml-2 #{t('home.cart')} 
+          span.badge.badge-pill.badge-danger(style='position: absolute; top: 0; right: 0;')
+            | #{cartAmount}
         a.nav-item.nav-link(href='' id='userDropdown')
           i.fa.fa-user
         ul.dropdown-menu-nav-notLoggedIn

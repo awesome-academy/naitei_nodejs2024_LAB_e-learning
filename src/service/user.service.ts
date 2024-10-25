@@ -19,7 +19,7 @@ export const userRegister = async (
   email: string,
   password: string,
   role: string,
-  phone_number: number,
+  phone_number: string,
   avatar: string,
   date_of_birth: Date,
   gender: string,

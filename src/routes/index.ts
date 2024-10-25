@@ -7,6 +7,7 @@ import homeRoute from "./home.routes";
 import userRouter from "../routes/user.routes";
 import enrollmentRouter from "../routes/enrollment.routes";
 import paymentmentRouter from "../routes/payment.routes";
+import cartRouter from "../routes/cart.routes"
 import adminCourseRouter from "./admin/adminCourse.route";
 import adminUserRouter from "./admin/adminUser.routes";
 import adminPaymentRouter from "./admin/adminPayment.routes";
@@ -27,6 +28,7 @@ router.use("/", homeRoute);
 router.use("/courses", courseRoute);
 router.use("/enrollments", enrollmentRouter);
 router.use("/payments", paymentmentRouter);
+router.use("/cart", cartRouter)
 router.use("/admins", adminCourseRouter,adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter);
 router.use("/categories", categoryRoute);
 

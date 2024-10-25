@@ -4,6 +4,7 @@ import {
   getCoursesWithSectionsAndHours,
   getUserPurchasedCourses,
 } from "../service/course.service";
+import { getAmountOfCartItems } from "../service/cart.service";
 
 export const renderHomePage = asyncHandler(
   async (req: Request, res: Response) => {
@@ -12,6 +13,7 @@ export const renderHomePage = asyncHandler(
       const isLoggedIn = Boolean(userId);
 
       const courses = await getCoursesWithSectionsAndHours();
+      const cartAmount = await getAmountOfCartItems(userId)
 
       const payments = isLoggedIn ? await getUserPurchasedCourses(userId) : [];
 
@@ -24,6 +26,7 @@ export const renderHomePage = asyncHandler(
         title: req.t("home.home"),
         message: { message: req.t("home.message") },
         courses,
+        cartAmount,
         t: req.t,
         purchasedCourses,
         isLoggedIn,

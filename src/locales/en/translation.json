@@ -69,7 +69,9 @@
     "Filters": "Filters",
     "newest-course": "Newest Course",
     "mostEnrolledCourse": "the most enrolled course",
-    "no_course_available": "No Courses Available"
+    "no_course_available": "No Courses Available",
+    "cart": "Cart",
+    "Add_to_cart": "Add to cart"
   },
   "login": {
     "email": "Email",
@@ -251,5 +253,16 @@
     "amount": "Total time",
     "status": "Content",
     "payment-date": "Description"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "your_cart": "Your Cart",
+    "course": "Course",
+    "price": "Price",
+    "action": "Action",
+    "remove": "Remove",
+    "total_amount": "Total Amount:",
+    "checkout": "Checkout",
+    "empty": "Your cart is empty!"
   }
 }

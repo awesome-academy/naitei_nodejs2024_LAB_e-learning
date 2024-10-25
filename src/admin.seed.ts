@@ -15,7 +15,7 @@ export async function runSeeder(AppDataSource: DataSource) {
       email: 'admin1@example.com',
       password: hashedPassword,
       role: 'admin',
-      phone_number: 911045805,
+      phone_number: '911045805',
       avatar: '',
       date_of_birth: new Date('2003-02-09'),
       gender: 'male',

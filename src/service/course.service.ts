@@ -3,7 +3,6 @@ import { Course } from "../entity/Course";
 import { Enrollment } from "../entity/Enrollment";
 import { Section } from "../entity/Section";
 import { Lesson } from "../entity/Lesson";
-import { User } from "../entity/User";
 import { Payment } from "../entity/Payment";
 import { Category } from "./../entity/Category";
 import { In } from "typeorm";
@@ -12,7 +11,6 @@ const enrollmentRepository = AppDataSource.getRepository(Enrollment);
 const courseRepository = AppDataSource.getRepository(Course);
 const sectionRepository = AppDataSource.getRepository(Section);
 const lessonRepository = AppDataSource.getRepository(Lesson);
-const userRepository = AppDataSource.getRepository(User);
 const paymentRepository = AppDataSource.getRepository(Payment);
 
 export async function getAllCourses() {
