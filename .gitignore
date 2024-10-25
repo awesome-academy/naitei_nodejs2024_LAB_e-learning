@@ -1,6 +1,7 @@
 dist/
 **/**/*.log
 env/*.env
+*.sql
 
 # Logs
 logs

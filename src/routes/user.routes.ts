@@ -18,4 +18,7 @@ router.post("/verify", userController.verifyUser);
 
 router.get("/logout", userController.logout);
 
+router.get('/account', userController.getUserDetails);
+router.post('/account', userController.updateUserDetails);
+
 export default router;
