@@ -1737,3 +1737,108 @@ table.user-table {
 .custom-input:hover {
   border-color: var(--primary);
 }
+/* Bố cục và định dạng chung cho bài giảng */
+
+.lesson-description {
+  font-size: 1rem; 
+  line-height: 1.5; 
+  color: #555; 
+}
+.lesson-name{
+  margin-left: 10px ;
+  color: #06BBCC; 
+}
+.fa.fa-video.text-black {
+  color: #06BBCC;
+}
+.lesson-item {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề bài giảng */
+.lesson-item i.fa {
+  font-size: 20px;
+  color: #ff4d4d;
+  margin-right: 8px;
+}
+
+/* Bố cục chi tiết bài giảng */
+.lesson-details {
+  margin-top: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+  display: block;  /* Đảm bảo chi tiết ở dòng riêng */
+}
+
+/* Khung Video và PDF */
+.lesson-item iframe {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
+/* Form nút "Mark as done" căn bên phải */
+.lesson-item form {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.lesson-item button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.lesson-item button:hover {
+  background-color: #0056b3;
+}
+
+.pdf-download {
+  display: block;
+  align-items: center;
+  text-decoration: none;
+  color: #0056b3; 
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.pdf-download:hover {
+  color: #a71d2a;
+  text-decoration: underline;
+}
+
+.pdf-test{
+  font-size: 1rem;
+}
+
+/* Đáp ứng trên màn hình nhỏ */
+@media (max-width: 768px) {
+  .lesson-item iframe {
+    height: 250px;
+  }
+}
+
+.d-flex{
+  display: flex;
+  gap: 20px;
+}
+
+.progress.mt-2{
+  width: 50%;
+}
+
+.progress.mt-2 .progress-bar.bg-success.color{
+  background-color: #06BBCC;
+}

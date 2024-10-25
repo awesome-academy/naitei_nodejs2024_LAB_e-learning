@@ -21,14 +21,108 @@ block content
       | #{t('course.fill-reply')}
 
   <!-- Courses Start -->
-  .container-xxl.py-2
-    .container
-      .row
-        .col-lg-9.wow.fadeInUp
-          .container
-            .row.g-5.justify-content-center
-              .col-lg-12.wow.fadeInUp(data-wow-delay='0.3s')
-                h2 #{course ? course.name : 'Course not found'}
+    .container-xxl.py-2
+      .container
+        .row
+          .col-lg-9.wow.fadeInUp
+            .container
+              .row.g-5.justify-content-center
+                .col-lg-12.wow.fadeInUp(data-wow-delay='0.3s')
+                  h2 #{course ? course.name : 'Course not found'}
+                  p
+                    | Start at the beginning by learning HTML basics &mdash; an important foundation for building and editing web pages.
+                  .d-flex
+                    small
+                      i.fa.fa-star.text-warning  
+                        | #{course.average_rating}
+                    small
+                      i.fa.fa-user-graduate
+                      |  #{totalStudents} 
+                      | #{t('course.student')}
+                    small
+                      i.fa.fa-user
+                      | #{t('course.begin')}
+                    small
+                      i.fa.fa-clock.me-2
+                      |  #{totalHours}h
+                  .image-div.text-left.mt-3
+                    img(src='/img/testimonial-2.jpg' alt='', )
+                    span
+                      b #{t('course.instructor_name')} - #{name}
+            .container-fluid.wow.fadeInUp.mt-5.tabs
+              .tab-content.mt-4
+                #Overview.tab-pane.container.active
+                  h2 #{t('course.about_course')}
+                  p 
+                    | #{course.description}
+                  h2.mt-4
+                    | #{t('course.skill')}
+                  span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Structure pages with HTML
+                  span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Present data with tables
+                  span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Write cleaner HTML
+                #Curriculum.container
+                  h2.mt-4
+                    | #{t('course.section')}
+                    #accordionFlushExample.accordion.accordion-flush
+                      each section in sectionsWithLessons
+                        .accordion-item
+                          h2.accordion-header
+                            - var sectionId = 'flush-collapse' + section.id
+                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse', data-bs-target=`#${sectionId}`, aria-expanded='false', aria-controls=sectionId)
+                              | #{section.name}
+                          .accordion-collapse.collapse(id=sectionId, data-bs-parent='#accordionFlushExample')
+                            .accordion-body
+                              if section.lessons.length > 0
+                                ul
+                                  each lesson in section.lessons
+                                    li.lesson-item
+                                      i.fa.fa-video.text-black
+                                        span.lesson-name #{lesson.name} - #{lesson.time} #{t('course.hours')} 
+                              else
+                                p #{t('course.course_lesson_error')} 
+                #Instructor.container
+                  h2.mt-4 #{t('course.course_professor')}
+                  .image-div.text-left.mt-4
+                    .row
+                      .col-lg-3.col-md-6
+                        img(src='/img/testimonial-2.jpg' alt='')
+                      .col-lg-9.col-md-6.mt-2
+                        h5 #{name}
+                        p #{t('course.professor_job')}
+                        .row
+                          .col-6
+                            p
+                              i.fa.fa-star
+                                | 4.87 #{t('course.professor_rating')}
+                          .col-6
+                            p
+                              i.fa.fa-check
+                                | 1,533 #{t('course.professor_review')}
+                        .row
+                          .col-6
+                            p
+                              i.fa.fa-user
+                                | #{totalStudents} #{t('course.professor_student')}
+                          .col-6
+                            p
+                              i.fa.fa-video
+                                | 29 #{t('course.professor_course')}
+                    .des.mt-4.mb-5
+                      | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
+          .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
+            .image.text-center
+              img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
+            .buttons
+              if paidCourse
+                a.text-decoration-none.text-white.btn.p-3.w-100.mb-2(href=`/enrollments/${course.id}`) #{t('home.Enroll')}
+              else
+                h4.mt-2.p-2
+                | $
+                small
+                  del #{course.price}
+                a.text-decoration-none.text-white.btn.p-3.w-100.mb-2(href=`/payments/${course.id}`) #{t('home.Buy')}
+            .list.mt-2
+              .list1.d-flex.justify-content-between.pt-2.border-bottom
                 p
                   | Start at the beginning by learning HTML basics &mdash; an important foundation for building and editing web pages.
                 .d-flex

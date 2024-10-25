@@ -78,4 +78,3 @@ export async function getAllUser() {
     order: {name: 'ASC'},
    }); 
 };
-
