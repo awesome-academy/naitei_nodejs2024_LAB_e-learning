@@ -1842,3 +1842,10 @@ table.user-table {
 .progress.mt-2 .progress-bar.bg-success.color{
   background-color: #06BBCC;
 }
+
+.dropdown-menu {
+  display: none;
+}
+.dropdown-menu.active {
+  display: block;
+}
