@@ -99,3 +99,62 @@
     },
   });
 })(jQuery);
+
+
+function showUpdateForm(id, name, phoneNumber, dateOfBirth, gender, address, identityCard, additionalInfo) {
+  console.log('showUpdateForm called');
+  document.getElementById('update-id').value = id;
+  document.getElementById('update-name').value = name || '';
+  document.getElementById('update-phone_number').value = phoneNumber || '';
+  document.getElementById('update-date_of_birth').value = dateOfBirth || '';
+  document.getElementById('update-gender').value = gender || ''; 
+  document.getElementById('update-address').value = address || '';
+  document.getElementById('update-identity_card').value = identityCard || '';
+  document.getElementById('update-additional_info').value = additionalInfo || '';
+  
+  document.getElementById('editModal').classList.remove('hidden');
+}
+function hideUpdateForm() {
+  document.getElementById('editModal').classList.add('hidden');
+}
+
+function showResetPasswordPopup() {
+  console.log('showResetPasswordPopup called');
+  document.getElementById('resetPasswordModal').classList.remove('hidden');
+}
+
+function hideResetPasswordPopup() {
+  document.getElementById('resetPasswordModal').classList.add('hidden');
+}
+
+document.getElementById('reset-password-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const userId = document.querySelector('input[name="userId"]').value;
+  const currentPassword = document.querySelector('input[name="currentPassword"]').value;
+  const newPassword = document.querySelector('input[name="newPassword"]').value;
+  const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+
+  if (newPassword !== confirmPassword) {
+    alert('Mật khẩu mới không khớp. Vui lòng kiểm tra lại.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/account/reset-password/${userId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert('Mật khẩu đã được thay đổi thành công!');
+      hideResetPasswordPopup();
+    } else {
+      alert(result.message || 'Đã có lỗi xảy ra');
+    }
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    alert('Đã có lỗi xảy ra');
+  }
+});

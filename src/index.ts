@@ -5,6 +5,7 @@ import app from './server';
 import session from 'express-session';
 import { runSeeder } from './admin.seed';
 
+
 app.use(session({
   secret: process.env.JWT_SECRET || 'your-secret-key', 
   resave: false,

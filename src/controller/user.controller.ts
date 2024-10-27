@@ -5,8 +5,12 @@ import {
   userLogin,
   decodeJwtToken,
   getUserById,
-  saveUserDetails
+  saveUserDetails,
+  getPurchasedCoursesWithDetails,
+  updateUserPassword
 } from "../service/user.service";
+import { getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
+import { getSectionsWithLessons, countEnrolledUsersInCourse } from '../service/course.service';
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password, role, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info } = req.body;
@@ -81,28 +85,64 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUserDetails = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.session!.user?.id;
+  const userId = req.session?.user?.id;
+  const isLoggedIn = Boolean(userId);
 
   if (!userId) {
-    res.status(400).send('User not authenticated');
+    return res.status(404).render('error', { message: req.t('user.user_authenticated')  });
   }
 
   try {
-    const user = await getUserById(parseInt(userId))
-    if (user) {
-      res.render('user-details', { user });
-    } else {
-      res.status(404).send('User not found');
+    const coursesWithDetails = await getPurchasedCoursesWithDetails(userId);
+    const user = await getUserById(parseInt(userId, 10));
+
+    if (!user) {
+      return res.status(404).render('error', { message: req.t('user.user_not_found')  });
     }
+
+    const courseDetailsList = [];
+
+    for (const courseDetails of coursesWithDetails) {
+      const courseId = courseDetails.course.id;
+
+      const enrollment = await getEnrollmentWithCourseAndUser(Number(userId), Number(courseId));
+
+      if (!enrollment || !enrollment.course) {
+        continue; 
+      }
+
+      const sectionsWithLessons = await getSectionsWithLessons(Number(courseId));
+
+      const totalHours = sectionsWithLessons.reduce((sum, section) => sum + section.total_time, 0);
+      const totalLessons = sectionsWithLessons.reduce((sum, section) => sum + section.lessons.length, 0);
+      const totalStudents = await countEnrolledUsersInCourse(Number(courseId));
+
+      courseDetailsList.push({
+        course: courseDetails.course,
+        totalHours,
+        totalLessons,
+        totalStudents,
+        enrollment,
+        sectionsWithLessons,
+      });
+    }
+
+    res.render('user-details', { 
+      user,
+      coursesWithDetails, 
+      courseDetailsList, 
+      isLoggedIn,
+      t: req.t,
+    });
   } catch (error) {
-    res.status(500).send('Server error');
+    return res.status(404).render('error', { message: req.t('user.server_error')  });
   }
 });
 
 export const updateUserDetails = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.session!.user?.id;
   if (!userId) {
-    res.status(400).send('User not authenticated');
+    return res.status(404).render('error', { message: req.t('user.user_authenticated')  });
   }
   const { name, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info } = req.body;
 
@@ -121,9 +161,26 @@ export const updateUserDetails = asyncHandler(async (req: Request, res: Response
       await saveUserDetails(user);
       res.redirect('/account');
     } else {
-      res.status(404).send('User not found');
+      return res.status(404).render('error', { message: req.t('user.user_not_found')  });
     }
   } catch (error) {
-    res.status(500).send('Error updating user details');
+    return res.status(404).render('error', { message: req.t('user.update_user_error')  });
+  }
+});
+
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { newPassword } = req.body;
+  const userId = req.session!.user?.id;
+  
+  try {
+    const result = await updateUserPassword(userId, newPassword);
+    if (result) {
+      res.status(200).json({ status: 200, message: req.t('user.success_change_password') });
+    } else {
+      res.status(404).json({ status: 404, message: req.t('user.user_not_found') });
+    }
+  } catch (error) {
+    res.status(500).json({ status: 500, message: req.t('user.server_error') });
   }
 });

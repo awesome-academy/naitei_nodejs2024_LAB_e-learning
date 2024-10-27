@@ -31,8 +31,7 @@ export const lessonDetails = asyncHandler(async (req: Request, res: Response): P
   const lesson = await findLessonById(parseInt(req.params.id))
 
   if (!lesson) {
-    res.status(404).json({ message: 'Lesson not found' });
-    return;
+    return res.status(404).render('error', { message: req.t('course.lesson_not_found')  });
   }
 
   res.json(lesson);
@@ -42,12 +41,9 @@ export const lessonUpdateGet = asyncHandler(async (req: Request, res: Response):
     const lesson = await findLessonById(parseInt(req.params.id));
 
     if (!lesson) {
-      res.status(404).json({ message: 'Lesson not found' });
-      return;
+      return res.status(404).render('error', { message: req.t('course.lesson_not_found')  });
     }
 
-    // You can return an HTML form here if you're rendering views
-    // For now, let's return the lesson data as JSON
     res.json(lesson);
   });
 
@@ -56,8 +52,7 @@ export const lessonUpdatePost = asyncHandler(async (req: Request, res: Response)
     const lesson = await findLessonById(parseInt(req.params.id))
 
   if (!lesson) {
-    res.status(404).json({ message: 'Lesson not found' });
-    return;
+    return res.status(404).render('error', { message: req.t('course.lesson_not_found')  });
   }
 
   const { name, progress, type, content, description, time } = req.body;
