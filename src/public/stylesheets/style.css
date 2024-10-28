@@ -1689,7 +1689,11 @@ table.user-table {
   font-size: large;
 }
 
-.reply-btn {
+.reply-btn,
+.edit-btn,
+.delete-btn,
+.edit-child-btn,
+.delete-child-btn {
   border-style: none;
   background-color: transparent;
   font-style: italic;
@@ -1700,6 +1704,7 @@ table.user-table {
   display: flex;
   flex-direction: row-reverse;
   cursor: pointer;
+  justify-content: flex-end;
 }
 
 .rating-container input {
@@ -1854,6 +1859,10 @@ table.user-table {
   }
 }
 
+.d-flex {
+  display: flex;
+}
+
 .progress.mt-2 {
   width: 50%;
 }
@@ -1886,9 +1895,55 @@ input[type="radio"] {
   color: var(--light) !important;
 }
 
+.form-comment,
+.form-comment-update,
+.form-child-update {
+  display: flex;
+  height: 45px;
+  gap: 5px;
+}
+
+.submit-reply-btn {
+  width: 150px;
+}
+
+.comment-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.comment-container {
+  display: flex;
+  height: 45px;
+  gap: 5px;
+}
+
+.submit-cmt-btn {
+  width: 200px;
+}
+
+#toastNoAutohideRateNote,
+#toastNoAutohideCmtNote,
+#toastNoAutohideEditCmtSuccess,
+#toastNoAutohideEditCmtFailure,
+#toastNoAutohideDeleteCmtSuccess,
+#toastNoAutohideDeleteCmtFailure {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1055;
+  max-width: 80%;
+  width: auto;
+}
+
 .dropdown-menu {
   display: none;
 }
 .dropdown-menu.active {
   display: block;
+}
+
+.custom-container {
+  display: flex;
+  gap: 20px;
 }

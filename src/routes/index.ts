@@ -17,12 +17,8 @@ import categoryRoute from "./category.routes";
 import professorLessonRouter from "./professor/professorLesson.routes"
 import professorCourseRouter from "./professor/professorCourse.route";
 import professorSectionRouter from "./professor/professorSection.routes";
-
-
-
-
-
-
+import commentRouter from "../routes/comment.routes";
+import reviewRouter from "../routes/review.routes";
 const router = Router();
 
 router.use(i18nextMiddleware.handle(i18next));
@@ -37,8 +33,16 @@ router.use("/cart", cartRouter)
 router.use("/admins", adminCourseRouter,adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter);
 router.use("/categories", categoryRoute);
 router.use("/professors", professorCourseRouter, professorSectionRouter,professorLessonRouter);
-
-
+router.use(
+  "/admins",
+  adminCourseRouter,
+  adminUserRouter,
+  adminPaymentRouter,
+  adminSectionRouter,
+  adminLessonRouter
+);
+router.use("/comments", commentRouter);
+router.use("/reviews", reviewRouter);
 router.use("/", userRouter);
 
 export default router;

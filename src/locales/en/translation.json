@@ -148,7 +148,17 @@
     "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
     "lesson_not_found": "Lesson not found",
     "all": "All courses",
-    "noCourse": "No courses available"
+    "noCourse": "No courses available",
+    "rating-msg": "Please leave a rating",
+    "comment-msg": "Please enter a comment",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+    "edit-success": "Comment edited successfully",
+    "edit-failure": "Failed to edit comment",
+    "delete-success": "Comment deleted successfully",
+    "delete-failure": "Failed to delete comment",
+    "delete-confirm": "Are you sure you want to delete this comment?"
   },
   "payment": {
     "amount": "Amount",
@@ -176,6 +186,7 @@
     "course": "Courses",
     "section": "Sections",
     "lesson": "Lessons",
+    "payment": "Payments",
     "review": "Reviews",
     "comment": "Comments",
     "edit": "Edit",
@@ -272,7 +283,7 @@
     "remove": "Remove",
     "total_amount": "Total Amount:",
     "checkout": "Checkout",
-    "empty": "Your cart is empty!",
+    "empty": "Your cart is empty!"
   },
   "professor": {
     "update_error": "You are not authorized to update this course.",

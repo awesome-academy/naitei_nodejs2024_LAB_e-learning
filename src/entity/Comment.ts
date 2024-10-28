@@ -1,38 +1,47 @@
-import { Entity,
-  Column, 
-  PrimaryGeneratedColumn, 
-  ManyToOne, 
-  JoinColumn, 
-  CreateDateColumn, 
-  UpdateDateColumn, 
-} from 'typeorm';
-import { Review } from './Review';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Review } from "./Review";
+import { User } from "./User";
 
-@Entity('comments')
+@Entity("comments")
 export class Comment {
-    @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-      id!: number;
+  @PrimaryGeneratedColumn("increment", { type: "bigint" })
+  id!: number;
 
-    @ManyToOne(() => Review)
-    @JoinColumn({ name: 'review_id' })
-      review!: Review;
+  @ManyToOne(() => Review)
+  @JoinColumn({ name: "review_id" })
+  review!: Review;
 
-    @Column({ type: 'bigint' })
-      parent_id!: number;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "user_id" })
+  user!: User;
 
-    @Column('text')
-      comment_text!: string;
+  @Column({ type: "bigint", nullable: true })
+  parent_id!: number;
 
-    @Column({ type: 'bigint' })
-      review_id!: number;
+  @Column("text")
+  comment_text!: string;
 
-    @CreateDateColumn({ type: 'datetime' })
-      created_at!: Date;
+  @Column({ type: "bigint" })
+  user_id!: number;
 
-    @UpdateDateColumn({ type: 'datetime' })
-      updated_at!: Date;
+  @Column({ type: "bigint" })
+  review_id!: number;
 
-    constructor(commentData?: Partial<Comment>) {
-      commentData && Object.assign(this, commentData);
-    }
+  @CreateDateColumn({ type: "datetime" })
+  created_at!: Date;
+
+  @UpdateDateColumn({ type: "datetime" })
+  updated_at!: Date;
+
+  constructor(commentData?: Partial<Comment>) {
+    commentData && Object.assign(this, commentData);
+  }
 }
