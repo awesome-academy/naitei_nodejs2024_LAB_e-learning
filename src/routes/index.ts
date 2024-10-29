@@ -11,10 +11,8 @@ import adminCourseRouter from "./admin/adminCourse.route";
 import adminUserRouter from "./admin/adminUser.routes";
 import adminPaymentRouter from "./admin/adminPayment.routes";
 import adminSectionRouter from "./admin/adminSection.routes";
-import adminLessonRouter from "./admin/adminLesson.routes"
-
-
-
+import adminLessonRouter from "./admin/adminLesson.routes";
+import categoryRoute from "./category.routes";
 
 const router = Router();
 
@@ -26,8 +24,15 @@ router.use("/", homeRoute);
 router.use("/courses", courseRoute);
 router.use("/enrollments", enrollmentRouter);
 router.use("/payments", paymentmentRouter);
-router.use("/admins", adminCourseRouter,adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter);
-
+router.use(
+  "/admins",
+  adminCourseRouter,
+  adminUserRouter,
+  adminPaymentRouter,
+  adminSectionRouter,
+  adminLessonRouter
+);
+router.use("/categories", categoryRoute);
 
 router.use("/", userRouter);
 

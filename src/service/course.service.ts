@@ -1,3 +1,4 @@
+import { Category } from "./../entity/Category";
 import { AppDataSource } from "../repos/db";
 import { Course } from "../entity/Course";
 import { Enrollment } from "../entity/Enrollment";
@@ -193,6 +194,7 @@ export interface CourseFilter {
   maxPrice?: number;
   minRating?: number;
   name?: string;
+  category?: string;
 }
 
 export interface CourseSorting {
@@ -206,7 +208,10 @@ export const filterAndSortCourses = async (
   page: number = 1,
   limit: number = 10
 ) => {
-  const query = courseRepository.createQueryBuilder("course");
+  // const = courseRepository.createQueryBuilder("course");
+  const query = courseRepository
+    .createQueryBuilder("course")
+    .innerJoinAndSelect("course.category", "category");
 
   // Apply filters
   if (filters.professorId) {
@@ -234,6 +239,12 @@ export const filterAndSortCourses = async (
     query.orderBy(`course.${sorting.sortBy}`, sorting.order || "ASC");
   }
 
+  if (filters.category) {
+    query.andWhere("category.name LIKE :category", {
+      category: `%${filters.category}%`,
+    });
+  }
+
   // Apply pagination (offset and limit)
   const offset = (page - 1) * limit;
   query.skip(offset).take(limit);
@@ -241,29 +252,31 @@ export const filterAndSortCourses = async (
   // Execute the query and get results
   const [courses, total] = await query.getManyAndCount();
 
-  courses.map(async (course) => {
-    const sectionsWithLessons = await getSectionsWithLessons(course.id);
-    const totalHours = sectionsWithLessons.reduce(
-      (sum, section) => sum + section.total_time,
-      0
-    );
+  const results = await Promise.all(
+    courses.map(async (course) => {
+      const sectionsWithLessons = await getSectionsWithLessons(course.id);
+      const totalHours = sectionsWithLessons.reduce(
+        (sum, section) => sum + section.total_time,
+        0
+      );
 
-    const professor = await getProfessorByCourse(course.id);
-    const professorName = professor?.name || "Unknown";
-    const professorId = professor?.id || "Unknown";
+      const professor = await getProfessorByCourse(course.id);
+      const professorName = professor?.name || "Unknown";
+      const professorId = professor?.id || "Unknown";
 
-    return {
-      ...course,
-      professorName,
-      professorId,
-      sectionsWithLessons,
-      totalHours,
-    };
-  });
+      return {
+        ...course,
+        professorName,
+        professorId,
+        sectionsWithLessons,
+        totalHours,
+      };
+    })
+  );
 
   // Return paginated result along with total count
   return {
-    courses,
+    courses: results,
     total,
     page,
     pageCount: Math.ceil(total / limit),

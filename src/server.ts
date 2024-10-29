@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: "your-secret-key",
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
       secure: false,
@@ -33,10 +33,6 @@ app.set("views", path.join(__dirname, "../src/views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
 
 app.use(router);
 app.listen(process.env.PORT);

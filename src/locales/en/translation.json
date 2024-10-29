@@ -68,7 +68,8 @@
     "ApplyFilters": "Apply Filters",
     "Filters": "Filters",
     "newest-course": "Newest Course",
-    "mostEnrolledCourse": "the most enrolled course"
+    "mostEnrolledCourse": "the most enrolled course",
+    "no_course_available": "No Courses Available"
   },
   "login": {
     "email": "Email",
@@ -130,7 +131,12 @@
     "submit-reply": "Submit reply",
     "select-star": "Please select a star rating!",
     "fill-reply": "Please enter a reply.",
-    "note": "Note"
+    "note": "Note",
+    "enrollment_not_found": "Enrollment Not Found",
+    "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
+    "lesson_not_found": "Lesson not found",
+    "all": "All courses",
+    "noCourse": "Không có khóa học nào có sẵn"
   },
   "payment": {
     "amount": "Amount",
@@ -146,14 +152,18 @@
     "email": "Email",
     "username": "Username",
     "password": "Password",
-    "role": "Role"
+    "role": "Role",
+    "user_authenticated": "User not authenticated",
+    "user_not_found": "User not found",
+    "update_user_error": "Error updating user details",
+    "server_error": "Server error",
+    "success_change_password": "Password changed successfully"
   },
   "admin": {
     "user": "Users",
     "course": "Courses",
     "section": "Sections",
     "lesson": "Lessons",
-    "payment": "Payments",
     "review": "Reviews",
     "comment": "Comments",
     "payment": "Payments",
@@ -184,9 +194,19 @@
     "professor": "Professor",
     "phone_number": "Phone Number",
     "date_of_birth": "Birth",
+    "address": "Address",
     "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
     "identity_card": "Identity",
-    "additional_info": "Info"
+    "additional_info": "Info",
+    "purchased_course": "Purchased Course",
+    "in_progress_course": "In Progress Course",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "reset_password": "Reset Password",
+    "updateInfo": "Update Info"
   },
   "admin-course": {
     "management": "Course management",

@@ -12,13 +12,25 @@ import {
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
 import { CourseFilter, CourseSorting } from "../service/course.service";
 import { coursePagination } from "../constants";
+import { getAllCategories } from "../service/category.service";
+
+export const courseGet = asyncHandler(async (req: Request, res: Response) => {
+  res.render("course", {
+    title: req.t("home.course"),
+    message: req.t("home.message"),
+  });
+});
 
 export const courseShowGet = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const userId = req.session!.user?.id;
-      const isLoggedIn = Boolean(userId);
+      const trans = {
+        all: req.t("course.all"),
+      };
 
+      const categories = await getAllCategories();
+      const userId = req.query.userId as any;
+      const isLoggedIn = Boolean(userId);
       // Extract filters, sorting, and pagination options from query parameters
       const filters: CourseFilter = {
         professorId: req.query.professorId
@@ -30,6 +42,7 @@ export const courseShowGet = asyncHandler(
           ? Number(req.query.minRating)
           : undefined,
         name: req.query.courseName ? String(req.query.courseName) : undefined,
+        category: req.query.category ? String(req.query.category) : undefined,
       };
 
       const sorting: CourseSorting = {
@@ -68,17 +81,18 @@ export const courseShowGet = asyncHandler(
         purchasedCourseIds.includes(course.id)
       );
 
-      res.render("course", {
+      res.json({
         title: req.t("home.course"),
         message: req.t("home.message"),
         courses,
+        categories,
         purchasedCourses,
         isLoggedIn,
-        filters: req.query, // Pass the filters back to the view
+        filters: req.body,
         total,
         pageCount,
         currentPage: page,
-        t: req.t,
+        trans,
       });
     } catch (error) {
       res

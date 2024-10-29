@@ -14,7 +14,6 @@ app.use(session({
   }
 }));
 
-
 AppDataSource.initialize()
   .then( async () => {
     console.log('Data Source has been initialized!');
@@ -23,3 +22,4 @@ AppDataSource.initialize()
   .catch((error: unknown) => {
     console.log('Error during Data Source initialization:', error);
   });
+  
