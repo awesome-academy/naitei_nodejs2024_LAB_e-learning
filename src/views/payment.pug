@@ -13,22 +13,24 @@ block content
           .payment-container 
             table.payment-table
               tbody
-                tr
-                  td.label #{t('payment.username')}
-                  td.value #{username}
-                tr
-                  td.label #{t('payment.course')}
-                  td.value #{courseId}
-                tr
-                  td.label #{t('payment.payment-date')}
-                  td.value #{paymentDate}
-                tr
-                  td.label #{t('payment.status')}
-                  td.value #{status}
-                tr
-                  td.label.amount #{t('payment.amount')}
-                  td.amount $ #{amount.toFixed(2)}
-              form(action=`/payments/${courseId}`, method='post')
-                input(type='hidden' name='courseId', value=courseId) 
-                button#paymentSubmit.btn.text-light.w-100.py-3.payment-submit(type='submit') #{t('payment.submit')}
+                each payment in paymentDetails
+                  tr
+                    td.label #{t('payment.username')}
+                    td.value #{username}
+                  tr
+                    td.label #{t('payment.course')}
+                    td.value #{payment.course}
+                  tr
+                    td.label #{t('payment.payment-date')}
+                    td.value #{payment.paymentDate}
+                  tr
+                    td.label #{t('payment.status')}
+                    td.value #{payment.status}
+                  tr
+                    td.label.amount #{t('payment.amount')}
+                    td.amount $ #{payment.amount.toFixed(2)}
+            form(action="/payments/submit", method='post')
+              each payment in paymentDetails
+                input(type='hidden' name='courseIds[]' value=payment.courseId)
+              button#paymentSubmit.btn.text-light.w-100.py-3.payment-submit(type='submit') #{t('payment.submit')}
   <!-- Payment End -->

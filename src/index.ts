@@ -15,6 +15,12 @@ app.use(session({
   }
 }));
 
+app.use((req, res, next) => {
+  if (!req.session!.cart) {
+    req.session!.cart = [];
+  }
+  next();
+});
 
 AppDataSource.initialize()
   .then( async () => {

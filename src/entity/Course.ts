@@ -11,6 +11,7 @@ import {
 import { User } from './User';
 import { Section } from './Section';
 import { Category } from './Category'; 
+import { Cart } from './Cart';
 
 @Entity('courses')
 export class Course {
@@ -51,6 +52,9 @@ export class Course {
 
   @UpdateDateColumn({ type: 'datetime' })
   updated_at!: Date;
+
+  @OneToMany(() => Cart, (cart) => cart.course)
+  cartItems!: Cart[];
 
   constructor(courseData?: Partial<Course>) {
     courseData && Object.assign(this, courseData);

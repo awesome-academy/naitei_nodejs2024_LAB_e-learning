@@ -1,0 +1,48 @@
+extends layout 
+
+block content
+    include partial/navbar
+    include partial/header
+
+    title #{t('cart.title')}
+    h1 #{t('cart.your_cart')}
+
+    if cartItems.length
+      // Initialize total amount
+      - let totalAmount = 0
+
+      // Center the table
+      .container
+        table.table.table-bordered.text-center
+          thead
+            tr
+              th #{t('cart.course')}
+              th #{t('cart.price')}
+              th #{t('cart.action')}
+          tbody
+            each item in cartItems
+              tr
+                td #{item.course.name}
+                td $#{item.course.price.toFixed(2)}
+                td
+                  form(action=`/cart/remove`, method="post", style="display: inline;")
+                    input(type="hidden", name="itemId", value=item.id)
+                    button.btn.btn-danger(type="submit") #{t('cart.remove')}
+
+              // Update total amount
+              - totalAmount += item.course.price 
+
+          // Total amount display
+          tfoot
+            tr
+              td #{t('cart.total_amount')}
+              td $#{totalAmount.toFixed(2)}
+              td 
+              
+        .text-right
+          form(action="/payments/checkout", method="post")
+            each item in cartItems
+              input(type="hidden", name="courseIds[]", value=item.course.id)
+            button.btn.btn-primary(type="submit") #{t('cart.checkout')}
+    else
+      p #{t('cart.empty')}

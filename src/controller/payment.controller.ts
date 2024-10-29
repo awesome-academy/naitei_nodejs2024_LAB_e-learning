@@ -7,90 +7,81 @@ import {
 } from "../service/payment.service";
 import { getCourseById } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
+import { getItemByCourseId, removeFromCart } from "@src/service/cart.service";
 
 
 export const processPayment = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.session!.user?.id; 
-    const { courseId } = req.params; 
-    if (!userId || isNaN(Number(courseId))) {
+    const courseIds = req.body.courseIds; 
+    if (!userId || !Array.isArray(courseIds)) {
       return res
         .status(400)
         .render("error", { message: req.t("payment.error_invalid_data") });
     }
 
-    const course = await getCourseById(Number(courseId));
+    const paymentDetails = [];
 
-    if (!course) {
-      return res
-        .status(404)
-        .render("error", { message: req.t("payment.error_course_not_found") });
-    }
+    for (const courseId of courseIds) {
+      const course = await getCourseById(Number(courseId));
+      if (!course) {
+        return res
+          .status(404)
+          .render("error", { message: req.t("payment.error_course_not_found") });
+      }
 
-    const existingPayment = await hasUserPaidForCourse(
-      userId,
-      Number(courseId)
-    );
-
-    if (existingPayment) {
-      return res.render("payment", {
-        t: req.t,
-        username: req.session!.user?.name || "User",
-        courseId,
-        paymentDate: existingPayment.payment_date,
-        status: existingPayment.status,
-        amount: existingPayment.amount,
-      });
-    }
-
-    const amount = course.price;
-
-    try {
-      const payment = await createPayment(userId, Number(courseId), amount);
-
-      res.render("payment", {
-        t: req.t,
-        username: req.session!.user?.name || "User",
+      const existingPayment = await hasUserPaidForCourse(userId, Number(courseId));
+      if (existingPayment) {
+        paymentDetails.push({
+          course: course.name,
+          paymentDate: existingPayment.payment_date,
+          status: existingPayment.status,
+          amount: existingPayment.amount,
+        });
+        continue;
+      }
+      const payment = await createPayment(userId, Number(courseId), course.price);
+      paymentDetails.push({
+        courseId: courseId,
         course: course.name,
-        courseId: course.id,
         paymentDate: payment.payment_date,
         status: payment.status,
         amount: payment.amount,
-        paymentId: payment.id,
       });
-    } catch (error) {
-      return res.status(500).render("error", { message: error.message });
     }
+    console.log(paymentDetails)
+
+    res.render("payment", {
+      t: req.t,
+      username: req.session!.user?.name || "User",
+      paymentDetails,
+    });
   });
   
-  
   export const submitPayment = asyncHandler(async (req: Request, res: Response) => {
-    const { courseId } = req.params; 
+    const courseIds = req.body.courseIds;
     const userId = req.session!.user?.id; 
   
-  
-    if (!userId || isNaN(Number(courseId))) {
-      return res
-        .status(400)
-        .render("error", { message: req.t("payment.error_invalid_data") });
+    if (!userId || !Array.isArray(courseIds)) {
+      return res.status(400).render("error", { message: req.t("payment.error_invalid_data") });
     }
 
     try {
-      const updatedPayment = await completePaymentByUserAndCourse(
-        userId,
-        Number(courseId)
-      );
-
-      if (!updatedPayment) {
-        return res
-          .status(404)
-          .render("error", {
-            message: req.t("payment.error_payment_not_found"),
-          });
+      for (const courseId of courseIds) {
+        const updatedPayment = await completePaymentByUserAndCourse(userId, Number(courseId));
+        if (!updatedPayment) {
+          console.error(`Payment not found or already completed for course ID: ${courseId}`);
+          return res.status(404).render("error", { message: req.t("payment.error_payment_not_found") });
+        }
+        const cartItem = await getItemByCourseId(courseId)
+        if (!cartItem) {
+          throw new Error('Cart item not found');
+        }
+        await removeFromCart(cartItem.id)
       }
   
-      return res.redirect('/'); 
+      res.redirect('/');
     } catch (error) {
-      console.error(`Error during payment update: ${error.message}`); 
+      console.error(`Error during payment update: ${error.message}`);
       return res.status(500).render('error', { message: error.message });
     }
   }

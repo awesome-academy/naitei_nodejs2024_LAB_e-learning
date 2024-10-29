@@ -69,7 +69,9 @@
     "Filters": "Bộ lọc",
     "newest-course": "Khóa học mới nhất",
     "mostEnrolledCourse": "khóa học được đăng ký nhiều nhất",
-    "no_course_available": "Không có khóa học nào"
+    "no_course_available": "Không có khóa học nào",
+    "cart": "Giỏ hàng",
+    "Add_to_cart": "Thêm vào giỏ hàng"
   },
   "login": {
     "email": "Email",
@@ -250,5 +252,16 @@
     "amount": "Số tiền",
     "status": "Trạng thái",
     "payment-date": "Ngày thanh toán"
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "your_cart": "Giỏ hàng của bạn",
+    "course": "Khóa học",
+    "price": "Giá khóa học",
+    "action": "Hành động",
+    "remove": "Xóa",
+    "total_amount": "Tổng:",
+    "checkout": "Thanh toán",
+    "empty": "Giỏ hàng trống!"
   }
 }
