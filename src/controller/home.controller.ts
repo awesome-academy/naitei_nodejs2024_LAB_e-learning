@@ -21,7 +21,7 @@ export const renderHomePage = asyncHandler(
         purchasedCourseIds.includes(course.id)
       );
       res.render("index", {
-        title: { message: req.t("home.home") },
+        title: req.t("home.home"),
         message: { message: req.t("home.message") },
         courses,
         t: req.t,

@@ -134,7 +134,12 @@
     "note": "Note",
     "enrollment_not_found": "Enrollment Not Found",
     "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
-    "lesson_not_found": "Lesson not found"
+    "lesson_not_found": "Lesson not found",
+    "enrollment_not_found": "Enrollment Not Found",
+    "enrollment_user_not_found": "User ID, Course ID, and Lesson ID are required",
+    "lesson_not_found": "Lesson not found",
+    "all": "All courses",
+    "noCourse": "No courses available"
   },
   "payment": {
     "amount": "Amount",

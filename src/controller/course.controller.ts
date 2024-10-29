@@ -8,18 +8,31 @@ import {
   countEnrolledUsersInCourse,
   getProfessorByCourse,
   CourseFilter,
-  CourseSorting
+  CourseSorting,
 } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
 import { calculateTotalTimeAndLessons } from "../service/lession.service";
 import { coursePagination } from "../constants";
+import { getAllCategories } from "../service/category.service";
+
+export const courseGet = asyncHandler(async (req: Request, res: Response) => {
+  res.render("course", {
+    title: req.t("home.course"),
+    message: req.t("home.message"),
+  });
+});
 
 export const courseShowGet = asyncHandler(
   async (req: Request, res: Response) => {
     try {
+      const trans = {
+        all: req.t("course.all"),
+      };
+
+      const categories = await getAllCategories();
       const userId = req.session!.user?.id;
       const isLoggedIn = Boolean(userId);
-      
+
       const filters: CourseFilter = {
         professorId: req.query.professorId
           ? Number(req.query.professorId)
@@ -30,6 +43,7 @@ export const courseShowGet = asyncHandler(
           ? Number(req.query.minRating)
           : undefined,
         name: req.query.courseName ? String(req.query.courseName) : undefined,
+        category: req.query.category ? String(req.query.category) : undefined,
       };
 
       const sorting: CourseSorting = {
@@ -69,25 +83,25 @@ export const courseShowGet = asyncHandler(
       let totalHours = 0;
 
       for (const course of purchasedCourses) {
-        const sections = await getSectionsWithLessons(course.id); 
+        const sections = await getSectionsWithLessons(course.id);
 
         for (const section of sections) {
           const { total_time } = await calculateTotalTimeAndLessons(section.id);
-          totalHours += total_time; 
+          totalHours += total_time;
         }
       }
-      res.render("course", {
+      res.json({
         title: req.t("home.course"),
         message: req.t("home.message"),
         courses,
+        categories,
         purchasedCourses,
         isLoggedIn,
-        filters: req.query, 
+        filters: req.body,
         total,
-        totalHours,
         pageCount,
         currentPage: page,
-        t: req.t,
+        trans,
       });
     } catch (error) {
       res
