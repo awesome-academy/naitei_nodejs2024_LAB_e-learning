@@ -9,26 +9,6 @@ block content
     .text-center.wow.fadeInUp(data-wow-delay='0.1s')
       h2.py-2 #{t('home.Category-title')}
     .row.g-2.m-2
-      .col-lg-3.col-md-6.text-center
-        .content.shadow.p-3.mb-2.wow.fadeInUp(data-wow-delay='0.3s')
-          img.img-fluid(src='img/cat1.png' alt='categories')
-          h5.my-2
-            a.text-center(href='#') Microsoft Excel
-      .col-lg-3.col-md-6.text-center
-        .content.shadow.p-3.mb-2.wow.fadeInUp(data-wow-delay='0.3s')
-          img.img-fluid(src='img/cat2.png' alt='categories')
-          h5.my-2
-            a.text-center(href='#')  AWS
-      .col-lg-3.col-md-6.text-center
-        .content.shadow.p-3.mb-2.wow.fadeInUp(data-wow-delay='0.3s')
-          img.img-fluid(src='img/cat3.png' alt='categories')
-          h5.my-2
-            a.text-center(href='#') Python
-      .col-lg-3.col-md-6.text-center
-        .content.shadow.p-3.mb-2.wow.fadeInUp(data-wow-delay='0.3s')
-          img.img-fluid(src='img/cat4.png' alt='categories')
-          h5.my-2
-            a.text-center(href='#') Java
   <!-- category end -->
 
   <!-- course and filter start -->
@@ -36,101 +16,228 @@ block content
     .custom-grid-container  
       form(action='/courses' method='GET' class='row g-3')
         .custom-sort-container
-          h2.py-2 #{t('home.Filters')}
-          .col-md-10
-            label.text-dark(for='professorId') #{t('home.Professor')}
-            .custom-input
-              input.custom-sort(type='number' name='professorId' placeholder=t('home.Professor') value=(filters.professorId || '') onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-
-          .col-md-10
-            label.text-dark(for='minPrice') #{t('home.MinPrice')}
-            .custom-input
-              input.custom-sort(type='number' name='minPrice', placeholder=t('home.MinPrice'), value=(filters.minPrice || ''), min='0' onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-
-          .col-md-10
-            label.text-dark(for='maxPrice') #{t('home.MaxPrice')}
-            .custom-input
-              input.custom-sort(type='number' name='maxPrice', placeholder=t('home.MaxPrice'), value=(filters.maxPrice || ''), min='0' onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-
-          .col-md-10
-            label.text-dark(for='minRating') #{t('home.MinRating')}
-            .custom-input
-              input.custom-sort(type='number' step='0.1' min='0' max='5' name='minRating', placeholder=t('home.MinRating'), value=(filters.minRating || '') onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-
-          .col-md-10
-            label.text-dark(for='sortBy') #{t('home.SortBy')}
-            .custom-input
-              select.custom-sort(name='sortBy' onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-                option(value='name' selected=(filters.sortBy === 'name')) #{t('home.SortByName')}
-                option(value='price' selected=(filters.sortBy === 'price')) #{t('home.SortByPrice')}
-                option(value='average_rating' selected=(filters.sortBy === 'average_rating')) #{t('home.SortByRating')}
-                option(value='created_at' selected=(filters.sortBy === 'created_at')) #{t('home.SortByDate')}
-
-          .col-md-10
-            label.text-dark(for='sortOrder') #{t('home.SortOrder')}
-            .custom-input
-              select.custom-sort(name='sortOrder' onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')")
-                option(value='ASC' selected=(filters.sortOrder === 'ASC')) #{t('home.SortAsc')}
-                option(value='DESC' selected=(filters.sortOrder === 'DESC')) #{t('home.SortDesc')}
-
-          .col-md-10
-            button.btn.text-light(type='submit') #{t('home.ApplyFilters')}
-
       .container
         h2.py-2 #{t('home.course')}
         .row.g-4.py-2
-          if courses && courses.length > 0
-            each course in courses
-              .col-lg-4.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
-                .course-item.shadow
-                  .position-relative.overflow-hidden.text-light.image
-                    img.img-fluid(src='img/course-1.jpg' alt=course.name)
-                  .p-2.pb-0.custom-course-name
-                    h5.mb-1
-                      a.text-dark(href=`/courses/${course.id}`) #{course.name}
-                    .d-flex
-                      small.flex-fill.py-1.px-2
-                        i.fa.fa-star.text-warning.me-2
-                        | #{course.average_rating}
-                      small.flex-fill.text-left.p-2
-                        i.fa.fa-clock.me-2
-                        | #{totalHours}#{t('home.Hrs')}
-                      small.text-primary.py-1.px-2.fw-bold.fs-6
-                        if isLoggedIn
-                          if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
-                            a(href=`/enrollments/${course.id}`)
-                              | #{t('home.Enroll')}  
-                              i.fa.fa-chevron-right.me-2.fs-10
-                          else
-                            a(href=`/payments/${course.id}`)
-                              | #{course.price}$ #{t('home.Buy')}
-                              i.fa.fa-chevron-right.me-2.fs-10
-                        else
-                          a(href=`/login`) 
-                            | #{course.price}$  #{t('home.Buy')}  
-                            i.fa.fa-chevron-right.me-2.fs-10
-            else
-              p.text-center #{t('home.NoCoursesAvailable')}
-
-          //- Pagination Section
-          if pageCount > 1
-            .d-flex.justify-content-center.mt-5
-              nav
-                ul.pagination
-                  //- Previous Page Link
-                  li.page-item(class=(currentPage === 1 ? 'disabled' : ''))
-                    a.page-link(href=`?page=${currentPage - 1}&sortBy=${filters.sortBy}&sortOrder=${filters.sortOrder}&professorId=${filters.professorId || ''}&minPrice=${filters.minPrice || ''}&maxPrice=${filters.maxPrice || ''}&minRating=${filters.minRating || ''}`)
-                      | «
-
-                  //- Page Numbers
-                  each num in [...Array(pageCount).keys()].map(n => n + 1)
-                    li.page-item(class=(currentPage === num ? 'active' : ''))
-                      a.page-link(href=`?page=${num}&sortBy=${filters.sortBy}&sortOrder=${filters.sortOrder}&professorId=${filters.professorId || ''}&minPrice=${filters.minPrice || ''}&maxPrice=${filters.maxPrice || ''}&minRating=${filters.minRating || ''}`) #{num}
-
-                  //- Next Page Link
-                  li.page-item(class=(currentPage === pageCount ? 'disabled' : ''))
-                    a.page-link(href=`?page=${currentPage + 1}&sortBy=${filters.sortBy}&sortOrder=${filters.sortOrder}&professorId=${filters.professorId || ''}&minPrice=${filters.minPrice || ''}&maxPrice=${filters.maxPrice || ''}&minRating=${filters.minRating || ''}`)
-                      | »
+        .d-flex.justify-content-center.mt-5
+          nav
+            ul.pagination
   <!-- course and filter end -->
 
   include partial/footer
+  script.
+    function getAllCourses(num, category) {
+      const filters = {
+        professorId: document.querySelector('input[name="professorId"]')?.value || '',
+        minPrice: document.querySelector('input[name="minPrice"]')?.value || '',
+        maxPrice: document.querySelector('input[name="maxPrice"]')?.value || '',
+        minRating: document.querySelector('input[name="minRating"]')?.value || '',
+        sortBy: document.querySelector('select[name="sortBy"]')?.value || 'name',
+        sortOrder: document.querySelector('select[name="sortOrder"]')?.value || 'ASC',
+        userId: sessionStorage.getItem("user.id")
+      };
+
+      const queryString = $.param(filters); 
+      const checkedRadio = document.querySelector('input[name="category"]:checked');
+      const checkedRadio2 = localStorage.getItem("category")
+      let url = num != null ? `/courses/all?page=${num}&${queryString}` : `/courses/all?${queryString}`;
+
+      if(checkedRadio!=null) {
+        url += `&category=${checkedRadio.value}`;
+      }
+      else if(checkedRadio2!=null) {
+        url += `&category=${checkedRadio2}`;
+      }
+      localStorage.removeItem("category")
+
+      $.ajax({
+        url: url,
+        method: "GET",
+        contentType: "application/json",
+        data: JSON.stringify(filters),
+        processData: false,
+        processData: false,
+        xhrFields: {
+          withCredentials: true  
+            },
+        success: function (response) {
+          $('.row.g-4.py-2').empty()
+          let courseHtml = '';
+          if (response.courses && response.courses.length > 0) {
+            response.courses.forEach(course => {
+              courseHtml += `
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                  <div class="course-item shadow">
+                    <div class="position-relative overflow-hidden text-light image">
+                      <img class="img-fluid" src="img/course-1.jpg" alt="${course.name}">
+                    </div>
+                    <div class="p-2 pb-0 custom-course-name">
+                      <h5 class="mb-1">
+                        <a class="text-dark" href="/courses/${course.id}">${course.name}</a>
+                      </h5>
+                      <div class="d-flex">
+                        <small class="flex-fill py-1 px-2">
+                          <i class="fa fa-star text-warning me-2"></i> ${course.average_rating}
+                        </small>
+                        <small class="flex-fill text-left p-2">
+                          <i class="fa fa-clock me-2"></i> ${course.totalHours} Hrs
+                        </small>
+                        <small class="text-primary py-1 px-2 fw-bold fs-6">
+                          <a href="${response.isLoggedIn ? (response.purchasedCourses.some(p => p.id === course.id)  ? `/enrollments/${course.id}` : `/payments/${course.id}`) : '/login'}">
+                            ${course.price} $ ${response.isLoggedIn ? (response.purchasedCourses.some(p => p.id === course.id)  ? 'Enroll' : 'Buy') : 'Buy'}
+                            <i class="fa fa-chevron-right me-2 fs-10"></i>
+                          </a>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+          } else {
+            $('.row.g-4.py-2').append('<p class="text-center">#{t('course.noCourse')}</p>');
+          }
+          $('.row.g-4.py-2').append(courseHtml);
+          let paginationHtml = '';
+          if (response.pageCount > 1) {
+            // Previous page link
+            paginationHtml += `
+              <li class="page-item ${response.currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="getAllCourses(${response.currentPage - 1}, null)">«</a>
+              </li>`;
+
+            // Page numbers
+            for (let num = 1; num <= response.pageCount; num++) {
+              paginationHtml += `
+                <li class="page-item ${response.currentPage === num ? 'active' : ''}">
+                  <a class="page-link" href="#" onclick="getAllCourses(${num}, null)">${num}</a>
+                </li>`;
+            }
+
+            // Next page link
+            paginationHtml += `
+              <li class="page-item ${response.currentPage === response.pageCount ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="getAllCourses(${response.currentPage + 1}, null)">»</a>
+              </li>`;
+            }
+
+            $('.pagination').html(paginationHtml);
+
+          $('.custom-sort-container').empty();
+
+          const filterHTML = `<h2 class="py-2">#{t('home.Filters')}</h2>
+            <div class="col-md-10">
+              <label class="text-dark" for="professorId">#{t('home.Professor')}</label>
+              <div class="custom-input">
+                <input class="custom-sort" type="number" name="professorId" placeholder="#{t('home.Professor')}" value="${filters.professorId || ''}" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <label class="text-dark" for="minPrice">#{t('home.MinPrice')}</label>
+              <div class="custom-input">
+                <input class="custom-sort" type="number" name="minPrice" placeholder="#{t('home.MinPrice')}" value="${filters.minPrice || ''}" min="0" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <label class="text-dark" for="maxPrice">#{t('home.MaxPrice')}</label>
+              <div class="custom-input">
+                <input class="custom-sort" type="number" name="maxPrice" placeholder="#{t('home.MaxPrice')}" value="${filters.maxPrice || ''}" min="0" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <label class="text-dark" for="minRating">#{t('home.MinRating')}</label>
+              <div class="custom-input">
+                <input class="custom-sort" type="number" step="0.1" min="0" max="5" name="minRating" placeholder="#{t('home.MinRating')}" value="${filters.minRating || ''}" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <label class="text-dark" for="sortBy">#{t('home.SortBy')}</label>
+              <div class="custom-input">
+                <select class="custom-sort" name="sortBy" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+                  <option value="name" ${filters.sortBy === 'name' ? 'selected' : ''}>#{t('home.SortByName')}</option>
+                  <option value="price" ${filters.sortBy === 'price' ? 'selected' : ''}>#{t('home.SortByPrice')}</option>
+                  <option value="average_rating" ${filters.sortBy === 'average_rating' ? 'selected' : ''}>#{t('home.SortByRating')}</option>
+                  <option value="created_at" ${filters.sortBy === 'created_at' ? 'selected' : ''}>#{t('home.SortByDate')}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <label class="text-dark" for="sortOrder">#{t('home.SortOrder')}</label>
+              <div class="custom-input">
+                <select class="custom-sort" name="sortOrder" onfocus="this.parentElement.classList.add('active')" onblur="this.parentElement.classList.remove('active')">
+                  <option value="ASC" ${filters.sortOrder === 'ASC' ? 'selected' : ''}>#{t('home.SortAsc')}</option>
+                  <option value="DESC" ${filters.sortOrder === 'DESC' ? 'selected' : ''}>#{t('home.SortDesc')}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-10">
+              <a class="btn text-light" href="#" onclick="getAllCourses(null,null)">#{t('home.ApplyFilters')}</a>
+            </div>
+            `;
+          $('.custom-sort-container').append(filterHTML);
+
+        },
+      });
+    }
+
+    $(document).ready(function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryParam = urlParams.get('category');
+      if (categoryParam) {
+        getAllCourses(null, categoryParam);
+      } else {
+        getAllCourses();
+      }
+
+      $('.row.g-2.m-2').on('change', 'input[type="radio"]', function() {
+        const categoryName = $(this).attr('id'); 
+        const content = $(`.content[data-category="${categoryName}"]`);  
+        $('.content').css('background-color', '');
+        if ($(this).is(':checked')) {
+          content.css({
+          'background-color': 'var(--primary)',
+        });
+        }
+      });
+
+      $.ajax({
+        url: `/categories`,
+        method: "GET",
+        contentType: "application/json",
+        success: function (response) {
+          $('.row.g-2.m-2').empty();
+          if (response.categories && response.categories.length > 0) {
+            response.categories.forEach(category => {
+              const categoryHtml = `<div class="col-lg-3 col-md-6 text-center">
+                <div class="content shadow p-3 mb-2 wow fadeInUp" data-wow-delay="0.3s" data-category="${category.name}">
+                  <h5 class="my-2">
+                    <input type="radio" name="category" value="${category.name}" id="${category.name}" class="text-center" onclick="getAllCourses(null, '${category.name}');">
+                    <label for="${category.name}">
+                      ${category.name}
+                    </label>
+                  </h5>
+                </div>
+              </div>`;
+              $('.row.g-2.m-2').append(categoryHtml);
+            });
+          }
+          const categoryHtml = `<div class="col-lg-3 col-md-6 text-center">
+            <div class="content shadow p-3 mb-2 wow fadeInUp" data-wow-delay="0.3s" >
+              <h5 class="my-2">
+                <input type="radio" name="category" id="all" value="" class="text-center" onclick="getAllCourses(null, null);">
+                <label for="all">
+                  #{t('course.all')}
+                </label>
+              </h5>
+            </div>
+          </div>`;
+          $('.row.g-2.m-2').append(categoryHtml);
+        }
+      });
+    });

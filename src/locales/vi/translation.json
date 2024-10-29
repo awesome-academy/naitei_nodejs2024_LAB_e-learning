@@ -134,7 +134,12 @@
     "note": "Lưu ý",
     "enrollment_not_found": "Không tìm thấy khóa học nào đang học",
     "enrollment_user_not_found": "Khóa học không phù hợp",
-    "lesson_not_found": "Không tìm thầy bài học phù hợp"
+    "lesson_not_found": "Không tìm thầy bài học phù hợp",
+    "enrollment_not_found": "Không tìm thấy khóa học nào đang học",
+    "enrollment_user_not_found": "Khóa học không phù hợp",
+    "lesson_not_found": "Không tìm thầy bài học phù hợp",
+    "all": "Tất cả",
+    "noCourse": "Không có khóa học nào có sẵn"
   },
   "payment": {
     "amount": "Giá",
