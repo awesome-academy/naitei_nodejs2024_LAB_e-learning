@@ -94,7 +94,7 @@ block content
                         | #{course.average_rating}
                       small.flex-fill.text-left.p-2
                         i.fa.fa-clock.me-2
-                        | #{course.totalHours}#{t('home.Hrs')}
+                        | #{totalHours}#{t('home.Hrs')}
                       small.text-primary.py-1.px-2.fw-bold.fs-6
                         if isLoggedIn
                           if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)

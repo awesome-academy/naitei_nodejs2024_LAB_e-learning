@@ -19,6 +19,7 @@ router.post("/verify", userController.verifyUser);
 router.get("/logout", userController.logout);
 
 router.get('/account', userController.getUserDetails);
-router.post('/account', userController.updateUserDetails);
+router.post('/account/edit', userController.updateUserDetails);
+router.post("/account/reset-password/:userId", userController.resetPassword);
 
 export default router;

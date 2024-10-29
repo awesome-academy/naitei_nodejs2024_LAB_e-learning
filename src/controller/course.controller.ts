@@ -2,15 +2,16 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import {
   getUserPurchasedCourses,
-  getCoursesWithSectionsAndHours,
   filterAndSortCourses,
   getSectionsWithLessons,
   getCourseById,
   countEnrolledUsersInCourse,
   getProfessorByCourse,
+  CourseFilter,
+  CourseSorting
 } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
-import { CourseFilter, CourseSorting } from "../service/course.service";
+import { calculateTotalTimeAndLessons } from "../service/lession.service";
 import { coursePagination } from "../constants";
 
 export const courseShowGet = asyncHandler(
@@ -18,8 +19,7 @@ export const courseShowGet = asyncHandler(
     try {
       const userId = req.session!.user?.id;
       const isLoggedIn = Boolean(userId);
-
-      // Extract filters, sorting, and pagination options from query parameters
+      
       const filters: CourseFilter = {
         professorId: req.query.professorId
           ? Number(req.query.professorId)
@@ -61,21 +61,30 @@ export const courseShowGet = asyncHandler(
         page,
         limit
       );
-      // let courses = await getCoursesWithSectionsAndHours();
       const payments = isLoggedIn ? await getUserPurchasedCourses(userId) : [];
       const purchasedCourseIds = payments.map((payment) => payment.course_id);
       const purchasedCourses = courses.filter((course) =>
         purchasedCourseIds.includes(course.id)
       );
+      let totalHours = 0;
 
+      for (const course of purchasedCourses) {
+        const sections = await getSectionsWithLessons(course.id); 
+
+        for (const section of sections) {
+          const { total_time } = await calculateTotalTimeAndLessons(section.id);
+          totalHours += total_time; 
+        }
+      }
       res.render("course", {
         title: req.t("home.course"),
         message: req.t("home.message"),
         courses,
         purchasedCourses,
         isLoggedIn,
-        filters: req.query, // Pass the filters back to the view
+        filters: req.query, 
         total,
+        totalHours,
         pageCount,
         currentPage: page,
         t: req.t,

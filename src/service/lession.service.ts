@@ -56,6 +56,19 @@ export const updateLesson = async (id: number, lessonData: any) => {
     return await lessonRepository.save(lesson);
 };
 
+export const calculateTotalTimeAndLessons = async (sectionId: number) => {
+
+    const lessons = await lessonRepository.find({ where: { section_id: sectionId } });
+
+    let total_time = 0;
+    let total_lesson = lessons.length; 
+
+    lessons.forEach(lesson => {
+      total_time += lesson.time; 
+    });
+
+    return { total_time, total_lesson };
+};
 
 export const saveLesson = async (lesson: Lesson) => {
     return await lessonRepository.save(lesson)

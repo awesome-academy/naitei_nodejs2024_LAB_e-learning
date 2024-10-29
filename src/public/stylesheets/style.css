@@ -930,6 +930,19 @@ table.admin-table {
   z-index: 999;
 }
 
+#resetPasswordModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
 .confirmDelete-btn {
   display: flex;
   justify-content: flex-end;
@@ -1637,7 +1650,7 @@ body {
 
 table.user-table {
   margin: 0 auto;
-  width: 30%;
+  width: 50%;
   border-collapse: collapse;
   background-color: white;
   overflow: hidden;
@@ -1717,7 +1730,7 @@ table.user-table {
 }
 
 .custom-course-name {
-  height: 89px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1740,16 +1753,16 @@ table.user-table {
 /* Bố cục và định dạng chung cho bài giảng */
 
 .lesson-description {
-  font-size: 1rem; 
-  line-height: 1.5; 
-  color: #555; 
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
 }
-.lesson-name{
-  margin-left: 10px ;
-  color: #06BBCC; 
+.lesson-name {
+  margin-left: 10px;
+  color: #06bbcc;
 }
 .fa.fa-video.text-black {
-  color: #06BBCC;
+  color: #06bbcc;
 }
 .lesson-item {
   margin-bottom: 20px;
@@ -1773,7 +1786,7 @@ table.user-table {
   margin-bottom: 10px;
   font-size: 14px;
   color: #333;
-  display: block;  /* Đảm bảo chi tiết ở dòng riêng */
+  display: block; /* Đảm bảo chi tiết ở dòng riêng */
 }
 
 /* Khung Video và PDF */
@@ -1809,7 +1822,7 @@ table.user-table {
   display: block;
   align-items: center;
   text-decoration: none;
-  color: #0056b3; 
+  color: #0056b3;
   font-weight: bold;
   margin-top: 10px;
 }
@@ -1819,7 +1832,7 @@ table.user-table {
   text-decoration: underline;
 }
 
-.pdf-test{
+.pdf-test {
   font-size: 1rem;
 }
 
@@ -1830,17 +1843,36 @@ table.user-table {
   }
 }
 
-.d-flex{
-  display: flex;
-  gap: 20px;
-}
-
-.progress.mt-2{
+.progress.mt-2 {
   width: 50%;
 }
 
-.progress.mt-2 .progress-bar.bg-success.color{
-  background-color: #06BBCC;
+.progress.mt-2 .progress-bar.bg-success.color {
+  background-color: #06bbcc;
+}
+
+input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.nav-tabs .nav-link {
+  margin-right: 5px;
+  padding: 8px 16px;
+  border: none !important;
+  color: var(--dark);
+  border-bottom: none !important;
+  font-size: large;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary) !important;
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: var(--primary);
+  color: var(--light) !important;
 }
 
 .dropdown-menu {

@@ -48,14 +48,12 @@ export const updateLessonProgress = asyncHandler(async (req: Request, res: Respo
   const userId = req.session!.user?.id;
   
   if (!userId || !courseId || !lessonId) {
-    res.status(400).json({ message: 'User ID, Course ID, and Lesson ID are required.' });
-    return;  
+    return res.status(404).render('error', { message: req.t('course.enrollment_not_found')  });
   }
 
   const enrollment = await getEnrollment(+userId, +courseId);
   if (!enrollment) {
-    res.status(404).json({ message: 'Enrollment not found.' });
-    return;
+    return res.status(404).render('error', { message: req.t('course.enrollment_not_found')  });
   }
 
   try {
@@ -64,7 +62,6 @@ export const updateLessonProgress = asyncHandler(async (req: Request, res: Respo
 
     res.redirect(`/enrollments/${courseId}`);
   } catch (error) {
-    console.error('Error updating lesson progress:', error); 
-    res.status(500).json({ message: error.message });
+    return res.status(404).render('error', { message: req.t('course.progress_error')  });
   }
 });
