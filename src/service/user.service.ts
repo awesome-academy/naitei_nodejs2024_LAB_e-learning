@@ -25,18 +25,21 @@ export const userRegister = async (
   gender: string,
   address: string,
   identity_card: string,
-  additional_info: string
+  additional_info: string,
+  department?: string,
+  years_of_experience?: number
 ) => {
   const existingUser = await userRepository.findOne({
     where: [{ email }, { name }],
   });
+
   if (existingUser) {
     throw new Error("User already exists with this email or username");
   }
 
   const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
 
-  const user = userRepository.create({
+  const user = userRepository.create(<Partial<User>>{
     name,
     email,
     password: hashedPassword,
@@ -47,11 +50,14 @@ export const userRegister = async (
     gender,
     address,
     identity_card,
-    additional_info
+    additional_info,
+    department: role === 'professor' ? department : null,
+    years_of_experience: role === 'professor' ? years_of_experience : null,
   });
 
   return await userRepository.save(user);
 };
+
 
 export const userLogin = async (email: string, password: string) => {
   const user = await userRepository.findOne({ where: { email } });

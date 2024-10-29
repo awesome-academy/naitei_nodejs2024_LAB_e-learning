@@ -21,8 +21,8 @@ export class Lesson {
     @Column()
       name!: string;
 
-    @Column('integer')
-    progress!: number;
+    @Column('integer',{ nullable: true })
+    progress!: number | null;
 
     @Column({
       type: 'enum',

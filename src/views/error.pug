@@ -2,5 +2,13 @@ doctype html
 html
   head
     title Error
+    link(rel="stylesheet" href="/stylesheets/style.css")
   body
-    h1 #{message}
+    h1 Error
+
+    if error
+      p.error-message(style="color: red")= error
+
+    p Please try again or contact support if the problem persists.
+
+    a(href="/") Return to Home

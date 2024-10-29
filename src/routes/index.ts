@@ -14,6 +14,11 @@ import adminPaymentRouter from "./admin/adminPayment.routes";
 import adminSectionRouter from "./admin/adminSection.routes";
 import adminLessonRouter from "./admin/adminLesson.routes";
 import categoryRoute from "./category.routes";
+import professorLessonRouter from "./professor/professorLesson.routes"
+import professorCourseRouter from "./professor/professorCourse.route";
+import professorSectionRouter from "./professor/professorSection.routes";
+
+
 
 
 
@@ -31,6 +36,8 @@ router.use("/payments", paymentmentRouter);
 router.use("/cart", cartRouter)
 router.use("/admins", adminCourseRouter,adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter);
 router.use("/categories", categoryRoute);
+router.use("/professors", professorCourseRouter, professorSectionRouter,professorLessonRouter);
+
 
 router.use("/", userRouter);
 

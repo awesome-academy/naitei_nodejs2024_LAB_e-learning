@@ -54,6 +54,9 @@ export class User {
     @Column({ type: 'text', nullable: true }) 
     additional_info!: string;
 
+    @Column({ nullable: true }) department!: string;
+    @Column({ nullable: true }) years_of_experience!: number;
+
     @CreateDateColumn({ type: 'datetime' })
       created_at!: Date;
 
