@@ -2,19 +2,53 @@ extends layout
 
 block content
   include partial/navbar
-  <!-- Header Start -->
-  .container-fluid.bg-primary.py-5.mb-5.page-header
-    .container.py-5
-      .row.justify-content-center
-        .col-lg-10.text-center
-          h1.display-3.text-white.animated.slideInDown #{t('home.course')}
-          nav(aria-label='breadcrumb')
-            ol.breadcrumb.justify-content-center
-              li.breadcrumb-item
-                a.text-white(href='/') #{t('home.home')}
-              li.breadcrumb-item
-                a.text-white(href='') #{t('home.course')}
-  <!-- Header End -->
+  include partial/header
+
+  <!-- Toast start -->
+  #toastNoAutohideRateNote.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-success
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.rating-msg')}
+  #toastNoAutohideCmtNote.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-success
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.comment-msg')}
+
+  #toastNoAutohideEditCmtSuccess.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-success
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.edit-success')}
+  #toastNoAutohideEditCmtFailure.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-danger
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.edit-failure')}
+
+  #toastNoAutohideDeleteCmtSuccess.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-success
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.delete-success')}
+  #toastNoAutohideDeleteCmtFailure.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-danger
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('course.note')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('course.delete-failure')}
 
   <!-- Courses Start -->
     .container-xxl.py-2
@@ -42,7 +76,7 @@ block content
                       i.fa.fa-clock.me-2
                       |  #{totalHours}h
                   .image-div.text-left.mt-3
-                    img(src='/img/testimonial-2.jpg', alt='', )
+                    img(src='/img/testimonial-2.jpg' alt='', )
                     span
                       b #{t('course.instructor_name')} - #{name}
             .container-fluid.wow.fadeInUp.mt-5.tabs
@@ -64,7 +98,7 @@ block content
                         .accordion-item
                           h2.accordion-header
                             - var sectionId = 'flush-collapse' + section.id
-                            button.accordion-button.collapsed(type='button', data-bs-toggle='collapse', data-bs-target=`#${sectionId}`, aria-expanded='false', aria-controls=sectionId)
+                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse', data-bs-target=`#${sectionId}`, aria-expanded='false', aria-controls=sectionId)
                               | #{section.name}
                           .accordion-collapse.collapse(id=sectionId, data-bs-parent='#accordionFlushExample')
                             .accordion-body
@@ -88,7 +122,7 @@ block content
                                           span.pdf-test #{lesson.content}
 
                                       form(method='POST', action=`/enrollments/${enrollment.course_id}/${lesson.id}`)
-                                        input(type='hidden', name='lessonId', value=lesson.id)
+                                        input(type='hidden' name='lessonId', value=lesson.id)
                                         button.btn.btn-primary(type='submit') Mark as done
                               else
                                 p #{t('course.course_lesson_error')} 
@@ -97,7 +131,7 @@ block content
                   .image-div.text-left.mt-4
                     .row
                       .col-lg-3.col-md-6
-                        img(src='/img/testimonial-2.jpg', alt='')
+                        img(src='/img/testimonial-2.jpg' alt='')
                       .col-lg-9.col-md-6.mt-2
                         h5 #{name}
                         p #{t('course.professor_job')}
@@ -121,16 +155,97 @@ block content
                                 | 29 #{t('course.professor_course')}
                     .des.mt-4.mb-5
                       | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
+            #Comment.container
+              h2.mt-4
+                | #{t('course.comments')}
+              .comment-list
+                if allComments && allComments.length > 0
+                each comment in allComments
+                  .card.shadow-sm.mb-3(data-id=`${comment.id}`)
+                    .card-body
+                      .d-flex.align-items-center.mb-2.justify-content-between
+                        .d-flex
+                          img(src='https://via.placeholder.com/40' alt='avatar' class='rounded-circle me-3')
+                          .comment-info
+                            h6.mb-0 #{comment.user.name}
+                            small.text-muted #{comment.user.email}
+                        .d-flex
+                          .px-2
+                            each i in Array(comment.review.rating)
+                              i.fa.fa-star.text-warning
+
+                      p.mt-3.mb-1.px-5 #{comment.comment_text}
+                      .custom-container.px-5.mb-2.mt-2
+                        small: button.mb-2.reply-btn(data-id=`${comment.id}`) #{t('course.reply')}
+                        if comment.user_id === userId
+                          small: button.mb-2.edit-btn(data-id=`${comment.id}` data-action='edit') #{t('course.edit')}
+                          small: button.mb-2.delete-btn(data-id=`${comment.id}` data-action='delete') #{t('course.delete')}
+                      .edit-input.hidden(data-id=`${comment.id}`)
+                        .form(method='PUT' action=`/comments/update/${comment.id}` class='form-comment-update').mt-2.px-5
+                          input.form-control(name='comment_text' value=`${comment.comment_text}` required)
+                          button.btn.text-light.py-1.top-0.end-0.submit-edit-btn(data-id=`${comment.id}`) #{t('course.update')}
+
+                      .reply-input.hidden(data-id=`${comment.id}`)
+                        form(action='/comments/create' method='POST' class='form-comment').mt-2.px-5
+                          img(src='https://via.placeholder.com/40' alt='avatar' class='rounded-circle')
+                          input.form-control(name='reply' rows='3' placeholder='Write a reply...' required)
+                          input(type='hidden' name='parent_id' value=`${comment.id}`)
+                          input(type='hidden' name='course_id' value=`${enrollment.course_id}`)
+                          input(type='hidden' name='review_id' value=`${comment.review_id}`)
+                          button.btn.text-light.py-1.top-0.end-0.submit-reply-btn(data-id=`${comment.id}`) #{t('course.submit-reply')}
+                      .reply-list(data-id=`${comment.id}`)
+                      .card-body.px-5
+                        each child in comment.children
+                          .comment-child.pt-2.mt-2
+                            .d-flex.align-items-center.my-2
+                              img(src='https://via.placeholder.com/40' alt='avatar' class='rounded-circle me-3')
+                              .comment-info
+                                h6.mb-0 #{child.user.name}
+                                small.text-muted #{child.user.email}
+                            p.mt-3.px-5 #{child.comment_text}
+                            .custom-container.px-5.mb-2.mt-2
+                              if child.user_id === userId
+                                small: button.mb-2.edit-child-btn(data-id=`${child.id}` data-action='edit') #{t('course.edit')}
+                                small: button.mb-2.delete-child-btn(data-id=`${child.id}` data-action='delete') #{t('course.delete')}
+                            .edit-child-input.hidden(data-id=`${child.id}`)
+                              .form(method='PUT' action=`/comments/update/${child.id}` class='form-child-update').mt-2.px-5
+                                input.form-control(name='comment_text' value=`${child.comment_text}` required)
+                                button.btn.text-light.py-1.top-0.end-0.submit-edit-child-btn(data-id=`${child.id}`) #{t('course.update')}
+
+              .card.p-4.shadow-lg
+                .d-flex.align-items-center.mb-2.justify-content-between
+                  .d-flex
+                    img(src='https://via.placeholder.com/50' alt='avatar' class='rounded-circle me-3')
+                    .comment-info
+                      h5.mb-0 #{userName}
+                      small.text-muted #{userMail}
+
+                form#commentForm(action='/reviews/create' method='POST')
+                  .rating-container.py-2
+                    input(type="radio" id="star1" name="rating" value="5")
+                    label(for="star1").star: i.fa.fa-star
+                    input(type="radio" id="star2" name="rating" value="4")
+                    label(for="star2").star: i.fa.fa-star
+                    input(type="radio" id="star3" name="rating" value="3")
+                    label(for="star3").star: i.fa.fa-star
+                    input(type="radio" id="star4" name="rating" value="2")
+                    label(for="star4").star: i.fa.fa-star
+                    input(type="radio" id="star5" name="rating" value="1")
+                    label(for="star5").star: i.fa.fa-star
+                  input(type='hidden' name='course_id' value=`${enrollment.course_id}`)
+                  .comment-container
+                    input.form-control(name='comment' rows='3' placeholder='Write a reply...')
+                    button.btn.text-light.py-2.top-0.end-0.submit-cmt-btn #{t('course.submit-cmt')}
           .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
             .image.text-center
-              img.img-fluid.mt-2(src='/img/course-1.jpg', alt='')
+              img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
             .list.mt-2
               .list1.d-flex.justify-content-between.pt-2.border-bottom
                 p
                   i.fa.fa-clock
                   |  #{t('course.duration')}
                 p 
-                    | #{totalHours}
+                  | #{totalHours}
               .list2.d-flex.justify-content-between.pt-2.border-bottom
                 p
                   i.fa.fa-book
@@ -141,7 +256,7 @@ block content
                   i.fa.fa-list
                   |  #{t('course.progress')}
                   .progress.mt-2
-                    .progress-bar.bg-success.color(role="progressbar", style=`width: ${enrollment.progress}%`, aria-valuenow=`${enrollment.progress}`, aria-valuemin="0", aria-valuemax="100")
+                    .progress-bar.bg-success.color(role="progressbar", style=`width: ${enrollment.progress}%`, aria-valuenow=`${enrollment.progress}`, aria-valuemin="0" aria-valuemax="100")
                       | #{enrollment.progress}%
               .list3.d-flex.justify-content-between.pt-2.border-bottom
                 p
@@ -157,4 +272,3 @@ block content
                 i.fa.fa-share
                 a(href='')  #{t('course.share')}
   include partial/footer
-  

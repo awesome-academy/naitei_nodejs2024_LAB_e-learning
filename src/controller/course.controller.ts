@@ -10,8 +10,10 @@ import {
   CourseFilter,
   CourseSorting,
 } from "../service/course.service";
-import { hasUserPurchasedCourse } from "../service/enrollment.service";
-import { calculateTotalTimeAndLessons } from "../service/lession.service";
+import {
+  getEnrollment,
+  hasUserPurchasedCourse,
+} from "../service/enrollment.service";
 import { coursePagination } from "../constants";
 import { getAllCategories } from "../service/category.service";
 
@@ -21,6 +23,11 @@ export const courseGet = asyncHandler(async (req: Request, res: Response) => {
     message: req.t("home.message"),
   });
 });
+import {
+  getAllComments,
+  getAllCommentsByCourseId,
+} from "@src/service/comment.service";
+import { calculateTotalTimeAndLessons } from "../service/lession.service";
 
 export const courseShowGet = asyncHandler(
   async (req: Request, res: Response) => {
@@ -32,7 +39,6 @@ export const courseShowGet = asyncHandler(
       const categories = await getAllCategories();
       const userId = req.session!.user?.id;
       const isLoggedIn = Boolean(userId);
-
       const filters: CourseFilter = {
         professorId: req.query.professorId
           ? Number(req.query.professorId)
@@ -128,7 +134,6 @@ export const getCourseDetail = asyncHandler(
         .status(404)
         .render("error", { message: req.t("course.course_error_notfound") });
     }
-
     const paidCourse = await hasUserPurchasedCourse(userId, courseId);
     const professor = await getProfessorByCourse(courseId);
     const sectionsWithLessons = await getSectionsWithLessons(courseId);
@@ -142,7 +147,7 @@ export const getCourseDetail = asyncHandler(
       0
     );
     const totalStudents = await countEnrolledUsersInCourse(courseId);
-
+    const allComments = await getAllCommentsByCourseId(courseId);
     res.render("courseDetail", {
       course,
       name: professor?.name || "Unknown Professor",
@@ -151,6 +156,7 @@ export const getCourseDetail = asyncHandler(
       totalLessons,
       totalStudents,
       paidCourse,
+      allComments,
       t: req.t,
       title: req.t("home.course"),
       message: req.t("home.message"),

@@ -1,13 +1,11 @@
-import { Router } from 'express';
-import * as commentController from '../controller/comment.controller';
-import { isAdmin } from 'src/middleware/roleCheckMiddleware'
+import { Router } from "express";
+import * as commentController from "../controller/comment.controller";
+import { isUser } from "src/middleware/roleCheckMiddleware";
 
 const router: Router = Router();
 
-// Public access: Get the list of comments
-router.get('/', commentController.commentList);
-
-// Admin only: Delete a comment
-router.post('/:id/delete', isAdmin, commentController.commentDeletePost);
+router.post("/create", isUser, commentController.createCommentPost);
+router.delete("/:id", isUser, commentController.deleteCommentPost);
+router.put("/update/:id", isUser, commentController.updateCommentPost);
 
 export default router;

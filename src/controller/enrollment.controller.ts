@@ -2,11 +2,15 @@ import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { updateEnrollmentProgress, getEnrollment, markLessonAsDone, hasUserPurchasedCourse, getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
 import { getSectionsWithLessons, countEnrolledUsersInCourse, getCourseById, getProfessorByCourse   } from '../service/course.service';
+import { getAllCommentsByCourseId } from '../service/comment.service';
+import { getUserById } from '@src/service/user.service';
 
 
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {
   const  {courseId}  = req.params;
   const userId = req.session!.user?.id;
+  const userName = req.session!.user?.name;
+  const userMail = req.session!.user?.email;
   if (!userId || !courseId) {
     return res.status(400).render('error', { message: req.t('course.userid_courseid_required')  });
   }
@@ -30,16 +34,23 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
   const totalHours = sectionsWithLessons.reduce((sum, section) => sum + section.total_time, 0);
   const totalLessons = sectionsWithLessons.reduce((sum, section) => sum + section.lessons.length, 0);
   const totalStudents = await countEnrolledUsersInCourse(Number(courseId));
+  const allComments = await getAllCommentsByCourseId(Number(courseId));
 
   res.status(200).render('enrollment', {
     course,
     enrollment,
+    title: req.t("home.course"),
+    message: req.t("home.message"),
     name: professor?.name || 'Unknown Professor',
     totalHours,
     sectionsWithLessons,
     totalLessons,
     totalStudents,
+    allComments,
+    userName,
+    userMail,
     t: req.t,
+    userId: req.session!.user?.id,
   });
 });
 

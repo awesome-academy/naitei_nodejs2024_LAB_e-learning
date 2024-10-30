@@ -109,6 +109,35 @@ block content
                                 | 29 #{t('course.professor_course')}
                     .des.mt-4.mb-5
                       | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
+            #Comment.container
+              h2.mt-4
+                | #{t('course.comments')}
+              .comment-list
+                if allComments && allComments.length > 0
+                each comment in allComments
+                  .card.shadow-sm.mb-3
+                    .card-body
+                      .d-flex.align-items-center.mb-2.justify-content-between
+                        .d-flex
+                          img(src='https://via.placeholder.com/40' alt='avatar' class='rounded-circle me-3')
+                          .comment-info
+                            h6.mb-0 #{comment.user.name}
+                            small.text-muted #{comment.user.email}
+                        .d-flex
+                          .px-2
+                            each i in Array(comment.review.rating)
+                              i.fa.fa-star.text-warning
+
+                      p.mt-3.mb-1.px-5 #{comment.comment_text}
+                      .card-body
+                        each child in comment.children
+                          .d-flex.align-items-center.mb-2
+                            img(src='https://via.placeholder.com/40' alt='avatar' class='rounded-circle me-3')
+                            .comment-info
+                              h6.mb-0 #{child.user.name}
+                              small.text-muted #{child.user.email}
+                          p.mt-3.mb-1.px-5 #{child.comment_text}
+
           .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
             .image.text-center
               img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')

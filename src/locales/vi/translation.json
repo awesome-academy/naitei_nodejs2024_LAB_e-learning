@@ -148,7 +148,17 @@
     "enrollment_user_not_found": "Khóa học không phù hợp",
     "lesson_not_found": "Không tìm thầy bài học phù hợp",
     "all": "Tất cả",
-    "noCourse": "Không có khóa học nào có sẵn"
+    "noCourse": "Không có khóa học nào có sẵn",
+    "rating-msg": "Vui lòng để lại đánh giá",
+    "comment-msg": "Vui lòng nhập bình luận",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "update": "Cập nhật",
+    "edit-success": "Bình luận được sửa thành công",
+    "edit-failure": "Sửa bình luận thất bại",
+    "delete-success": "Bình luận được xóa thành công",
+    "delete-failure": "Xóa bình luận thất bại",
+    "delete-confirm": "Bạn có chắc chắn muốn xóa bình luận này không?"
   },
   "payment": {
     "amount": "Giá",
@@ -212,6 +222,8 @@
     "female": "Nữ",
     "identity_card": "CMND/CCCD",
     "additional_info": "Thông tin thêm",
+    "purchased_course": "Khóa học đã mua",
+    "in_progress_course": "Khóa học đang tiến hành",
     "current_password": "Mật khẩu hiện tại",
     "new_password": "Mật khẩu mới",
     "confirm_password": "Xác nhận mật khẩu",

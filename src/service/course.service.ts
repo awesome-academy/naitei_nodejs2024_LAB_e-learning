@@ -6,12 +6,14 @@ import { Lesson } from "../entity/Lesson";
 import { Payment } from "../entity/Payment";
 import { Category } from "./../entity/Category";
 import { In } from "typeorm";
+import { User } from "../entity/User";
 
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
 const courseRepository = AppDataSource.getRepository(Course);
 const sectionRepository = AppDataSource.getRepository(Section);
 const lessonRepository = AppDataSource.getRepository(Lesson);
 const paymentRepository = AppDataSource.getRepository(Payment);
+const userRepository = AppDataSource.getRepository(User);
 
 export async function getAllCourses() {
   return await courseRepository.find({
