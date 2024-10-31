@@ -194,6 +194,7 @@
     "save": "Lưu",
     "cancel": "Hủy",
     "create": "Tạo mới",
+    "view": "Xem",
     "confirm-delete": "Xác nhận xóa",
     "confirm-message-user": "Bạn có chắc chắn muốn xóa người dùng này không?",
     "confirm-delete-course": "Bạn có chắc chắn muốn xóa khóa học này không?",
@@ -239,7 +240,11 @@
     "section": "Chương",
     "professor": "Giáo sư",
     "price": "Giá",
-    "rating": "Đánh giá"
+    "rating": "Đánh giá",
+    "categoryId": "Danh Mục Id",
+    "categoryName": "Danh Mục",
+    "paymentCount": "Đã mua",
+    "enrollmentCount": "Đã tham gia học"
   },
   "admin-section": {
     "management": "Quản lý chương",
