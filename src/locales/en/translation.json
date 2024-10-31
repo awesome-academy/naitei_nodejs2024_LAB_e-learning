@@ -71,7 +71,9 @@
     "mostEnrolledCourse": "the most enrolled course",
     "no_course_available": "No Courses Available",
     "cart": "Cart",
-    "Add_to_cart": "Add to cart"
+    "Add_to_cart": "Add to cart",
+    "enroll": "Enroll",
+    "payment": "Payment"
   },
   "login": {
     "email": "Email",
@@ -93,7 +95,7 @@
     "male": "Male",
     "female": "Female",
     "other": "Other",
-    "date-of-bỉth": "Day of Birth",
+    "date-of-birth": "Day of Birth",
     "role": "Role",
     "address": "Address",
     "department": "Department",
@@ -276,7 +278,7 @@
     "course": "Section name",
     "amount": "Total time",
     "status": "Content",
-    "payment-date": "Description"
+    "payment-date": "Payment time"
   },
   "cart": {
     "title": "Shopping Cart",

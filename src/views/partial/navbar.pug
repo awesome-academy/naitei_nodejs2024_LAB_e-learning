@@ -4,27 +4,27 @@ block content
   <!-- Navbar Start -->
   nav.navbar.navbar-expand-lg.bg-white.navbar-light.shadow.sticky-top.p-0
     a.navbar-brand.d-flex.align-items-center.px-4.px-lg-5(href='/')
-      img(src='img/icon.png' alt='' class='icon')
+      img(src='/img/icon.png' alt='' class='icon')
     button.navbar-toggler.me-4(type='button' data-bs-toggle='collapse' data-bs-target='#navbarCollapse')
       span.navbar-toggler-icon
     #navbarCollapse.collapse.navbar-collapse
       .navbar-nav.ms-auto.p-4.p-lg-0
         a.nav-item.nav-link(href='/') #{t('home.home')}
         a.nav-item.nav-link(href='/courses') #{t('home.course')}
-        a.nav-item.nav-link(href='/cart', style='position: relative;')
+        a.nav-item.nav-link(href='/cart' style='position: relative;')
           i.fa.fa-shopping-cart 
           span.ml-2 #{t('home.cart')} 
           span.badge.badge-pill.badge-danger(style='position: absolute; top: 0; right: 0;')
             | #{cartAmount}
-        a.nav-item.nav-link(href='' id='userDropdown')
+        a.nav-item.nav-link(href='' id='userDropdown' data-bs-toggle='dropdown')
           i.fa.fa-user
-        ul.dropdown-menu-nav-notLoggedIn
+        ul.dropdown-menu-nav-notLoggedIn(aria-labelledby='userDropdown')
           li
             a(href='/login') #{t('home.login')}
           li
             a(href='/signup') #{t('home.signup')}
 
-        ul.dropdown-menu-nav-loggedIn
+        ul.dropdown-menu-nav-loggedIn(aria-labelledby='userDropdown')
           li
             a(href='/account') #{t('home.account')}
           li

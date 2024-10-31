@@ -2,15 +2,14 @@ extends layout
 
 block content
   include partial/navbar
+  include partial/header
   .container-xxl.py-2.mt-4
     .container
       .row.g-4.wow.fadeInUp(data-wow-delay='0.5s')
         .profile-page
           .content
             .custom-content
-              .content__avatar
-                img(src=user.avatar alt='User Avatar' class='user-avatar')
-              
+              img.py-5(src=user.avatar alt='User Avatar' class='user-avatar')
               table.user-table
                 tbody
                   tr
@@ -39,75 +38,72 @@ block content
                     td.value #{user.additional_info}
               .edit-btn.mt-3
                 button( onclick="showResetPasswordPopup()") #{t('admin-user.reset_password')}
-              .edit-btn.mt-3
+              .edit-btn.mt-3.mb-3
                 button(onclick=`showUpdateForm('${user.id}', '${user.name}', '${user.phone_number}', '${user.date_of_birth}', '${user.gender}', '${user.address}', '${user.identity_card}', '${user.additional_info}')`) #{t('admin.edit')}
-          .bg
-            .container-fluid.bg-primary.py-5.mb-5.page-header
+          .tab-content
+            ul.nav.nav-tabs
+              li.nav-item
+                a.nav-link.active(href="#purchased-courses" data-bs-toggle="tab") #{t('admin-user.purchased_course')}
+              li.nav-item
+                a.nav-link(href="#in-progress-courses" data-bs-toggle="tab") #{t('admin-user.in_progress_course')}
 
-        ul.nav.nav-tabs
-          li.nav-item
-            a.nav-link.active(href="#purchased-courses" data-bs-toggle="tab") #{t('admin-user.purchased_course')}
-          li.nav-item
-            a.nav-link(href="#in-progress-courses" data-bs-toggle="tab") #{t('admin-user.in_progress_course')}
+            .tab-pane.fade.show.active#purchased-courses    
+              .container
+                .row.g-4.py-2
+                  each courseDetails in coursesWithDetails
+                    .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
+                      .course-item.shadow
+                        .position-relative.overflow-hidden.text-light.image
+                          img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
+                        .p-2.pb-0.custom-course-name
+                          h5.mb-1
+                            a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
+                          .d-flex
+                            small.flex-fill.py-1.px-2
+                              i.fa.fa-star.text-warning.me-2
+                              | #{courseDetails.course.average_rating}
+                            small.flex-fill.text-left.p-2
+                              i.fa.fa-clock.me-2
+                              | #{courseDetails.totalHours}#{t('home.Hrs')}
+                            small.text-primary.py-1.px-2.fw-bold.fs-6
+                              if isLoggedIn
+                                a(href=`/enrollments/${courseDetails.course.id}`)
+                                  | #{t('home.enroll')}  
+                                  i.fa.fa-chevron-right.me-2.fs-10
+                  else
+                    p.text-center #{t('home.no_course_available')}
 
-        .tab-content
-          .tab-pane.fade.show.active#purchased-courses    
-            .container
-              .row.g-4.py-2
-                each courseDetails in coursesWithDetails
-                  .col-lg-4.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
-                    .course-item.shadow
-                      .position-relative.overflow-hidden.text-light.image
-                        img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
-                      .p-2.pb-0.custom-course-name
-                        h5.mb-1
-                          a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
-                        .d-flex
-                          small.flex-fill.py-1.px-2
-                            i.fa.fa-star.text-warning.me-2
-                            | #{courseDetails.course.average_rating}
-                          small.flex-fill.text-left.p-2
-                            i.fa.fa-clock.me-2
-                            | #{courseDetails.totalHours}#{t('home.Hrs')}
-                          small.text-primary.py-1.px-2.fw-bold.fs-6
-                            if isLoggedIn
-                              a(href=`/enrollments/${courseDetails.course.id}`)
-                                | #{t('home.Enroll')}  
-                                i.fa.fa-chevron-right.me-2.fs-10
-                else
-                  p.text-center #{t('home.no_course_available')}
-
-          .tab-pane.fade#in-progress-courses
-            .container
-              .row.g-4.py-2
-                each courseDetails in courseDetailsList
-                  .col-lg-4.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
-                    .course-item.shadow
-                      .position-relative.overflow-hidden.text-light.image
-                        img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
-                      .p-2.pb-0.custom-course-name
-                        h5.mb-1
-                          a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
-                        .d-flex
-                          small.flex-fill.py-1.px-2
-                            .list2.d-flex.justify-content-between.pt-2.border-bottom.me-2
-                              p
-                                i.fa.fa-book
-                                |  #{t('course.lectures')}
-                              p #{courseDetails.totalLessons}
-                          small.flex-fill.text-left.p-2
-                            .list6.d-flex.justify-content-between.pt-2.border-bottom.me-2
-                              p
-                                i.fa.fa-list
-                                |  #{t('course.progress')}
-                                | #{courseDetails.enrollment.progress}%
-                          small.text-primary.py-1.px-2.fw-bold.fs-6
-                            if isLoggedIn
-                              a(href=`/enrollments/${courseDetails.course.id}`)
-                                | #{t('home.Enroll')}  
-                                i.fa.fa-chevron-right.me-2.fs-10
-                else
-                  p.text-center #{t('home.no_course_available')}
+            .tab-pane.fade#in-progress-courses
+              .container
+                .row.g-4.py-2
+                  each courseDetails in courseDetailsList
+                    .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
+                      .course-item.shadow
+                        .position-relative.overflow-hidden.text-light.image
+                          img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
+                        .p-2.pb-0.custom-course-name
+                          h5.mb-1
+                            a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
+                          .d-flex
+                            small.flex-fill.py-1.px-2
+                              .list2.d-flex.justify-content-between.pt-2.border-bottom.me-2
+                                p
+                                  i.fa.fa-book
+                                  |  #{t('course.lectures')}
+                                p #{courseDetails.totalLessons}
+                            small.flex-fill.text-left.p-2
+                              .list6.d-flex.justify-content-between.pt-2.border-bottom.me-2
+                                p
+                                  i.fa.fa-list
+                                  |  #{t('course.progress')}
+                                  | #{courseDetails.enrollment.progress}%
+                            small.text-primary.py-1.px-2.fw-bold.fs-6
+                              if isLoggedIn
+                                a(href=`/enrollments/${courseDetails.course.id}`)
+                                  | #{t('home.Enroll')}  
+                                  i.fa.fa-chevron-right.me-2.fs-10
+                  else
+                    p.text-center #{t('home.no_course_available')}
 
   #editModal.hidden
     .modal-content-admin  
