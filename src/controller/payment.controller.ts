@@ -9,10 +9,10 @@ import { getCourseById } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
 import { getItemByCourseId, removeFromCart } from "@src/service/cart.service";
 
-
-export const processPayment = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.session!.user?.id; 
-    const courseIds = req.body.courseIds; 
+export const processPayment = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.session!.user?.id;
+    const courseIds = req.body.courseIds;
     if (!userId || !Array.isArray(courseIds)) {
       return res
         .status(400)
@@ -24,12 +24,15 @@ export const processPayment = asyncHandler(async (req: Request, res: Response) =
     for (const courseId of courseIds) {
       const course = await getCourseById(Number(courseId));
       if (!course) {
-        return res
-          .status(404)
-          .render("error", { message: req.t("payment.error_course_not_found") });
+        return res.status(404).render("error", {
+          message: req.t("payment.error_course_not_found"),
+        });
       }
 
-      const existingPayment = await hasUserPaidForCourse(userId, Number(courseId));
+      const existingPayment = await hasUserPaidForCourse(
+        userId,
+        Number(courseId)
+      );
       if (existingPayment) {
         paymentDetails.push({
           course: course.name,
@@ -39,7 +42,11 @@ export const processPayment = asyncHandler(async (req: Request, res: Response) =
         });
         continue;
       }
-      const payment = await createPayment(userId, Number(courseId), course.price);
+      const payment = await createPayment(
+        userId,
+        Number(courseId),
+        course.price
+      );
       paymentDetails.push({
         courseId: courseId,
         course: course.name,
@@ -48,41 +55,53 @@ export const processPayment = asyncHandler(async (req: Request, res: Response) =
         amount: payment.amount,
       });
     }
-    console.log(paymentDetails)
 
     res.render("payment", {
       t: req.t,
       username: req.session!.user?.name || "User",
       paymentDetails,
+      title: req.t("home.payment"),
+      message: req.t("home.message"),
     });
-  });
-  
-  export const submitPayment = asyncHandler(async (req: Request, res: Response) => {
+  }
+);
+
+export const submitPayment = asyncHandler(
+  async (req: Request, res: Response) => {
     const courseIds = req.body.courseIds;
-    const userId = req.session!.user?.id; 
-  
+    const userId = req.session!.user?.id;
+
     if (!userId || !Array.isArray(courseIds)) {
-      return res.status(400).render("error", { message: req.t("payment.error_invalid_data") });
+      return res
+        .status(400)
+        .render("error", { message: req.t("payment.error_invalid_data") });
     }
 
     try {
       for (const courseId of courseIds) {
-        const updatedPayment = await completePaymentByUserAndCourse(userId, Number(courseId));
+        const updatedPayment = await completePaymentByUserAndCourse(
+          userId,
+          Number(courseId)
+        );
         if (!updatedPayment) {
-          console.error(`Payment not found or already completed for course ID: ${courseId}`);
-          return res.status(404).render("error", { message: req.t("payment.error_payment_not_found") });
+          console.error(
+            `Payment not found or already completed for course ID: ${courseId}`
+          );
+          return res.status(404).render("error", {
+            message: req.t("payment.error_payment_not_found"),
+          });
         }
-        const cartItem = await getItemByCourseId(courseId)
+        const cartItem = await getItemByCourseId(courseId);
         if (!cartItem) {
-          throw new Error('Cart item not found');
+          throw new Error("Cart item not found");
         }
-        await removeFromCart(cartItem.id)
+        await removeFromCart(cartItem.id);
       }
-  
-      res.redirect('/');
+
+      res.redirect("/");
     } catch (error) {
       console.error(`Error during payment update: ${error.message}`);
-      return res.status(500).render('error', { message: error.message });
+      return res.status(500).render("error", { message: error.message });
     }
   }
 );

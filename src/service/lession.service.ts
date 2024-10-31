@@ -75,7 +75,6 @@ export const updateLesson = async (id: number, lessonData: any) => {
   
     await adjustSectionTotals(newSection.id, 1, lessonData.time);
   
-    console.log(savedLesson);
     return savedLesson;
   };
 

@@ -174,7 +174,7 @@ block content
                       | #{course.average_rating}
                     small.flex-fill.text-left.p-2
                       i.fa.fa-clock.me-2
-                      | #{course.totalHours} #{t('home.Hrs')}
+                      | #{totalHours}#{t('home.Hrs')}
                     small.text-primary.py-1.px-2.fw-bold.fs-6
                       if isLoggedIn
                         if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
@@ -182,15 +182,15 @@ block content
                             | #{t('home.Enroll')}  
                             i.fa.fa-chevron-right.me-2.fs-10
                         else
-                          a(href=`/payments/${course.id}`)
-                            | #{course.price}$ #{t('home.Buy')}
+                          a(href=`/cart/add?courseId=${course.id}`, class='link-style')
+                            | #{t('home.Add_to_cart')}
                             i.fa.fa-chevron-right.me-2.fs-10
                       else
                         a(href=`/login`) 
-                          | #{course.price}$  #{t('home.Buy')}  
+                          | #{course.price}$  #{t('home.Add_to_cart')}  
                           i.fa.fa-chevron-right.me-2.fs-10
-        else
-          p.text-center #{t('home.NoCoursesAvailable')}
+          else
+            p.text-center #{t('home.NoCoursesAvailable')}
   .container.text-center
     a.btn.text-light.py-3.px-5.mt-2.mb-5(href='/courses') #{t('home.All-courses')}
   <!-- Courses End -->
