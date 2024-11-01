@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 
 
-import { calculateTotalTimeAndLessons } from "../service/lession.service";
+import { calculateTotalTimeAndLessons } from "../service/section.service";
 import { getSectionsWithLessons, getUserPurchasedCourses } from "../service/course.service";
 
 const userRepository = AppDataSource.getRepository(User);
