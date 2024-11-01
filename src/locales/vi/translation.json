@@ -71,7 +71,9 @@
     "mostEnrolledCourse": "khóa học được đăng ký nhiều nhất",
     "no_course_available": "Không có khóa học nào",
     "cart": "Giỏ hàng",
-    "Add_to_cart": "Thêm vào giỏ hàng"
+    "Add_to_cart": "Thêm vào giỏ hàng",
+    "enroll": "Đăng ký",
+    "payment": "Thanh toán"
   },
   "login": {
     "email": "Email",
@@ -195,6 +197,8 @@
     "cancel": "Hủy",
     "create": "Tạo mới",
     "view": "Xem",
+    "add-more": "Thêm",
+    "selectCategory": "Chọn danh mục",
     "confirm-delete": "Xác nhận xóa",
     "confirm-message-user": "Bạn có chắc chắn muốn xóa người dùng này không?",
     "confirm-delete-course": "Bạn có chắc chắn muốn xóa khóa học này không?",
@@ -286,5 +290,9 @@
     "total_amount": "Tổng:",
     "checkout": "Thanh toán",
     "empty": "Giỏ hàng trống!"
+  },
+  "professor": {
+    "update_error": "You are not authorized to update this course.",
+    "section_not_found": "Section not found"
   }
 }

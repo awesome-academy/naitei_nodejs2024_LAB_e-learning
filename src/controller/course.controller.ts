@@ -72,8 +72,8 @@ export const courseShowGet = asyncHandler(
 
       const page = req.query.page
         ? Number(req.query.page)
-        : coursePagination.DEFAULT_PAGE; 
-      const limit = coursePagination.PAGE_LIMIT; 
+        : coursePagination.DEFAULT_PAGE;
+      const limit = coursePagination.PAGE_LIMIT;
 
       const { courses, total, pageCount } = await filterAndSortCourses(
         filters,

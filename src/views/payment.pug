@@ -29,8 +29,27 @@ block content
                   tr
                     td.label.amount #{t('payment.amount')}
                     td.amount $ #{payment.amount.toFixed(2)}
-            form(action="/payments/submit", method='post')
+            form(action="/payments/submit" method='post')
               each payment in paymentDetails
                 input(type='hidden' name='courseIds[]' value=payment.courseId)
-              button#paymentSubmit.btn.text-light.w-100.py-3.payment-submit(type='submit') #{t('payment.submit')}
+              button#paymentSubmit.btn.text-light.payment-submit(type='submit') #{t('payment.submit')}
   <!-- Payment End -->
+  include partial/footer
+  script.
+    document.getElementById('#paymentSubmit').onsubmit = async function(event) {
+      event.preventDefault(); 
+      const response = await fetch('/payments/submit', {
+        method: 'POST',
+        body: new FormData(this),
+      });
+      if (response.ok) {
+        const paymentSuccessImg = document.getElementById('paymentSuccess');
+        paymentSuccessImg.style.display = 'block';
+        setTimeout(() => {
+          paymentSuccessImg.style.display = 'none';
+          window.location.href = '/'; 
+        }, 2000);
+      } else {
+        alert('Thanh toán không thành công. Vui lòng thử lại.');
+      }
+    };
