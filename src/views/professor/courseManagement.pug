@@ -22,10 +22,12 @@ block content
                   th #{t('admin-course.enrollmentCount')}
                   th #{t('admin-course.price')}
                   th #{t('admin-course.rating')}
+                  th #{t('admin-course.status')}
                   th #{t('admin.section')}
                   th #{t('admin.lesson')}
                   th #{t('admin.edit')}
                   th #{t('admin.delete')}
+                  th #{t('admin.status')}
               tbody
                 each course, index in courses
                   tr(id=`courseRow-${course.id}`)
@@ -38,6 +40,10 @@ block content
                     td #{course.enrollmentCount}
                     td $#{course.price}
                     td #{course.average_rating || 'N/A'}
+                    td #{course.status}
+                    td 
+                      .view-sections-btn
+                        button(onclick=`showSections(${course.id})`) #{t('admin.view')} 
                     td 
                       .view-sections-btn
                         button(onclick=`showSections(${course.id})`) #{t('admin.view')} 
@@ -47,6 +53,17 @@ block content
                     td 
                       .delete-btn
                         button(onclick=`showDeleteForm(${course.id})`) #{t('admin.delete')}
+                    td
+                      if course.status === 'DRAFT' 
+                        form(action=`/professors/courses/${course.id}/update-status`, method="POST")
+                          input(type="hidden", name="status", value="PUBLIC") 
+                          .status-btn
+                            button(type="submit") #{t('admin-course.public')}
+                      else
+                        form(action=`/professors/courses/${course.id}/update-status`, method="POST")
+                          input(type="hidden", name="status", value="DRAFT") 
+                          .status-btn
+                            button(type="submit") #{t('admin-course.draft')}
 
   each course in courses
     .sections-modal(id=`sections-${course.id}`).hidden
@@ -105,28 +122,7 @@ block content
           .btn-group-admin
             .save-btn: button(type="submit") #{t('admin.save')}
             .cancel-btn: button(type="button" onclick="hideSectionCreateForm()") #{t('admin.cancel')}
-
-  script.
-    const courses = JSON.parse('!{JSON.stringify(courses)}'); 
-    function addSectionForm() {
-        const container = document.getElementById('sectionsContainer');
-        const newForm = document.createElement('div');
-        newForm.className = 'section-form';
-        newForm.innerHTML = `
-            <label for="name">Section Name</label>
-            <input type="text" name="name[]" required>
-            <label for="edit-courseId">Course</label>
-            <select name="course_id[]" required>
-                ${courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('')}
-            </select>
-            <label for="total_time">Total Time</label>
-            <input type="number" name="total_time[]" required>
-            <label for="total_lesson">Total Lesson</label>
-            <input type="number" name="total_lesson[]" required>
-            <button type="button" class="remove-btn" onclick="removeSectionForm(this)">Xóa</button>
-        `;
-        container.appendChild(newForm);
-    }
+  
   #editSectionModal.hidden
     .modal-content-admin
       h3 #{t('admin.edit')}
@@ -154,6 +150,7 @@ block content
         .btn-group-admin
           .save-btn: button(type="submit") #{t('admin.save')}
           .cancel-btn: button(type="button" onclick="hideSectionEditForm()") #{t('admin.cancel')}
+
   #deleteSectionModal.hidden
     .modal-content-admin
       h3 #{t('admin.confirm-delete')}
@@ -231,3 +228,25 @@ block content
       .btn-group-admin
         .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
         .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
+
+  script.
+    const courses = JSON.parse('!{JSON.stringify(courses)}'); 
+    function addSectionForm() {
+        const container = document.getElementById('sectionsContainer');
+        const newForm = document.createElement('div');
+        newForm.className = 'section-form';
+        newForm.innerHTML = `
+            <label for="name">Section Name</label>
+            <input type="text" name="name[]" required>
+            <label for="edit-courseId">Course</label>
+            <select name="course_id[]" required>
+                ${courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('')}
+            </select>
+            <label for="total_time">Total Time</label>
+            <input type="number" name="total_time[]" required>
+            <label for="total_lesson">Total Lesson</label>
+            <input type="number" name="total_lesson[]" required>
+            <button type="button" class="remove-btn" onclick="removeSectionForm(this)">Xóa</button>
+        `;
+        container.appendChild(newForm);
+    }

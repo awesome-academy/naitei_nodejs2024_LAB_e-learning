@@ -8,4 +8,6 @@ router.get('/courses', isProfessor, professorCourseController.professorCourseSho
 router.post('/courses/create', isProfessor, professorCourseController.professorCreateCourse);
 router.post('/courses/edit', isProfessor, professorCourseController.professorUpdateCourse);
 router.delete('/courses/delete/:id', isProfessor, professorCourseController.professorDeleteCourse);
+router.post('/courses/:id/update-status', isProfessor, professorCourseController.updateCourseStatus);
+
 export default router;

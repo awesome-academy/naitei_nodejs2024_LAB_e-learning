@@ -12,6 +12,7 @@ import { User } from './User';
 import { Section } from './Section';
 import { Category } from './Category'; 
 import { Cart } from './Cart';
+import { CourseStatus } from '../enum/course.enum';
 
 @Entity('courses')
 export class Course {
@@ -46,6 +47,13 @@ export class Course {
 
   @Column({ type: 'bigint' })
   category_id!: number;
+
+  @Column({
+    type: 'enum', 
+    enum: CourseStatus,
+    default: CourseStatus.DRAFT,
+  })
+  status!: string;
 
   @CreateDateColumn({ type: 'datetime' })
   created_at!: Date;

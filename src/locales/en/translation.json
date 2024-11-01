@@ -158,7 +158,12 @@
     "edit-failure": "Failed to edit comment",
     "delete-success": "Comment deleted successfully",
     "delete-failure": "Failed to delete comment",
-    "delete-confirm": "Are you sure you want to delete this comment?"
+    "delete-confirm": "Are you sure you want to delete this comment?",
+    "invalid_professor_id": "Invalid professor ID.",
+    "creation_error": "Failed to create course: {{error}}",
+    "update_error": "Failed to update course: {{error}}",
+    "deletion_error": "Failed to delete course: {{error}}",
+    "internal_error": "Internal server error."
   },
   "payment": {
     "amount": "Amount",
@@ -246,7 +251,10 @@
     "categoryId": "Category Id",
     "categoryName": "Category Name",
     "paymentCount": "Payment Count",
-    "enrollmentCount": "Enrollment Count"
+    "enrollmentCount": "Enrollment Count",
+    "status": "Status",
+    "public": "Public",
+    "draft": "Draft"
   },
   "admin-section": {
     "management": "Section management",

@@ -7,6 +7,7 @@ import { Payment } from "../entity/Payment";
 import { Category } from "./../entity/Category";
 import { In } from "typeorm";
 import { User } from "../entity/User";
+import { CourseStatus } from "../enum/course.enum"
 
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
 const courseRepository = AppDataSource.getRepository(Course);
@@ -17,6 +18,7 @@ const userRepository = AppDataSource.getRepository(User);
 
 export async function getAllCourses() {
   return await courseRepository.find({
+    where: {  status: CourseStatus.PUBLIC }, 
     select: [
       "id",
       "name",
@@ -192,7 +194,7 @@ export async function createCourse(data: Partial<Course>): Promise<Course> {
       price: data.price, 
       category_id: data.category_id,
       average_rating: data.average_rating, 
-      professor_id: data.professor_id 
+      professor_id: data.professor_id,
   });
 
   return await courseRepository.save(newCourse);
@@ -227,6 +229,25 @@ export const updateCourse = async (id: number, courseData: any) => {
   return await courseRepository.save(course);
 }
 
+
+export const updateStatus = async (courseId: number) => {
+  try {
+    const course = await courseRepository.findOne({ where: { id: courseId } });
+
+    if (!course) {
+      return null;
+    }
+
+    course.status = course.status === CourseStatus.DRAFT ? CourseStatus.PUBLIC : CourseStatus.DRAFT;
+
+    return await courseRepository.save(course);
+  } catch (error) {
+    console.error('Lỗi khi cập nhật trạng thái khóa học:', error);
+    throw error; 
+  }
+};
+
+
 export async function deleteCourse(id: number): Promise<boolean> {
   const result = await courseRepository.delete(id);
   return result.affected !== 0;
@@ -254,7 +275,8 @@ export const filterAndSortCourses = async (
 ) => {
   const query = courseRepository
     .createQueryBuilder("course")
-    .innerJoinAndSelect("course.category", "category");
+    .innerJoinAndSelect("course.category", "category")
+    .where("course.status = :status", { status: CourseStatus.PUBLIC });
 
   if (filters.professorId) {
     query.andWhere("course.professor_id = :professorId", {
