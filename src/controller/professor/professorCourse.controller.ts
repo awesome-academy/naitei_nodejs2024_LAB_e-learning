@@ -3,31 +3,37 @@ import asyncHandler from 'express-async-handler';
 import { checkProfessorAuthorization, getUserPurchasedCourses, getCoursesInfo, createCourse, updateCourse, deleteCourse} from 'src/service/course.service';
 import { getAllCategories} from 'src/service/category.service';
 import { error } from 'console';
+import { getSectionsByCourseIds} from 'src/service/section.service';
 
 export const professorCourseShowGet = asyncHandler(async (req: Request, res: Response) => {
   try {
     const userId = req.session!.user?.id;
-    const isLoggedIn = Boolean(userId); 
+    const isLoggedIn = Boolean(userId);
 
-    const courses = await getCoursesInfo(userId);
+    const courses = await getCoursesInfo(userId); 
+
+    const courseIds = courses.map(course => course.id);
+    let sections = await getSectionsByCourseIds(courseIds);
     const categories = await getAllCategories();
     const payments = isLoggedIn ? await getUserPurchasedCourses(userId) : [];
     const purchasedCourseIds = payments.map(payment => payment.course_id);
     const purchasedCourses = courses.filter(course => purchasedCourseIds.includes(course.id));
 
     return res.render('professor/courseManagement', {
-        title: req.t('admin.course_management_title'),
-        message: req.t('admin.course_management_message'),
-        name: userId.name,
-        courses,
-        isLoggedIn,
-        categories,
-        t: req.t,
-      });
+      title: req.t('admin.course_management_title'),
+      message: req.t('admin.course_management_message'),
+      name: req.session!.user.name, 
+      sections,
+      courses,
+      isLoggedIn,
+      categories,
+      t: req.t,
+    });
   } catch (error) {
     res.status(500).render('error', { message: req.t('course.course_error') });
   }
 });
+
 
 export const professorCreateCourse = async (req: Request, res: Response) => {
   try {
