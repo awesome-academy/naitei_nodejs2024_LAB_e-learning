@@ -828,6 +828,7 @@ table.admin-table {
 .hidden {
   display: none !important;
 }
+
 .sections-modal{
   position: fixed;
   top: 0;
@@ -840,6 +841,20 @@ table.admin-table {
   align-items: center;
   z-index: 999;
 }
+
+.lessons-modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
 #createModal {
   position: fixed;
   top: 0;
@@ -939,6 +954,43 @@ table.admin-table {
   z-index: 999;
 }
 #createSectionModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#createLessonModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+#editLessonModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+#deleteLessonModal{
   position: fixed;
   top: 0;
   left: 0;

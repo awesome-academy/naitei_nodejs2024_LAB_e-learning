@@ -46,6 +46,12 @@ export const calculateTotalTimeAndLessons = async (sectionId: number) => {
 
     return { total_time, total_lesson };
 };
+
+export const updateSectionStats = async (sectionId: number) => {
+  const { total_time, total_lesson } = await calculateTotalTimeAndLessons(sectionId);
+  await sectionRepository.update(sectionId, { total_time, total_lesson });
+};
+
 export const updateSection = async (id: number, body: any) => {
   const section = await sectionRepository.findOne({
     where: { id },
