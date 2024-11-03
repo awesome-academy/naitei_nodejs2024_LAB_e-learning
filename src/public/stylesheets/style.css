@@ -1999,6 +1999,20 @@ input[type="radio"] {
   display: block;
 }
 
+.view-btn button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-btn button:hover {
+  background-color: #0056b3;
+}
+
 .custom-container {
   display: flex;
   gap: 20px;

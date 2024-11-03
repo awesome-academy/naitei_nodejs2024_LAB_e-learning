@@ -1,0 +1,28 @@
+extends ../layout
+
+block content
+  include ../partial/adminPanel
+  .container-xxl.py-2.mt-4
+    .container
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s')
+        h2 #{t('admin-comment.management')}
+        .admin-container
+          center
+            table.admin-table
+              thead
+                tr
+                  th #{t('admin-comment.#')}
+                  th #{t('admin-comment.id')}
+                  th #{t('admin-comment.user')}
+                  th #{t('admin-comment.course')}
+                  th #{t('admin-comment.text')}
+                  th #{t('admin-comment.date')}
+              tbody
+                each comment, index in comments
+                  tr
+                    td #{index + 1}
+                    td #{comment.id}
+                    td #{comment.user.name}
+                    td #{comment.course ? comment.course.name : #{t('admin-comment.NA')}
+                    td #{comment.comment_text}
+                    td #{comment.created_at.toLocaleString()}

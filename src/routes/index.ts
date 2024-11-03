@@ -13,6 +13,8 @@ import adminUserRouter from "./admin/adminUser.routes";
 import adminPaymentRouter from "./admin/adminPayment.routes";
 import adminSectionRouter from "./admin/adminSection.routes";
 import adminLessonRouter from "./admin/adminLesson.routes";
+import adminCommentRouter from "./admin/adminComment.routes";
+import adminReviewRouter from "./admin/adminReview.routes";
 import categoryRoute from "./category.routes";
 import professorLessonRouter from "./professor/professorLesson.routes"
 import professorCourseRouter from "./professor/professorCourse.route";
@@ -30,7 +32,7 @@ router.use("/courses", courseRoute);
 router.use("/enrollments", enrollmentRouter);
 router.use("/payments", paymentmentRouter);
 router.use("/cart", cartRouter)
-router.use("/admins", adminCourseRouter,adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter);
+router.use("/admins", adminCourseRouter, adminUserRouter, adminPaymentRouter, adminSectionRouter,adminLessonRouter, adminCommentRouter, adminReviewRouter);
 router.use("/categories", categoryRoute);
 router.use("/professors", professorCourseRouter, professorSectionRouter,professorLessonRouter);
 router.use(
