@@ -160,7 +160,12 @@
     "edit-failure": "Sửa bình luận thất bại",
     "delete-success": "Bình luận được xóa thành công",
     "delete-failure": "Xóa bình luận thất bại",
-    "delete-confirm": "Bạn có chắc chắn muốn xóa bình luận này không?"
+    "delete-confirm": "Bạn có chắc chắn muốn xóa bình luận này không?",
+    "invalid_professor_id": "ID giảng viên không hợp lệ.",
+    "creation_error": "Tạo khóa học không thành công: {{error}}",
+    "update_error": "Cập nhật khóa học không thành công: {{error}}",
+    "deletion_error": "Xóa khóa học không thành công: {{error}}",
+    "internal_error": "Lỗi máy chủ nội bộ."
   },
   "payment": {
     "amount": "Giá",
@@ -249,7 +254,10 @@
     "categoryId": "Danh Mục Id",
     "categoryName": "Danh Mục",
     "paymentCount": "Đã mua",
-    "enrollmentCount": "Đã tham gia học"
+    "enrollmentCount": "Đã tham gia học",
+    "status": "Trạng Thái",
+    "public": "Đăng",
+    "draft": "Ẩn"
   },
   "admin-section": {
     "management": "Quản lý chương",
