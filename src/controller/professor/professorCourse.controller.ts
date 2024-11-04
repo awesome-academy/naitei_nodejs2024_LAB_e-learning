@@ -3,6 +3,8 @@ import asyncHandler from 'express-async-handler';
 import { updateStatus, checkProfessorAuthorization, getUserPurchasedCourses, getCoursesInfo, createCourse, updateCourse, deleteCourse } from 'src/service/course.service';
 import { getAllCategories } from 'src/service/category.service';
 import { getSectionsByCourseIds } from 'src/service/section.service';
+import { CreateCourseDto } from 'src/entity/dto/course.dto';
+import { validateOrReject } from 'class-validator';
 
 export const professorCourseShowGet = asyncHandler(async (req: Request, res: Response) => {
   try {
@@ -38,6 +40,15 @@ export const professorCreateCourse = async (req: Request, res: Response) => {
     if (isNaN(userId)) {
       throw new Error(req.t('course.invalid_professor_id')); 
     }
+    const courseData = new CreateCourseDto();
+    courseData.average_rating = req.body.average_rating
+    courseData.category_id = req.body.category_id
+    courseData.description = req.body.description
+    courseData.name = req.body.name
+    courseData.price = req.body.price
+
+    await validateOrReject(courseData)
+
     const course = await createCourse({
       name: req.body.name,
       description: req.body.description,
@@ -49,7 +60,12 @@ export const professorCreateCourse = async (req: Request, res: Response) => {
 
     res.redirect(`/professors/courses`);
   } catch (error) {
-    res.status(400).json({ message: req.t('course.creation_error', { error: error.message }) }); // i18n for creation error
+    if (Array.isArray(error) && error[0].constraints) {
+      const validationErrors = error.map(err => Object.values(err.constraints)).flat();
+      res.status(400).render('error', { message: req.t('course.update_error', { error: validationErrors.join(', ')  }) }); 
+    } else {
+      res.status(400).render("error", { error: error.message });
+    }
   }
 };
 
@@ -67,6 +83,15 @@ export const professorUpdateCourse = async (req: Request, res: Response) => {
       return res.status(403).render('error', { message: req.t('professor.update_error') }); 
     }
 
+    const courseData = new CreateCourseDto();
+    courseData.average_rating = req.body.average_rating
+    courseData.category_id = req.body.category_id
+    courseData.description = req.body.description
+    courseData.name = req.body.name
+    courseData.price = req.body.price
+
+    await validateOrReject(courseData)
+
     const updatedCourse = await updateCourse(courseId, req.body);
     if (!updatedCourse) {
       return res.status(404).render('error', { message: req.t('course.course_not_found') });
@@ -74,7 +99,12 @@ export const professorUpdateCourse = async (req: Request, res: Response) => {
 
     res.redirect(`/professors/courses`);
   } catch (error) {
-    res.status(400).render('error', { message: req.t('course.update_error', { error: error.message }) }); 
+    if (Array.isArray(error) && error[0].constraints) {
+      const validationErrors = error.map(err => Object.values(err.constraints)).flat();
+      res.status(400).render('error', { message: req.t('course.update_error', { error: validationErrors.join(', ')  }) }); 
+    } else {
+      res.status(400).render("error", { error: error.message });
+    }
   }
 };
 

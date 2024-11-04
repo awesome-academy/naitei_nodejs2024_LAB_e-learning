@@ -28,14 +28,37 @@ import {
   getAllCommentsByCourseId,
 } from "../service/comment.service";
 import { calculateTotalTimeAndLessons } from "../service/lession.service";
+import { FilterCourseDto } from "src/entity/dto/course.dto";
+import { validateOrReject } from "class-validator";
+import { CourseSortingFields } from "src/enum/course.enum";
 
 export const courseShowGet = asyncHandler(
   async (req: Request, res: Response) => {
+    const filterData = new FilterCourseDto();
+    filterData.category = req.query.category as string | undefined;
+    filterData.courseName = req.query.courseName as string | undefined;
+    filterData.minPrice = req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined;
+    filterData.maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined;
+    filterData.minRating = req.query.minRating ? parseFloat(req.query.minRating as string) : undefined;
+
+    const sortBy = req.query.sortBy as CourseSortingFields;
+    if (Object.values(CourseSortingFields).includes(sortBy)) {
+      filterData.sortBy = sortBy;
+    }
+
+    const sortOrder = req.query.sortOrder as 'ASC' | 'DESC';
+    if (sortOrder === 'ASC' || sortOrder === 'DESC') {
+      filterData.sortOrder = sortOrder;
+    }
+
+    await validateOrReject(filterData);
+
     try {
+      await validateOrReject(filterData);
       const trans = {
         all: req.t("course.all"),
       };
-
+                                                
       const categories = await getAllCategories();
       const userId = req.session!.user?.id;
       const isLoggedIn = Boolean(userId);

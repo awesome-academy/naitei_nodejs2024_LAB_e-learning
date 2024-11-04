@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { getSectionsByCourseIds,updateSection, createSection, deleteSection, calculateTotalTimeAndLessons } from 'src/service/section.service';
 import { getCoursesByUserId  } from 'src/service/course.service';
+import { CreateSectionDto, UpdateSectionDto } from '@src/entity/dto/section.dto';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 
 export const professorCreateSection = async (req: Request, res: Response) => {
@@ -11,6 +14,7 @@ export const professorCreateSection = async (req: Request, res: Response) => {
     const names = req.body.name; 
     const totalTimes = req.body.total_time; 
     const totalLessons = req.body.total_lesson; 
+    const validationErrors = [];
 
     for (let i = 0; i < names.length; i++) {
       const courseId = Number(courseIds[i]);
@@ -19,12 +23,25 @@ export const professorCreateSection = async (req: Request, res: Response) => {
           throw new Error("Invalid CourseId");
       }
 
-      await createSection({
-          name: names[i],
-          total_lesson: totalLessons[i],
-          course_id: courseId, 
-          total_time: totalTimes[i],
-      });
+      const sectionData = new CreateSectionDto();
+      sectionData.name = names[i];
+      sectionData.total_lesson = totalLessons[i];
+      sectionData.course_id = courseId;
+      sectionData.total_time = totalTimes[i];
+
+      const errors = await validate(sectionData);
+
+      if (errors.length > 0) {
+        const messages = errors.map((err) => Object.values(err.constraints || {})).flat();
+        validationErrors.push(...messages);
+      } else {
+        await createSection(sectionData);
+      }
+    }
+
+    if (validationErrors.length > 0) {
+      res.status(400).render('error', { message: validationErrors.join(', ') });
+      return;
     }
 
     res.redirect(`/professors/courses`);
@@ -41,6 +58,15 @@ export const professorUpdateSection = async (req: Request, res: Response) => {
 
     if (isNaN(sectionId) || isNaN(userId)) {
       res.status(400).render('error', { message: 'Invalid section ID or user ID.' });
+      return;
+    }
+
+    const sectionDto = plainToInstance(UpdateSectionDto, req.body);
+    const errors = await validate(sectionDto);
+
+    if (errors.length > 0) {
+      const messages = errors.map((err) => Object.values(err.constraints || {})).flat();
+      res.status(400).render('error', { message: messages.join(', ') });
       return;
     }
 
