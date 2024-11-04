@@ -29,8 +29,9 @@ block content
                   tr
                     td.label.amount #{t('payment.amount')}
                     td.amount $ #{payment.amount.toFixed(2)}
-            form(action="/payments/submit", method='post')
+            form(action="/payments/submit" method='post')
               each payment in paymentDetails
                 input(type='hidden' name='courseIds[]' value=payment.courseId)
-              button#paymentSubmit.btn.text-light.w-100.py-3.payment-submit(type='submit') #{t('payment.submit')}
+              button#paymentSubmit.btn.text-light.payment-submit(type='submit') #{t('payment.submit')}
   <!-- Payment End -->
+  include partial/footer

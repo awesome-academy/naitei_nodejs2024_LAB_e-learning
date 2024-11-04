@@ -71,7 +71,9 @@
     "mostEnrolledCourse": "khóa học được đăng ký nhiều nhất",
     "no_course_available": "Không có khóa học nào",
     "cart": "Giỏ hàng",
-    "Add_to_cart": "Thêm vào giỏ hàng"
+    "Add_to_cart": "Thêm vào giỏ hàng",
+    "enroll": "Đăng ký",
+    "payment": "Thanh toán"
   },
   "login": {
     "email": "Email",
@@ -179,7 +181,8 @@
     "user_not_found": "Người dùng không tìm thấy",
     "update_user_error": "Lỗi cập nhật thông tin người dùng",
     "server_error": "Lỗi Server",
-    "success_change_password": "Đổi mật khẩu thành công"
+    "success_change_password": "Đổi mật khẩu thành công",
+    "user_error": "Email hoặc tên người dùng này đã tồn tại"
   },
   "admin": {
     "user": "Người dùng",
@@ -195,6 +198,8 @@
     "cancel": "Hủy",
     "create": "Tạo mới",
     "view": "Xem",
+    "add-more": "Thêm",
+    "selectCategory": "Chọn danh mục",
     "confirm-delete": "Xác nhận xóa",
     "confirm-message-user": "Bạn có chắc chắn muốn xóa người dùng này không?",
     "confirm-delete-course": "Bạn có chắc chắn muốn xóa khóa học này không?",
@@ -285,6 +290,11 @@
     "remove": "Xóa",
     "total_amount": "Tổng:",
     "checkout": "Thanh toán",
-    "empty": "Giỏ hàng trống!"
+    "empty": "Giỏ hàng trống!",
+    "remove_msg": "Đã xóa sản phẩm khỏi giỏ hàng"
+  },
+  "professor": {
+    "update_error": "Bạn không được phép cập nhật khóa học này.",
+    "section_not_found": "Không tìm thấy mục"
   }
 }

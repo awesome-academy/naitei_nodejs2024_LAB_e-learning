@@ -7,32 +7,59 @@ import {
   getUserById,
   saveUserDetails,
   getPurchasedCoursesWithDetails,
-  updateUserPassword
+  updateUserPassword,
 } from "../service/user.service";
-import { getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
-import { getSectionsWithLessons, countEnrolledUsersInCourse } from '../service/course.service';
+import { getEnrollmentWithCourseAndUser } from "../service/enrollment.service";
+import {
+  getSectionsWithLessons,
+  countEnrolledUsersInCourse,
+} from "../service/course.service";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const {
-    name, email, password, role, phone_number, avatar, date_of_birth,
-    gender, address, identity_card, additional_info, department, years_of_experience
+    name,
+    email,
+    password,
+    role,
+    phone_number,
+    avatar,
+    date_of_birth,
+    gender,
+    address,
+    identity_card,
+    additional_info,
+    department,
+    years_of_experience,
   } = req.body;
 
   try {
     const user = await userRegister(
-      name, email, password, role, phone_number, avatar, date_of_birth,
-      gender, address, identity_card, additional_info, department, years_of_experience
+      name,
+      email,
+      password,
+      role,
+      phone_number,
+      avatar,
+      date_of_birth,
+      gender,
+      address,
+      identity_card,
+      additional_info,
+      department,
+      years_of_experience
     );
 
-    res.status(201).json({ status: 201, message: req.t("signup.signup-success"), user });
+    res
+      .status(201)
+      .json({ status: 201, message: req.t("signup.signup-success"), user });
   } catch (error) {
-    const message = error.message === "User already exists with this email or username"
-      ? error.message
-      : req.t("signup.signup-failure");
+    const message =
+      error.message === req.t("user.user_error")
+        ? error.message
+        : req.t("signup.signup-failure");
     res.status(400).json({ status: 400, message });
   }
 });
-
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -51,7 +78,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       user,
     });
   } catch (error) {
-    res.status(400).json({ status: 400, message: req.t("login.login-failure") });
+    res
+      .status(400)
+      .json({ status: 400, message: req.t("login.login-failure") });
   }
 });
 
@@ -79,7 +108,7 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
             .status(500)
             .json({ status: 500, message: req.t("logout.failure") });
         }
-        res.clearCookie("connect.sid"); 
+        res.clearCookie("connect.sid");
         return res.redirect("/");
       });
     } else {
@@ -92,103 +121,151 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export const getUserDetails = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.session?.user?.id;
-  const isLoggedIn = Boolean(userId);
+export const getUserDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.session?.user?.id;
+    const isLoggedIn = Boolean(userId);
 
-  if (!userId) {
-    return res.status(404).render('error', { message: req.t('user.user_authenticated')  });
-  }
-
-  try {
-    const coursesWithDetails = await getPurchasedCoursesWithDetails(userId);
-    const user = await getUserById(parseInt(userId, 10));
-
-    if (!user) {
-      return res.status(404).render('error', { message: req.t('user.user_not_found')  });
+    if (!userId) {
+      return res
+        .status(404)
+        .render("error", { message: req.t("user.user_authenticated") });
     }
 
-    const courseDetailsList = [];
+    try {
+      const coursesWithDetails = await getPurchasedCoursesWithDetails(userId);
+      const user = await getUserById(parseInt(userId, 10));
 
-    for (const courseDetails of coursesWithDetails) {
-      const courseId = courseDetails.course.id;
-
-      const enrollment = await getEnrollmentWithCourseAndUser(Number(userId), Number(courseId));
-
-      if (!enrollment || !enrollment.course) {
-        continue; 
+      if (!user) {
+        return res
+          .status(404)
+          .render("error", { message: req.t("user.user_not_found") });
       }
 
-      const sectionsWithLessons = await getSectionsWithLessons(Number(courseId));
+      const courseDetailsList = [];
 
-      const totalHours = sectionsWithLessons.reduce((sum, section) => sum + section.total_time, 0);
-      const totalLessons = sectionsWithLessons.reduce((sum, section) => sum + section.lessons.length, 0);
-      const totalStudents = await countEnrolledUsersInCourse(Number(courseId));
+      for (const courseDetails of coursesWithDetails) {
+        const courseId = courseDetails.course.id;
 
-      courseDetailsList.push({
-        course: courseDetails.course,
-        totalHours,
-        totalLessons,
-        totalStudents,
-        enrollment,
-        sectionsWithLessons,
+        const enrollment = await getEnrollmentWithCourseAndUser(
+          Number(userId),
+          Number(courseId)
+        );
+
+        if (!enrollment || !enrollment.course) {
+          continue;
+        }
+
+        const sectionsWithLessons = await getSectionsWithLessons(
+          Number(courseId)
+        );
+
+        const totalHours = sectionsWithLessons.reduce(
+          (sum, section) => sum + section.total_time,
+          0
+        );
+        const totalLessons = sectionsWithLessons.reduce(
+          (sum, section) => sum + section.lessons.length,
+          0
+        );
+        const totalStudents = await countEnrolledUsersInCourse(
+          Number(courseId)
+        );
+
+        courseDetailsList.push({
+          course: courseDetails.course,
+          totalHours,
+          totalLessons,
+          totalStudents,
+          enrollment,
+          sectionsWithLessons,
+        });
+      }
+
+      res.render("user-details", {
+        user,
+        coursesWithDetails,
+        courseDetailsList,
+        isLoggedIn,
+        t: req.t,
+        title: req.t("home.account"),
+        message: req.t("home.message"),
       });
+    } catch (error) {
+      return res
+        .status(404)
+        .render("error", { message: req.t("user.server_error") });
     }
-
-    res.render('user-details', { 
-      user,
-      coursesWithDetails, 
-      courseDetailsList, 
-      isLoggedIn,
-      t: req.t,
-    });
-  } catch (error) {
-    return res.status(404).render('error', { message: req.t('user.server_error')  });
   }
-});
+);
 
-export const updateUserDetails = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.session!.user?.id;
-  if (!userId) {
-    return res.status(404).render('error', { message: req.t('user.user_authenticated')  });
-  }
-  const { name, phone_number, avatar, date_of_birth, gender, address, identity_card, additional_info } = req.body;
-
-  try {
-    const user = await getUserById(parseInt(userId))
-    if (user) {
-      user.name = name;
-      user.phone_number = phone_number;
-      user.avatar = avatar;
-      user.date_of_birth = new Date(date_of_birth);
-      user.gender = gender;
-      user.address = address;
-      user.identity_card = identity_card;
-      user.additional_info = additional_info;
-
-      await saveUserDetails(user);
-      res.redirect('/account');
-    } else {
-      return res.status(404).render('error', { message: req.t('user.user_not_found')  });
+export const updateUserDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.session!.user?.id;
+    if (!userId) {
+      return res
+        .status(404)
+        .render("error", { message: req.t("user.user_authenticated") });
     }
-  } catch (error) {
-    return res.status(404).render('error', { message: req.t('user.update_user_error')  });
-  }
-});
+    const {
+      name,
+      phone_number,
+      avatar,
+      date_of_birth,
+      gender,
+      address,
+      identity_card,
+      additional_info,
+    } = req.body;
 
+    try {
+      const user = await getUserById(parseInt(userId));
+      if (user) {
+        user.name = name;
+        user.phone_number = phone_number;
+        user.avatar = avatar;
+        user.date_of_birth = new Date(date_of_birth);
+        user.gender = gender;
+        user.address = address;
+        user.identity_card = identity_card;
+        user.additional_info = additional_info;
 
-export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-  const { newPassword } = req.body;
-  const userId = req.session!.user?.id;
-  
-  try {
-    const result = await updateUserPassword(userId, newPassword);
-    if (result) {
-      res.status(200).json({ status: 200, message: req.t('user.success_change_password') });
-    } else {
-      res.status(404).json({ status: 404, message: req.t('user.user_not_found') });
+        await saveUserDetails(user);
+        res.redirect("/account");
+      } else {
+        return res
+          .status(404)
+          .render("error", { message: req.t("user.user_not_found") });
+      }
+    } catch (error) {
+      return res
+        .status(404)
+        .render("error", { message: req.t("user.update_user_error") });
     }
-  } catch (error) {
-    res.status(500).json({ status: 500, message: req.t('user.server_error') });
   }
-});
+);
+
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { newPassword } = req.body;
+    const userId = req.session!.user?.id;
+
+    try {
+      const result = await updateUserPassword(userId, newPassword);
+      if (result) {
+        res.status(200).json({
+          status: 200,
+          message: req.t("user.success_change_password"),
+        });
+      } else {
+        res
+          .status(404)
+          .json({ status: 404, message: req.t("user.user_not_found") });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ status: 500, message: req.t("user.server_error") });
+    }
+  }
+);

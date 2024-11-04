@@ -61,20 +61,20 @@ block content
                   h2 #{course ? course.name : 'Course not found'}
                   p
                     | Start at the beginning by learning HTML basics &mdash; an important foundation for building and editing web pages.
-                  .d-flex
+                  .d-flex-custom
                     small
-                      i.fa.fa-star.text-warning  
+                      i.fa.fa-star.text-warning.px-1
                         | #{course.average_rating}
                     small
-                      i.fa.fa-user-graduate
+                      i.fa.fa-user-graduate.px-1
                       |  #{totalStudents} 
                       | #{t('course.student')}
                     small
-                      i.fa.fa-user
+                      i.fa.fa-user.px-1
                       | #{t('course.begin')}
                     small
-                      i.fa.fa-clock.me-2
-                      |  #{totalHours}h
+                      i.fa.fa-clock.me-2.px-1
+                      | #{totalHours}h
                   .image-div.text-left.mt-3
                     img(src='/img/testimonial-2.jpg' alt='', )
                     span
@@ -106,7 +106,7 @@ block content
                                 ul 
                                   each lesson in section.lessons
                                     li.lesson-item
-                                      i.fa.fa-video.text-black
+                                      i.fa.fa-video
                                         span.lesson-name #{lesson.name} - #{lesson.time} #{t('course.hours')}
                                       br.lesson-details
                                       | -
@@ -236,7 +236,8 @@ block content
                   .comment-container
                     input.form-control(name='comment' rows='3' placeholder='Write a reply...')
                     button.btn.text-light.py-2.top-0.end-0.submit-cmt-btn #{t('course.submit-cmt')}
-          .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
+
+          .col-lg-3.col-md-6.shadow.wow.fadeInUp.custom-h(data-wow-delay='0.3s')
             .image.text-center
               img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
             .list.mt-2

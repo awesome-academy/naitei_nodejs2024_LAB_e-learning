@@ -71,7 +71,9 @@
     "mostEnrolledCourse": "the most enrolled course",
     "no_course_available": "No Courses Available",
     "cart": "Cart",
-    "Add_to_cart": "Add to cart"
+    "Add_to_cart": "Add to cart",
+    "enroll": "Enroll",
+    "payment": "Payment"
   },
   "login": {
     "email": "Email",
@@ -93,7 +95,7 @@
     "male": "Male",
     "female": "Female",
     "other": "Other",
-    "date-of-bỉth": "Day of Birth",
+    "date-of-birth": "Day of Birth",
     "role": "Role",
     "address": "Address",
     "department": "Department",
@@ -179,7 +181,8 @@
     "user_not_found": "User not found",
     "update_user_error": "Error updating user details",
     "server_error": "Server error",
-    "success_change_password": "Password changed successfully"
+    "success_change_password": "Password changed successfully",
+    "user_error": "User already exists with this email or username"
   },
   "admin": {
     "user": "Users",
@@ -276,7 +279,7 @@
     "course": "Section name",
     "amount": "Total time",
     "status": "Content",
-    "payment-date": "Description"
+    "payment-date": "Payment time"
   },
   "cart": {
     "title": "Shopping Cart",
@@ -287,7 +290,8 @@
     "remove": "Remove",
     "total_amount": "Total Amount:",
     "checkout": "Checkout",
-    "empty": "Your cart is empty!"
+    "empty": "Your cart is empty!",
+    "remove_msg": "Item removed from cart"
   },
   "professor": {
     "update_error": "You are not authorized to update this course.",

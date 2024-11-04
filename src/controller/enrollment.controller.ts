@@ -9,6 +9,7 @@ import { getUserById } from '@src/service/user.service';
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {
   const  {courseId}  = req.params;
   const userId = req.session!.user?.id;
+  const isLoggedIn = Boolean(userId);
   const userName = req.session!.user?.name;
   const userMail = req.session!.user?.email;
   if (!userId || !courseId) {
@@ -49,6 +50,7 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
     allComments,
     userName,
     userMail,
+    isLoggedIn,
     t: req.t,
     userId: req.session!.user?.id,
   });
