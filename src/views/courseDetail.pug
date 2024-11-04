@@ -142,15 +142,15 @@ block content
           .image.text-center
             img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
           .buttons
-            if paidCourse
+            if isProfessorCourse || paidCourse
               a.text-decoration-none.text-white.btn.p-3.w-100.mb-2(href=`/enrollments/${course.id}`) #{t('home.Enroll')}
             else
               h4.mt-2.p-2
-              | $
-              small
-                del #{course.price}
+                | $
+                small
+                  del #{course.price}
               form(action=`/cart/add`, method='POST')
-                input(type='hidden' name='courseId', value=course.id)
+                input(type='hidden' name='courseId' value=course.id)
                 button.text-decoration-none.text-white.btn.p-3.w-100.mb-2(type='submit') #{t('home.Add_to_cart')}
           .list.mt-2
             .list1.d-flex.justify-content-between.pt-2.border-bottom

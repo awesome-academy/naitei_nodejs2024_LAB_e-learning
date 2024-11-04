@@ -2026,3 +2026,13 @@ input[type="radio"] {
 .custom-h {
   height: fit-content;
 }
+
+.status-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 5px;
+  border-radius: 5px;
+  color: #333;
+}

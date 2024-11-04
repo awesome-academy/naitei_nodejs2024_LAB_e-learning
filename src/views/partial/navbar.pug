@@ -16,6 +16,8 @@ block content
           span.ml-2 #{t('home.cart')} 
           span.badge.badge-pill.badge-danger(style='position: absolute; top: 0; right: 0;')
             | #{cartAmount}
+        if user && user.role === 'professor'
+          a.nav-item.nav-link(href='/professors/courses') #{t('professor.course')}
         a.nav-item.nav-link(href='' id='userDropdown' data-bs-toggle='dropdown')
           i.fa.fa-user
         ul.dropdown-menu-nav-notLoggedIn(aria-labelledby='userDropdown')

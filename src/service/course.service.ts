@@ -65,6 +65,25 @@ export async function getProfessorByCourse(courseId: number) {
   return course?.professor;
 }
 
+export async function getProfessorAndCourseCountByCourseId(courseId: number): Promise<number> {
+  const course = await courseRepository.findOne({
+    where: { id: courseId },
+    relations: { professor: true },
+  });
+
+  if (!course || !course.professor) {
+    throw new Error(`Professor not found for course with ID ${courseId}`);
+  }
+
+  const professorId = course.professor.id;
+
+  const professorCourseCount = await courseRepository.count({
+    where: { professor: { id: professorId } },
+  });
+
+  return professorCourseCount;
+}
+
 export const getCoursesByUserId = async (userId: number) => {
   return await courseRepository.find({ where: { professor_id: userId } });
 };

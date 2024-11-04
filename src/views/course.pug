@@ -53,15 +53,20 @@ block content
         contentType: "application/json",
         data: JSON.stringify(filters),
         processData: false,
-        processData: false,
-        xhrFields: {
-          withCredentials: true  
-            },
         success: function (response) {
-          $('.row.g-4.py-2').empty()
+          $('.row.g-4.py-2').empty();
           let courseHtml = '';
+          
           if (response.courses && response.courses.length > 0) {
             response.courses.forEach(course => {
+              const enrollLink = response.isLoggedIn && response.user?.role === 'professor'
+                ? `/enrollments/${course.id}`
+                : `/cart/add?courseId=${course.id}`;
+              
+              const buttonText = response.isLoggedIn && response.user?.role === 'professor'
+                ? '#{t("home.enroll")}'
+                : `${course.price} $ #{t("home.Add_to_cart")}`;
+
               courseHtml += `
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                   <div class="course-item shadow">
@@ -80,8 +85,8 @@ block content
                           <i class="fa fa-clock me-2"></i> ${course.totalHours} #{t('home.Hrs')}
                         </small>
                         <small class="text-primary py-1 px-2 fw-bold fs-6">
-                          <a href="${response.isLoggedIn ? (response.purchasedCourses.some(p => p.id === course.id)  ? `/enrollments/${course.id}` : `/cart/add?courseId=${course.id}`) : '/login'}">
-                            ${response.isLoggedIn ? (response.purchasedCourses.some(p => p.id === course.id)  ? '#{t('home.enroll')}' : `${course.price} $ #{t('home.Add_to_cart')}`) : `${course.price} $ #{t('home.Add_to_cart')}`}
+                          <a href="${enrollLink}">
+                            ${buttonText}
                             <i class="fa fa-chevron-right me-2 fs-10"></i>
                           </a>
                         </small>
@@ -92,7 +97,7 @@ block content
               `;
             });
           } else {
-            $('.row.g-4.py-2').append('<p class="text-center">#{t('course.noCourse')}</p>');
+            $('.row.g-4.py-2').append('<p class="text-center">#{t("course.noCourse")}</p>');
           }
           $('.row.g-4.py-2').append(courseHtml);
           let paginationHtml = '';

@@ -1,4 +1,4 @@
-extends layout
+extends layout 
 
 block content
   include partial/navbar
@@ -36,54 +36,95 @@ block content
                   tr
                     td.label #{t('admin-user.additional_info')}
                     td.value #{user.additional_info}
+
+                  if user.role === 'professor'
+                    tr
+                      td.label #{t('admin-user.department')}
+                      td.value #{user.department}
+                    tr
+                      td.label #{t('admin-user.years_of_experience')}
+                      td.value #{user.years_of_experience}
+
               .edit-btn.mt-3
                 button( onclick="showResetPasswordPopup()") #{t('admin-user.reset_password')}
               .edit-btn.mt-3.mb-3
-                button(onclick=`showUpdateForm('${user.id}', '${user.name}', '${user.phone_number}', '${user.date_of_birth}', '${user.gender}', '${user.address}', '${user.identity_card}', '${user.additional_info}')`) #{t('admin.edit')}
+                button(onclick=`showUpdateForm('${user.id}', '${user.name}', '${user.phone_number}', '${user.date_of_birth}', '${user.gender}', '${user.address}', '${user.identity_card}', '${user.additional_info}', '${user.department}', '${user.years_of_experience}')`) #{t('admin.edit')}
           .tab-content
             ul.nav.nav-tabs
               li.nav-item
-                a.nav-link.active(href="#purchased-courses" data-bs-toggle="tab") #{t('admin-user.purchased_course')}
-              li.nav-item
-                a.nav-link(href="#in-progress-courses" data-bs-toggle="tab") #{t('admin-user.in_progress_course')}
+                a.nav-link(href="#professor-courses" data-bs-toggle="tab") #{t('professor.course')} 
+              if user.role !== 'professor'
+                li.nav-item
+                  a.nav-link(href="#purchased-courses" data-bs-toggle="tab") #{t('admin-user.purchased_course')}
+                li.nav-item
+                  a.nav-link(href="#in-progress-courses" data-bs-toggle="tab") #{t('admin-user.in_progress_course')}
 
-            .tab-pane.fade.show.active#purchased-courses    
-              .container
-                .row.g-4.py-2
-                  each courseDetails in coursesWithDetails
-                    .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
-                      .course-item.shadow
-                        .position-relative.overflow-hidden.text-light.image
-                          img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
-                        .p-2.pb-0.custom-course-name
-                          h5.mb-1
-                            a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
+            if user.role === 'professor'
+              .tab-pane.fade.show.active#professor-courses
+                .container
+                  .row.g-4.py-2
+                    each courseDetails in professorCourses 
+                      .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
+                        .course-item.shadow
+                          .position-relative.overflow-hidden.text-light.image
+                            img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.status)
+                            .status-overlay
+                              | #{courseDetails.course.status}
+                          .p-2.pb-0.custom-course-name
+                            h5.mb-1
+                              a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
+                            .d-flex
+                              small.flex-fill.py-1.px-2
+                                i.fa.fa-star.text-warning.me-2
+                                | #{courseDetails.course.average_rating}
+                              small.flex-fill.text-left.p-2
+                                i.fa.fa-clock.me-2
+                                | #{courseDetails.totalHours} #{t('home.Hrs')}
+                              small.text-primary.py-1.px-2.fw-bold.fs-6
+                                a(href=`/enrollments/${courseDetails.course.id}`)
+                                  | #{t('home.enroll')}  
+                                  i.fa.fa-chevron-right.me-2.fs-10
+                    else
+                      p.text-center #{t('home.no_course_available')}
+
+            else
+              .tab-pane.fade.show.active#purchased-courses    
+                .container
+                  .row.g-4.py-2
+                    each courseDetails in coursesWithDetails
+                      .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
+                        .course-item.shadow
+                          .position-relative.overflow-hidden.text-light.image
+                            img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
+                          .p-2.pb-0.custom-course-name
+                            h5.mb-1
+                              a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
                           .d-flex
                             small.flex-fill.py-1.px-2
                               i.fa.fa-star.text-warning.me-2
                               | #{courseDetails.course.average_rating}
                             small.flex-fill.text-left.p-2
                               i.fa.fa-clock.me-2
-                              | #{courseDetails.totalHours}#{t('home.Hrs')}
+                              | #{courseDetails.totalHours} #{t('home.Hrs')}
                             small.text-primary.py-1.px-2.fw-bold.fs-6
                               if isLoggedIn
                                 a(href=`/enrollments/${courseDetails.course.id}`)
                                   | #{t('home.enroll')}  
                                   i.fa.fa-chevron-right.me-2.fs-10
-                  else
-                    p.text-center #{t('home.no_course_available')}
+                    else
+                      p.text-center #{t('home.no_course_available')}
 
-            .tab-pane.fade#in-progress-courses
-              .container
-                .row.g-4.py-2
-                  each courseDetails in courseDetailsList
-                    .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
-                      .course-item.shadow
-                        .position-relative.overflow-hidden.text-light.image
-                          img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
-                        .p-2.pb-0.custom-course-name
-                          h5.mb-1
-                            a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
+              .tab-pane.fade#in-progress-courses
+                .container
+                  .row.g-4.py-2
+                    each courseDetails in courseDetailsList
+                      .col-lg-6.col-md-6.wow.fadeInUp(data-wow-delay='0.1s')
+                        .course-item.shadow
+                          .position-relative.overflow-hidden.text-light.image
+                            img.img-fluid(src='img/course-1.jpg' alt=courseDetails.course.name)
+                          .p-2.pb-0.custom-course-name
+                            h5.mb-1
+                              a.text-dark(href=`/courses/${courseDetails.course.id}`) #{courseDetails.course.name}
                           .d-flex
                             small.flex-fill.py-1.px-2
                               .list2.d-flex.justify-content-between.pt-2.border-bottom.me-2
@@ -102,45 +143,51 @@ block content
                                 a(href=`/enrollments/${courseDetails.course.id}`)
                                   | #{t('home.Enroll')}  
                                   i.fa.fa-chevron-right.me-2.fs-10
-                  else
-                    p.text-center #{t('home.no_course_available')}
-
+                    else
+                      p.text-center #{t('home.no_course_available')}
   #editModal.hidden
-    .modal-content-admin  
-      h3 #{t('admin-user.updateInfo')}
-      form(action="/account/edit" method="POST")
-        input(type="hidden" name="id" id="update-id" value=user.id)
+   .modal-content-admin  
+    h3 #{t('admin-user.updateInfo')}
+    form(action="/account/edit" method="POST")
+      input(type="hidden" name="id" id="update-id" value=user.id)
+      .form-group
+        label(for="name") #{t('admin-user.name')}
+        input(type="text" name="name" id="update-name" value=user.name required)
+      .form-group
+        label(for="phone_number") #{t('admin-user.phone_number')}
+        input(type="text" name="phone_number" id="update-phone_number" value=user.phone_number required)
+      .form-group
+        label(for="date_of_birth") #{t('admin-user.date_of_birth')}
+        input(type="date" name="date_of_birth" id="update-date_of_birth" value=user.date_of_birth)
+      .form-group
+        label(for="gender") #{t('admin-user.gender')}
+        select(name="gender" id="update-gender" required)
+          option(value="male" selected=user.gender == 'male') #{t('admin-user.male')}
+          option(value="female" selected=user.gender == 'female') #{t('admin-user.female')}
+      .form-group
+        label(for="address") #{t('admin-user.address')}
+        input(type="text" name="address" id="update-address" value=user.address)
+      .form-group
+        label(for="identity_card") #{t('admin-user.identity_card')}
+        input(type="text" name="identity_card" id="update-identity_card" value=user.identity_card)
+      .form-group
+        label(for="additional_info") #{t('admin-user.additional_info')}
+        input(type="text" name="additional_info" id="update-additional_info" value=user.additional_info)
+      if user.role === 'professor'
         .form-group
-          label(for="name") #{t('admin-user.name')}
-          input(type="text" name="name" id="update-name" value=user.name required)
+          label(for="department") #{t('admin-user.department')}
+          input(type="text" name="department" id="update-department" value=user.department)
         .form-group
-          label(for="phone_number") #{t('admin-user.phone_number')}
-          input(type="text" name="phone_number" id="update-phone_number" value=user.phone_number required)
-        .form-group
-          label(for="date_of_birth") #{t('admin-user.date_of_birth')}
-          input(type="date" name="date_of_birth" id="update-date_of_birth" value=user.date_of_birth)
-        .form-group
-          label(for="gender") #{t('admin-user.gender')}
-          select(name="gender" id="update-gender" required)
-            option(value="male" selected=user.gender == 'male') #{t('admin-user.male')}
-            option(value="female" selected=user.gender == 'female') #{t('admin-user.female')}
-        .form-group
-          label(for="address") #{t('admin-user.address')}
-          input(type="text" name="address" id="update-address" value=user.address)
-        .form-group
-          label(for="identity_card") #{t('admin-user.identity_card')}
-          input(type="text" name="identity_card" id="update-identity_card" value=user.identity_card)
-        .form-group
-          label(for="additional_info") #{t('admin-user.additional_info')}
-          input(type="text" name="additional_info" id="update-additional_info" value=user.additional_info)
-        .btn-group-admin
-          .save-btn: button(type="submit") #{t('admin.save')}
-          .cancel-btn: button(type="button" onclick="hideUpdateForm()") #{t('admin.cancel')}
+          label(for="years_of_experience") #{t('admin-user.years_of_experience')}
+          input(type="number" name="years_of_experience" id="update-years_of_experience" value=user.years_of_experience)
 
+      .btn-group-admin
+        .save-btn: button(type="submit") #{t('admin.save')}
+        .cancel-btn: button(type="button" onclick="hideUpdateForm()") #{t('admin.cancel')}
   #resetPasswordModal.hidden
     .modal-content-admin  
       h3 #{t('admin-user.reset_password')}
-      form(action="/account/reset-password" method="POST" id="reset-password-form")
+      form(action=`/account/reset-password/${userId}` method="POST" id="reset-password-form")
         input(type="hidden" name="userId" value=user.id)
         .form-group
           label(for="currentPassword")  #{t('admin-user.current_password')}

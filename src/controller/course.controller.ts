@@ -9,6 +9,7 @@ import {
   getProfessorByCourse,
   CourseFilter,
   CourseSorting,
+  getProfessorAndCourseCountByCourseId
 } from "../service/course.service";
 import {
   getEnrollment,
@@ -21,6 +22,7 @@ export const courseGet = asyncHandler(async (req: Request, res: Response) => {
   res.render("course", {
     title: req.t("home.course"),
     message: req.t("home.message"),
+    user: req.session!.user
   });
 });
 import {
@@ -61,7 +63,9 @@ export const courseShowGet = asyncHandler(
                                                 
       const categories = await getAllCategories();
       const userId = req.session!.user?.id;
+      const userRole = req.session!.user?.role;
       const isLoggedIn = Boolean(userId);
+      
       const filters: CourseFilter = {
         professorId: req.query.professorId
           ? Number(req.query.professorId)
@@ -104,11 +108,18 @@ export const courseShowGet = asyncHandler(
         page,
         limit
       );
+
       const payments = isLoggedIn ? await getUserPurchasedCourses(userId) : [];
       const purchasedCourseIds = payments.map((payment) => payment.course_id);
       const purchasedCourses = courses.filter((course) =>
         purchasedCourseIds.includes(course.id)
       );
+
+      const coursesWithOwnership = courses.map(course => ({
+        ...course,
+        isProfessorCourse: userRole === 'professor' && course.professorId === userId
+      }));
+
       let totalHours = 0;
 
       for (const course of purchasedCourses) {
@@ -119,10 +130,11 @@ export const courseShowGet = asyncHandler(
           totalHours += total_time;
         }
       }
+
       res.json({
         title: req.t("home.course"),
         message: req.t("home.message"),
-        courses,
+        courses: coursesWithOwnership,
         categories,
         purchasedCourses,
         isLoggedIn,
@@ -131,6 +143,7 @@ export const courseShowGet = asyncHandler(
         pageCount,
         currentPage: page,
         trans,
+        user: req.session!.user
       });
     } catch (error) {
       res
@@ -139,11 +152,11 @@ export const courseShowGet = asyncHandler(
     }
   }
 );
-
 export const getCourseDetail = asyncHandler(
   async (req: Request, res: Response) => {
     const courseId = Number(req.params.id);
     const userId = req.session!.user?.id;
+    const userRole = req.session!.user?.role;
 
     if (!courseId) {
       return res
@@ -157,6 +170,9 @@ export const getCourseDetail = asyncHandler(
         .status(404)
         .render("error", { message: req.t("course.course_error_notfound") });
     }
+
+    const isProfessorCourse = userRole === 'professor' && course.professor_id === userId;
+
     const paidCourse = await hasUserPurchasedCourse(userId, courseId);
     const professor = await getProfessorByCourse(courseId);
     const sectionsWithLessons = await getSectionsWithLessons(courseId);
@@ -169,8 +185,12 @@ export const getCourseDetail = asyncHandler(
       (sum, section) => sum + section.lessons.length,
       0
     );
+
     const totalStudents = await countEnrolledUsersInCourse(courseId);
     const allComments = await getAllCommentsByCourseId(courseId);
+
+    const professorCourseCount = await getProfessorAndCourseCountByCourseId(courseId);
+
     res.render("courseDetail", {
       course,
       name: professor?.name || "Unknown Professor",
@@ -180,9 +200,12 @@ export const getCourseDetail = asyncHandler(
       totalStudents,
       paidCourse,
       allComments,
+      professorCourseCount,
+      isProfessorCourse, 
       t: req.t,
       title: req.t("home.course"),
       message: req.t("home.message"),
+      user: req.session!.user
     });
   }
 );

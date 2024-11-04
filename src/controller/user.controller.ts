@@ -16,6 +16,7 @@ import { getEnrollmentWithCourseAndUser } from "../service/enrollment.service";
 import {
   getSectionsWithLessons,
   countEnrolledUsersInCourse,
+  getCoursesByUserId,
 } from "../service/course.service";
 import { UserRegisterDto, UserLoginDto } from 'src/entity/dto/user.dto';
 
@@ -136,6 +137,7 @@ export const getUserDetails = asyncHandler(
       }
 
       const courseDetailsList = [];
+      const professorCourses = []; 
 
       for (const courseDetails of coursesWithDetails) {
         const courseId = courseDetails.course.id;
@@ -172,13 +174,43 @@ export const getUserDetails = asyncHandler(
           totalStudents,
           enrollment,
           sectionsWithLessons,
+          userId: req.session!.user?.id
         });
+      }
+
+      if (user.role === UserRoleType.PROFESSOR) {
+        const professorCourseDetails = await getCoursesByUserId(userId); 
+
+        for (const courseDetails of professorCourseDetails) {
+          const courseId = courseDetails.id;
+
+          const sectionsWithLessons = await getSectionsWithLessons(
+            Number(courseId)
+          );
+
+          const totalHours = sectionsWithLessons.reduce(
+            (sum, section) => sum + section.total_time,
+            0
+          );
+          const totalLessons = sectionsWithLessons.reduce(
+            (sum, section) => sum + section.lessons.length,
+            0
+          );
+
+          professorCourses.push({
+            course: courseDetails,
+            totalHours,
+            totalLessons,
+            sectionsWithLessons,
+          });
+        }
       }
 
       res.render("user-details", {
         user,
         coursesWithDetails,
         courseDetailsList,
+        professorCourses, 
         isLoggedIn,
         t: req.t,
         title: req.t("home.account"),
@@ -209,6 +241,8 @@ export const updateUserDetails = asyncHandler(
       address,
       identity_card,
       additional_info,
+      department, 
+      years_of_experience, 
     } = req.body;
 
     try {
@@ -222,6 +256,11 @@ export const updateUserDetails = asyncHandler(
         user.address = address;
         user.identity_card = identity_card;
         user.additional_info = additional_info;
+
+        if (user.role === UserRoleType.PROFESSOR) {
+          user.department = department; 
+          user.years_of_experience = years_of_experience; 
+        }
 
         await saveUserDetails(user);
         res.redirect("/account");
@@ -246,10 +285,7 @@ export const resetPassword = asyncHandler(
     try {
       const result = await updateUserPassword(userId, newPassword);
       if (result) {
-        res.status(200).json({
-          status: 200,
-          message: req.t("user.success_change_password"),
-        });
+        res.redirect(`/login`);
       } else {
         res
           .status(404)
