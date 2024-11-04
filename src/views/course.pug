@@ -4,24 +4,23 @@ block content
   include partial/navbar
   include partial/header
 
-  <!-- category start -->
-  .container-xxl.py-2.category
-    .text-center.wow.fadeInUp(data-wow-delay='0.1s')
-      h2.py-2 #{t('home.Category-title')}
-    .row.g-2.m-2
-  <!-- category end -->
-
   <!-- course and filter start -->
   .container-xxl.py-5
-    .custom-grid-container  
-      form(action='/courses' method='GET' class='row g-3')
-        .custom-sort-container
+    .custom-grid-container
+      .category
+        .category-header
+          h2.py-2 #{t('home.Category-title')}
+          select(name="category" class="custom-input col-md-10" id="categoryDropdown" onchange="getAllCourses(null, this.value);")
+            option(value="all") #{t('course.all')}
+        form(action='/courses' method='GET' class='row g-3')
+          .custom-sort-container
       .container
         h2.py-2 #{t('home.course')}
         .row.g-4.py-2
         .d-flex.justify-content-center.mt-5
           nav
             ul.pagination
+
   <!-- course and filter end -->
 
   include partial/footer
@@ -38,16 +37,14 @@ block content
       };
 
       const queryString = $.param(filters); 
-      const checkedRadio = document.querySelector('input[name="category"]:checked');
-      const checkedRadio2 = localStorage.getItem("category")
       let url = num != null ? `/courses/all?page=${num}&${queryString}` : `/courses/all?${queryString}`;
+      if(localStorage.getItem("category") != null)
+        $("#categoryDropdown").val(localStorage.getItem("category"))
+      category = localStorage.getItem("category") != null ? localStorage.getItem("category") : $("#categoryDropdown").val()
 
-      if(checkedRadio!=null) {
-        url += `&category=${checkedRadio.value}`;
-      }
-      else if(checkedRadio2!=null) {
-        url += `&category=${checkedRadio2}`;
-      }
+      if (category) {
+        url += `&category=${category === 'all' ? '' : category}`;
+      } 
       localStorage.removeItem("category")
 
       $.ajax({
@@ -186,7 +183,7 @@ block content
       });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function () { 
       const urlParams = new URLSearchParams(window.location.search);
       const categoryParam = urlParams.get('category');
       if (categoryParam) {
@@ -195,49 +192,26 @@ block content
         getAllCourses();
       }
 
-      $('.row.g-2.m-2').on('change', 'input[type="radio"]', function() {
-        const categoryName = $(this).attr('id'); 
-        const content = $(`.content[data-category="${categoryName}"]`);  
-        $('.content').css('background-color', '');
-        if ($(this).is(':checked')) {
-          content.css({
-          'background-color': 'var(--primary)',
-        });
+    $.ajax({
+      url: `/categories`,
+      method: "GET",
+      contentType: "application/json",
+      success: function (response) {
+        $('#categoryDropdown')
+        if (response.categories && response.categories.length > 0) {
+          response.categories.forEach(category => {
+            const categoryOption = `<option value="${category.name}">${category.name}</option>`;
+            $('#categoryDropdown').append(categoryOption);
+          });
         }
-      });
+        const allOption = `<option value="all">${t('course.all_courses')}</option>`;
+        $('#categoryDropdown').append(allOption);
+      }
+    });
 
-      $.ajax({
-        url: `/categories`,
-        method: "GET",
-        contentType: "application/json",
-        success: function (response) {
-          $('.row.g-2.m-2').empty();
-          if (response.categories && response.categories.length > 0) {
-            response.categories.forEach(category => {
-              const categoryHtml = `<div class="col-lg-3 col-md-6 text-center">
-                <div class="content shadow p-3 mb-2 wow fadeInUp" data-wow-delay="0.3s" data-category="${category.name}">
-                  <h5 class="my-2">
-                    <input type="radio" name="category" value="${category.name}" id="${category.name}" class="text-center" onclick="getAllCourses(null, '${category.name}');">
-                    <label for="${category.name}">
-                      ${category.name}
-                    </label>
-                  </h5>
-                </div>
-              </div>`;
-              $('.row.g-2.m-2').append(categoryHtml);
-            });
-          }
-          const categoryHtml = `<div class="col-lg-3 col-md-6 text-center">
-            <div class="content shadow p-3 mb-2 wow fadeInUp" data-wow-delay="0.3s" >
-              <h5 class="my-2">
-                <input type="radio" name="category" id="all" value="" class="text-center" onclick="getAllCourses(null, null);">
-                <label for="all">
-                  #{t('course.all')}
-                </label>
-              </h5>
-            </div>
-          </div>`;
-          $('.row.g-2.m-2').append(categoryHtml);
-        }
+    $('#categoryDropdown').on('change', function() {
+      const selectedCategory = $(this).val(); 
+      getAllCourses(null, selectedCategory); 
       });
     });
+

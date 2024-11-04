@@ -399,6 +399,12 @@ li {
 
 /*** Categories & Courses ***/
 
+.category {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .category .content {
   cursor: pointer;
   transition: 0.5s;
@@ -829,7 +835,7 @@ table.admin-table {
 .hidden {
   display: none !important;
 }
-.sections-modal{
+.sections-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -940,7 +946,7 @@ table.admin-table {
   align-items: center;
   z-index: 999;
 }
-#createSectionModal{
+#createSectionModal {
   position: fixed;
   top: 0;
   left: 0;
@@ -952,7 +958,7 @@ table.admin-table {
   align-items: center;
   z-index: 999;
 }
-#editSectionModal{
+#editSectionModal {
   position: fixed;
   top: 0;
   left: 0;
@@ -964,7 +970,7 @@ table.admin-table {
   align-items: center;
   z-index: 999;
 }
-#deleteSectionModal{
+#deleteSectionModal {
   position: fixed;
   top: 0;
   left: 0;
