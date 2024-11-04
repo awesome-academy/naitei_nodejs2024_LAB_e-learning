@@ -7,8 +7,8 @@ import {
 } from "../service/payment.service";
 import { getCourseById } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
-import { getItemByCourseId, removeFromCart } from "@src/service/cart.service";
-import { ProcessPaymentDto, SubmitPaymentDto } from "@src/entity/dto/payment.dto";
+import { getItemByCourseId, removeFromCart } from "src/service/cart.service";
+import { ProcessPaymentDto, SubmitPaymentDto } from "src/entity/dto/payment.dto";
 import { validateOrReject } from "class-validator";
 
 export const processPayment = asyncHandler(

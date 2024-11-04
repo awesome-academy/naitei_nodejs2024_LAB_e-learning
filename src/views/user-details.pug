@@ -146,58 +146,65 @@ block content
                     else
                       p.text-center #{t('home.no_course_available')}
   #editModal.hidden
-   .modal-content-admin  
-    h3 #{t('admin-user.updateInfo')}
-    form(action="/account/edit" method="POST")
-      input(type="hidden" name="id" id="update-id" value=user.id)
-      .form-group
-        label(for="name") #{t('admin-user.name')}
-        input(type="text" name="name" id="update-name" value=user.name required)
-      .form-group
-        label(for="phone_number") #{t('admin-user.phone_number')}
-        input(type="text" name="phone_number" id="update-phone_number" value=user.phone_number required)
-      .form-group
-        label(for="date_of_birth") #{t('admin-user.date_of_birth')}
-        input(type="date" name="date_of_birth" id="update-date_of_birth" value=user.date_of_birth)
-      .form-group
-        label(for="gender") #{t('admin-user.gender')}
-        select(name="gender" id="update-gender" required)
-          option(value="male" selected=user.gender == 'male') #{t('admin-user.male')}
-          option(value="female" selected=user.gender == 'female') #{t('admin-user.female')}
-      .form-group
-        label(for="address") #{t('admin-user.address')}
-        input(type="text" name="address" id="update-address" value=user.address)
-      .form-group
-        label(for="identity_card") #{t('admin-user.identity_card')}
-        input(type="text" name="identity_card" id="update-identity_card" value=user.identity_card)
-      .form-group
-        label(for="additional_info") #{t('admin-user.additional_info')}
-        input(type="text" name="additional_info" id="update-additional_info" value=user.additional_info)
-      if user.role === 'professor'
-        .form-group
-          label(for="department") #{t('admin-user.department')}
-          input(type="text" name="department" id="update-department" value=user.department)
-        .form-group
-          label(for="years_of_experience") #{t('admin-user.years_of_experience')}
-          input(type="number" name="years_of_experience" id="update-years_of_experience" value=user.years_of_experience)
-
-      .btn-group-admin
-        .save-btn: button(type="submit") #{t('admin.save')}
-        .cancel-btn: button(type="button" onclick="hideUpdateForm()") #{t('admin.cancel')}
-  #resetPasswordModal.hidden
     .modal-content-admin  
-      h3 #{t('admin-user.reset_password')}
-      form(action=`/account/reset-password/${userId}` method="POST" id="reset-password-form")
-        input(type="hidden" name="userId" value=user.id)
+      h3 #{t('admin-user.updateInfo')}
+      form(action="/account/edit" method="POST" id="update-form")
+        input(type="hidden" name="id" id="update-id" value=user.id)
         .form-group
-          label(for="currentPassword")  #{t('admin-user.current_password')}
-          input(type="password" name="currentPassword" required)
+          label(for="name") #{t('admin-user.name')}
+          input(type="text" name="name" id="update-name" value=user.name required class=(errors && errors.name ? 'is-invalid' : ''))
+          if errors && errors.name
+            .error-message.text-danger #{errors.name}
         .form-group
-          label(for="newPassword") #{t('admin-user.new_password')}
-          input(type="password" name="newPassword" required)
+          label(for="phone_number") #{t('admin-user.phone_number')}
+          input(type="text" name="phone_number" id="update-phone_number" value=user.phone_number required class=(errors && errors.phone_number ? 'is-invalid' : ''))
+          if errors && errors.phone_number
+            .error-message.text-danger #{errors.phone_number}
         .form-group
-          label(for="confirmPassword") #{t('admin-user.confirm_password')}
-          input(type="password" name="confirmPassword" required)
+          label(for="date_of_birth") #{t('admin-user.date_of_birth')}
+          input(type="date" name="date_of_birth" id="update-date_of_birth" value=user.date_of_birth class=(errors && errors.date_of_birth ? 'is-invalid' : ''))
+          if errors && errors.date_of_birth
+            .error-message.text-danger #{errors.date_of_birth}
+        .form-group
+          label(for="gender") #{t('admin-user.gender')}
+          select(name="gender" id="update-gender" required class=(errors && errors.gender ? 'is-invalid' : ''))
+            option(value="male" selected=user.gender == 'male') #{t('admin-user.male')}
+            option(value="female" selected=user.gender == 'female') #{t('admin-user.female')}
+          if errors && errors.gender
+            .error-message.text-danger #{errors.gender}
+        .form-group
+          label(for="address") #{t('admin-user.address')}
+          input(type="text" name="address" id="update-address" value=user.address class=(errors && errors.address ? 'is-invalid' : ''))
+          if errors && errors.address
+            .error-message.text-danger #{errors.address}
+        .form-group
+          label(for="identity_card") #{t('admin-user.identity_card')}
+          input(type="text" name="identity_card" id="update-identity_card" value=user.identity_card class=(errors && errors.identity_card ? 'is-invalid' : ''))
+          if errors && errors.identity_card
+            .error-message.text-danger #{errors.identity_card}
+        .form-group
+          label(for="additional_info") #{t('admin-user.additional_info')}
+          input(type="text" name="additional_info" id="update-additional_info" value=user.additional_info class=(errors && errors.additional_info ? 'is-invalid' : ''))
+          if errors && errors.additional_info
+            .error-message.text-danger #{errors.additional_info}
         .btn-group-admin
           .save-btn: button(type="submit") #{t('admin.save')}
-          .cancel-btn: button(type="button" onclick="hideResetPasswordPopup()") #{t('admin.cancel')}
+          .cancel-btn: button(type="button" onclick="hideUpdateForm()") #{t('admin.cancel')}
+
+    #resetPasswordModal.hidden
+      .modal-content-admin  
+        h3 #{t('admin-user.reset_password')}
+        form(action="/account/reset-password" method="POST" id="reset-password-form")
+          input(type="hidden" name="userId" value=user.id)
+          .form-group
+            label(for="currentPassword")  #{t('admin-user.current_password')}
+            input(type="password" name="currentPassword" required)
+          .form-group
+            label(for="newPassword") #{t('admin-user.new_password')}
+            input(type="password" name="newPassword" required)
+          .form-group
+            label(for="confirmPassword") #{t('admin-user.confirm_password')}
+            input(type="password" name="confirmPassword" required)
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideResetPasswordPopup()") #{t('admin.cancel')}

@@ -15,22 +15,18 @@ export class UserRegisterDto {
 
   @IsEnum(UserRoleType)
   @IsOptional()
-  role?: UserRoleType = UserRoleType.USER;
+  role?: UserRoleType;
 
   @IsString()
   @Length(10, 15)
   phone_number!: string;
-
-  @IsString()
-  @IsOptional()
-  avatar?: string;
 
   @IsDateString()
   date_of_birth!: Date;
 
   @IsEnum(UserGenderType)
   @IsOptional()
-  gender?: UserGenderType = UserGenderType.MALE;
+  gender?: UserGenderType;
 
   @IsString()
   @IsOptional()
@@ -61,3 +57,50 @@ export class UserLoginDto {
     @Length(8, 20)
     password!: string;
   }
+
+export class UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  @Length(1, 50, { message: "Name must be between 1 and 50 characters" })
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(10, 15, { message: "Phone number must be between 10 and 15 characters" })
+  phone_number?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @IsOptional()
+  @IsDateString({}, { message: "Date of birth must be a valid date" })
+  date_of_birth?: string;
+
+  @IsOptional()
+  @IsEnum(UserGenderType, { message: `Gender must be either 'male', 'female', or 'other'` })
+  gender?: UserGenderType;
+
+  @IsOptional()
+  @IsString()
+  @Length(0, 100, { message: "Address cannot exceed 100 characters" })
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(0, 20, { message: "Identity card cannot exceed 20 characters" })
+  identity_card?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(0, 500, { message: "Additional information cannot exceed 500 characters" })
+  additional_info?: string;
+
+  @IsOptional()
+  @IsString()
+  department?: string;
+
+  @IsOptional()
+  @IsInt({ message: "Years of experience must be a number" })
+  years_of_experience?: number;
+}

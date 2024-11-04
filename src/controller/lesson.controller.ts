@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { createLesson, deleteLesson, findLessonById, getAllLessons, saveLesson } from '../service/lession.service';
-import { plainToInstance } from 'class-transformer';
-import { LessonCreateDto, LessonUpdateDto } from '@src/entity/dto/lesson.dto';
+import { LessonCreateDto, LessonUpdateDto } from 'src/entity/dto/lesson.dto';
 import { validate } from 'class-validator';
 
 // Get the list of lessons
@@ -16,7 +15,15 @@ export const lessonCreateGet = asyncHandler(async (req: Request, res: Response):
   });
 
 export const lessonCreatePost = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const lessonData = plainToInstance(LessonCreateDto, req.body);
+  const lessonData = new LessonCreateDto()
+  lessonData.content = req.body.content
+  lessonData.description = req.body.description
+  lessonData.name = req.body.name
+  lessonData.progress = req.body.progress
+  lessonData.section_id = req.body.section_id
+  lessonData.time = req.body.time
+  lessonData.type = req.body.type
+
   const errors = await validate(lessonData);
 
   if (errors.length > 0) {
@@ -65,7 +72,14 @@ export const lessonUpdatePost = asyncHandler(async (req: Request, res: Response)
     return res.status(404).render('error', { message: req.t('course.lesson_not_found')  });
   }
 
-  const lessonData = plainToInstance(LessonUpdateDto, req.body);
+  const lessonData = new LessonUpdateDto()
+  lessonData.content = req.body.content ? req.body.content : undefined
+  lessonData.description = req.body.description ? req.body.description : undefined
+  lessonData.name = req.body.name ? req.body.name : undefined 
+  lessonData.progress = req.body.progress ? req.body.progress : undefined
+  lessonData.time = req.body.time ? req.body.time : undefined
+  lessonData.type = req.body.type ? req.body.type : undefined
+
   const errors = await validate(lessonData);
 
   if (errors.length > 0) {

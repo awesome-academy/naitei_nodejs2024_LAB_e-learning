@@ -53,8 +53,6 @@ export const courseShowGet = asyncHandler(
       filterData.sortOrder = sortOrder;
     }
 
-    await validateOrReject(filterData);
-
     try {
       await validateOrReject(filterData);
       const trans = {
