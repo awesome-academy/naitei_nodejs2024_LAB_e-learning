@@ -1,34 +1,72 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { updateStatus, checkProfessorAuthorization, getUserPurchasedCourses, getCoursesInfo, createCourse, updateCourse, deleteCourse } from 'src/service/course.service';
-import { getAllCategories } from 'src/service/category.service';
 import { getSectionsByCourseIds } from 'src/service/section.service';
+import { getAllCategories} from 'src/service/category.service';
+import { error } from 'console';
+import { getLessonsBySectionIds } from 'src/service/lession.service';
+import { calculateTotalTimeAndLessons } from "../../service/section.service";
+import { LessonType } from '../../enum/lesson.enum';
+
+export interface Lesson {
+  id: number;
+  name: string;
+  description: string;
+  time: number;
+  type: string;
+  content: string;
+  section_id: number;
+}
+
 
 export const professorCourseShowGet = asyncHandler(async (req: Request, res: Response) => {
   try {
     const userId = req.session!.user?.id;
-    const isLoggedIn = Boolean(userId);
-
     const courses = await getCoursesInfo(userId);
     const courseIds = courses.map(course => course.id);
     const sections = await getSectionsByCourseIds(courseIds);
-    const categories = await getAllCategories();
-    const payments = isLoggedIn ? await getUserPurchasedCourses(userId) : [];
-    const purchasedCourseIds = payments.map(payment => payment.course_id);
-    const purchasedCourses = courses.filter(course => purchasedCourseIds.includes(course.id));
+    const sectionIds = sections.map(section => section.id);
+    const lessons = await getLessonsBySectionIds(sectionIds);
 
+    for (const section of sections) {
+      const { total_time, total_lesson } = await calculateTotalTimeAndLessons(section.id);
+      section.total_time = total_time;
+      section.total_lesson = total_lesson;
+    }
+    
+    const courseLessons: { [key: number]: { [key: number]: Lesson[] } } = {};
+    sections.forEach(section => {
+      if (!courseLessons[section.course_id]) {
+        courseLessons[section.course_id] = {};
+      }
+      courseLessons[section.course_id][section.id] = [];
+    });
+
+    lessons.forEach(lesson => {
+      const sectionId = lesson.section_id;
+      const section = sections.find(sec => sec.id === sectionId);
+      if (section) {
+        const courseId = section.course_id;
+        if (courseLessons[courseId] && courseLessons[courseId][sectionId]) {
+          courseLessons[courseId][sectionId].push(lesson);
+        }
+      }
+    });
+    const lessonTypes = Object.values(LessonType);
     return res.render('professor/courseManagement', {
       title: req.t('admin.course_management_title'),
       message: req.t('admin.course_management_message'),
       name: req.session!.user.name,
+      lessons,
       sections,
       courses,
-      isLoggedIn,
-      categories,
+      courseLessons,  
+      lessonTypes,
       t: req.t,
     });
   } catch (error) {
-    res.status(500).render('error', { message: req.t('course.course_error') }); 
+    console.error("Error in professorCourseShowGet:", error);
+    res.status(500).render('error', { message: req.t('course.course_error') });
   }
 });
 
@@ -49,7 +87,7 @@ export const professorCreateCourse = async (req: Request, res: Response) => {
 
     res.redirect(`/professors/courses`);
   } catch (error) {
-    res.status(400).json({ message: req.t('course.creation_error', { error: error.message }) }); // i18n for creation error
+    res.status(400).json({ message: req.t('course.creation_error', { error: error.message }) }); 
   }
 };
 

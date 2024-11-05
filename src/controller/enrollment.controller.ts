@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import { updateEnrollmentProgress, getEnrollment, markLessonAsDone, hasUserPurchasedCourse, getEnrollmentWithCourseAndUser, enrollUserInCourse } from '../service/enrollment.service';
+import { updateEnrollmentProgress, getEnrollment, markLessonAsDone, hasUserPurchasedCourse, getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
 import { getSectionsWithLessons, countEnrolledUsersInCourse, getCourseById, getProfessorByCourse   } from '../service/course.service';
 import { getAllCommentsByCourseId } from '../service/comment.service';
 import { getUserById } from '@src/service/user.service';
-import { getEnrollmentLesson } from '@src/service/enrollmentlesson.service';
 
 
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {
@@ -17,19 +16,13 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
     return res.status(400).render('error', { message: req.t('course.userid_courseid_required')  });
   }
 
-  const hasAccess = await hasUserPurchasedCourse(
-    Number(userId),
-    Number(courseId)
-  );
+  const hasAccess = await hasUserPurchasedCourse(Number(userId), Number(courseId));
 
-  let enrollment = await getEnrollmentWithCourseAndUser(
-    Number(userId),
-    Number(courseId)
-  );
-
-  if (!enrollment) {
-    enrollment = await enrollUserInCourse(userId, Number(courseId));
+  if (!hasAccess) {
+    return res.status(403).render('error', { message: req.t('course.purchase_course_error')  });
   }
+
+  const enrollment = await getEnrollmentWithCourseAndUser(Number(userId), Number(courseId));
 
   if (!enrollment || !enrollment.course) {
     return res.status(404).render('error', { message: req.t('course.enrollment_error')  });
@@ -43,7 +36,7 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
   const totalLessons = sectionsWithLessons.reduce((sum, section) => sum + section.lessons.length, 0);
   const totalStudents = await countEnrolledUsersInCourse(Number(courseId));
   const allComments = await getAllCommentsByCourseId(Number(courseId));
-  const lessonProgress = await getEnrollmentLesson(enrollment.id)
+
   res.status(200).render('enrollment', {
     course,
     enrollment,
@@ -58,7 +51,6 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
     userName,
     userMail,
     isLoggedIn,
-    lessonProgress,
     t: req.t,
     userId: req.session!.user?.id,
   });

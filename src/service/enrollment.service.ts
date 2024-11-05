@@ -5,8 +5,6 @@ import { Course } from '../entity/Course';
 import { Payment } from '../entity/Payment';
 import { Lesson } from '../entity/Lesson';
 import { Section } from '@src/entity/Section';
-import { getEnrollmentLesson, upsertEnrollmentLesson } from './enrollmentlesson.service';
-import { Enrollmentlesson } from '@src/entity/EnrollmentLesson';
 
 
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
@@ -124,9 +122,13 @@ export async function getLessons(courseId: number) {
     return lessonsArray;
   }
 
-  export  async function markLessonAsDone(lessonId: number, enrollmentId: number): Promise<Enrollmentlesson | null> {
-    const upsert = await upsertEnrollmentLesson(lessonId, enrollmentId, 100)
-    return upsert;
+  export  async function markLessonAsDone(lessonId: number, enrollmentId: number): Promise<Lesson> {
+    const lesson = await lessonRepository.findOne({ where: { id: lessonId } });
+    if (!lesson) throw new Error('Lesson not found');
+    lesson.progress = 100; 
+    await lessonRepository.save(lesson);
+
+    return lesson;
   }
 
   export async function updateEnrollmentProgress(enrollmentId: number): Promise<void> {
@@ -134,17 +136,16 @@ export async function getLessons(courseId: number) {
         where: { id: enrollmentId },
         relations: ['course', 'course.sections', 'course.sections.lessons'],
     });
-    const lessonProgresss = await getEnrollmentLesson(enrollmentId)
 
     if (!enrollment) throw new Error(`Enrollment with ID ${enrollmentId} not found`);
 
     const lessons = enrollment.course.sections.flatMap(section => section.lessons);
     const totalLessons = lessons.length;
 
-    const completedLessons = lessonProgresss.filter(lesson => lesson.progress === 100).length;
+    const completedLessons = lessons.filter(lesson => lesson.progress === 100).length;
     enrollment.progress = (totalLessons > 0) ? (completedLessons / totalLessons) * 100 : 0;
 
     enrollment.completion_date = enrollment.progress === 100 ? new Date() : null;
 
     await enrollmentRepository.save(enrollment);
-  }
+}

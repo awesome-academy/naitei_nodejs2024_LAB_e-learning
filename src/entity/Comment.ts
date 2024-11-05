@@ -9,7 +9,6 @@ import {
 } from "typeorm";
 import { Review } from "./Review";
 import { User } from "./User";
-import { Course } from "./Course";
 
 @Entity("comments")
 export class Comment {
@@ -24,10 +23,6 @@ export class Comment {
   @JoinColumn({ name: "user_id" })
   user!: User;
 
-  @ManyToOne(() => Course) 
-  @JoinColumn({ name: "course_id" }) 
-  course!: Course;
-
   @Column({ type: "bigint", nullable: true })
   parent_id!: number;
 
@@ -39,9 +34,6 @@ export class Comment {
 
   @Column({ type: "bigint" })
   review_id!: number;
-  
-  @Column({ type: "bigint" }) 
-  course_id!: number;
 
   @CreateDateColumn({ type: "datetime" })
   created_at!: Date;

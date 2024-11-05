@@ -63,7 +63,7 @@ export const professorCreateLesson = async (req: Request, res: Response) => {
             });
           }
 
-        res.redirect(`/professors/lessons`);
+        res.redirect(`/professors/courses`);
     } catch (error) {
         res.status(400).render('error', { message: error.message });
     }
@@ -85,7 +85,7 @@ export const professorUpdateLesson = async (req: Request, res: Response) => {
             return;
         }
 
-        res.redirect(`/professors/lessons`);
+        res.redirect(`/professors/courses`);
     } catch (error) {
         res.status(400).render('error', { error: error.message || 'An unexpected error occurred.' });
       }
@@ -101,8 +101,7 @@ export const professorDeleteLesson = async (req: Request, res: Response) => {
         res.status(404).render('error', { message: 'Lesson not found.' });
         return;
         }
-        res.status(204).send(); 
-        // res.redirect(`/professors/lessons`);
+        res.redirect(`/professors/courses`);
     } catch (error) {
         res.status(400).render('error', { message: error.message });
     }

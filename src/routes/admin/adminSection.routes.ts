@@ -6,5 +6,4 @@ const router: Router = Router();
 
 router.get('/sections', isAdmin, adminSectionController.adminSectionShowGet);
 
-
 export default router;

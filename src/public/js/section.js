@@ -7,7 +7,7 @@ function hideSectionCreateForm() {
 }
 
 function removeSectionForm(button) {
-    $(button).parent().remove();
+    $(button).closest('.section-form').remove();
 }
 
 function showSectionEditForm(id, sectionName, totalTime, totalLessons, courseId) {
@@ -58,18 +58,18 @@ function hideSectionDeleteForm() {
 
 function confirmSectionDelete() {
     if (sectionIdToDelete) {
-        fetch(`/professors/sections/delete/${sectionIdToDelete}`, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    const row = document.getElementById(`sectionRow-${sectionIdToDelete}`);
-                    if (row) row.remove(); 
-                    hideSectionDeleteForm();
-                } else {
-                    console.error('Failed to delete section');
-                    response.json().then(data => alert(data.message)); 
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        $.ajax({
+            url: `/professors/sections/delete/${sectionIdToDelete}`,
+            type: 'DELETE',
+            success: function() {
+                $(`#sectionRow-${sectionIdToDelete}`).remove();
+                hideSectionDeleteForm();
+            },
+            error: function(xhr) {
+                console.error('Failed to delete section');
+                alert(xhr.responseJSON.message); 
+            }
+        });
     }
 }
 
@@ -89,11 +89,8 @@ function confirmDelete() {
         $.ajax({
             url: `/professors/courses/delete/${courseIdToDelete}`,
             type: 'DELETE',
-            success: function(response) {
-                const row = $(`#courseRow-${courseIdToDelete}`);
-                if (row.length) {
-                    row.remove(); 
-                }
+            success: function() {
+                $(`#courseRow-${courseIdToDelete}`).remove(); 
                 hideDeleteForm(); 
             },
             error: function(xhr) {
@@ -102,5 +99,132 @@ function confirmDelete() {
             }
         });
     }
+}
+
+function showLessonEditForm(lessonId, lessonName, sectionId, description, type, content, time) {
+    $('#edit-lesson-id').val(lessonId);
+    $('#edit-lesson-name').val(lessonName);
+    $('#edit-section_id').val(sectionId);
+    $('#edit-description').val(description);
+    $('#edit-type').val(type);
+    $('#edit-content').val(content);
+    $('#edit-time').val(time);
+    $('#editLessonModal').removeClass('hidden');
+}
+  
+function hideLessonEditForm() {
+    $('#editLessonModal').addClass('hidden');
+}
+
+function showLessonCreateForm() {
+    $('#createLessonModal').removeClass('hidden');
+}
+
+function hideLessonCreateForm() {
+    $('#createLessonModal').addClass('hidden');
+}
+
+function removeLessonForm(button) {
+    const form = $(button).closest('.lesson-form');
+    if ($('.lesson-form').length > 1) {
+        form.remove();
+    } else {
+        alert('Không thể xóa bài học cuối cùng!');
+    }
+}
+
+let lessonIdToDelete = null;
+
+function showLessonDeleteForm(id) {
+    lessonIdToDelete = id;
+    $('#deleteLessonModal').removeClass('hidden');
+}
+
+function hideLessonDeleteForm() {
+    $('#deleteLessonModal').addClass('hidden');
+}
+
+function confirmLessonDelete() {
+    if (lessonIdToDelete) {
+        $.ajax({
+            url: `/professors/lessons/delete/${lessonIdToDelete}`,
+            type: 'DELETE',
+            success: function() {
+                $(`#lessonRow-${lessonIdToDelete}`).remove(); 
+                hideLessonDeleteForm(); 
+            },
+            error: function(xhr) {
+                console.error('Failed to delete lesson');
+                alert(xhr.responseJSON.message); 
+            }
+        });
+    }
+}
+
+
+function addSectionForm() {
+    const container = $('#sectionsContainer');
+    const newForm = $(`
+        <div class="section-form">
+            <label for="name">Section Name</label>
+            <input type="text" name="name[]" required>
+            <label for="edit-courseId">Course</label>
+            <select name="course_id[]" required>
+                ${courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('')}
+            </select>
+            <label for="total_time">Total Time</label>
+            <input type="number" name="total_time[]" required>
+            <label for="total_lesson">Total Lesson</label>
+            <input type="number" name="total_lesson[]" required>
+            <button type="button" class="remove-btn" onclick="removeSectionForm(this)">Xóa</button>
+        </div>
+    `);
+    container.append(newForm);
+}
+
+function addLessonForm() {
+    const container = $('#lessonsContainer');
+    const newForm = $(`
+        <div class="lesson-form">
+            <label for="name">Lesson Name</label>
+            <input type="text" name="name[]" required>
+            <label for="section_id">Section</label>
+            <select name="section_id[]" required>
+                ${sections.map(section => `<option value="${section.id}">${section.name}</option>`).join('')}
+            </select>
+            <label for="type">Type</label>
+            <select name="type[]" required>
+                <option value="" disabled selected>Type</option>
+                <option value="video">Video</option>
+                <option value="pdf">PDF</option>
+                <option value="text">Text</option>
+                <option value="url">URL</option>
+            </select>
+            <label for="content">Content</label>
+            <input type="text" name="content[]" required>
+            <label for="description">Description</label>
+            <input type="text" name="description[]" required>
+            <label for="time">Time</label>
+            <input type="number" name="time[]" required>
+            <button type="button" class="remove-btn" onclick="removeLessonForm(this)">Delete</button>
+        </div>
+    `);
+    container.append(newForm);
+}
+
+function showSections(courseId) {
+    $(`#sections-${courseId}`).removeClass('hidden');
+}
+
+function hideSections(courseId) {
+    $(`#sections-${courseId}`).addClass('hidden');
+}
+
+function showLessons(courseId) {
+    $(`#lessons-${courseId}`).removeClass('hidden');
+}
+
+function hideLessons(courseId) {
+    $(`#lessons-${courseId}`).addClass('hidden');
 }
 

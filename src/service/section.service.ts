@@ -22,13 +22,6 @@ export const getSectionsByCourseIds = async (courseIds: number[]) => {
   });
 };
 
-export const getSectionsByCourseId = async (courseId: number) => {
-  return await sectionRepository.find({
-    where: { course: { id: courseId } },
-    relations: ['course'], 
-  });
-};
-
 export async function createSection(data: Partial<Section>): Promise<Section> {
     const newSection = sectionRepository.create({
         name: data.name,
@@ -53,6 +46,12 @@ export const calculateTotalTimeAndLessons = async (sectionId: number) => {
 
     return { total_time, total_lesson };
 };
+
+export const updateSectionStats = async (sectionId: number) => {
+  const { total_time, total_lesson } = await calculateTotalTimeAndLessons(sectionId);
+  await sectionRepository.update(sectionId, { total_time, total_lesson });
+};
+
 export const updateSection = async (id: number, body: any) => {
   const section = await sectionRepository.findOne({
     where: { id },

@@ -26,8 +26,8 @@ export const courseGet = asyncHandler(async (req: Request, res: Response) => {
 import {
   getAllComments,
   getAllCommentsByCourseId,
-} from "../service/comment.service";
-import { calculateTotalTimeAndLessons } from "../service/lession.service";
+} from "@src/service/comment.service";
+import { calculateTotalTimeAndLessons } from "../service/section.service";
 
 export const courseShowGet = asyncHandler(
   async (req: Request, res: Response) => {

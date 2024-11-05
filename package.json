@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "connect-mysql": "^4.0.0",
     "connect-mysql2": "^2.2.6",
     "cookie-parser": "^1.4.6",
@@ -28,6 +30,7 @@
     "express-async-errors": "^3.1.1",
     "express-async-handler": "1.2.0",
     "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
     "i18next": "^23.15.2",
     "i18next-express-middleware": "^2.0.0",

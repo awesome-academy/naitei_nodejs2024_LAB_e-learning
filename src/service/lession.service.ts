@@ -33,7 +33,6 @@ export const getLessonsBySectionIds = async (sectionIds: number[]) => {
 };
 
 export const updateLesson = async (id: number, lessonData: any) => {
-    // Tìm bài học hiện tại
     const lesson = await lessonRepository.findOne({
       where: { id },
       relations: ['section'],
@@ -47,7 +46,6 @@ export const updateLesson = async (id: number, lessonData: any) => {
       throw new Error(`section_id is required to update lesson.`);
     }
   
-    // Lấy thông tin section mới
     const newSection = await sectionRepository.findOne({
       where: { id: lessonData.section_id },
     });
@@ -64,7 +62,7 @@ export const updateLesson = async (id: number, lessonData: any) => {
       await adjustSectionTotals(oldSectionId, -1, -oldLessonTime);
     }
   
-    lesson.name = lessonData['lesson-name'];
+    lesson.name = lessonData.name;
     lesson.description = lessonData.description;
     lesson.type = lessonData.type;
     lesson.content = lessonData.content;
@@ -92,19 +90,6 @@ if (section) {
 }
 };
 
-export const calculateTotalTimeAndLessons = async (sectionId: number) => {
-
-    const lessons = await lessonRepository.find({ where: { section_id: sectionId } });
-
-    let total_time = 0;
-    let total_lesson = lessons.length; 
-
-    lessons.forEach(lesson => {
-      total_time += lesson.time; 
-    });
-
-    return { total_time, total_lesson };
-};
 
 export const saveLesson = async (lesson: Lesson) => {
     return await lessonRepository.save(lesson)
