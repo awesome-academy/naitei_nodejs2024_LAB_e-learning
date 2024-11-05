@@ -3,6 +3,9 @@ import asyncHandler from 'express-async-handler';
 import { getLessonsBySectionIds, createLesson, updateLesson, deleteLesson } from 'src/service/lession.service';
 import { getCoursesByUserId  } from 'src/service/course.service';
 import { getSectionsByCourseIds } from 'src/service/section.service';
+import { LessonCreateDto } from 'src/entity/dto/lesson.dto';
+import { plainToClass } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
 
 export const professorLesonShowGet = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -38,7 +41,10 @@ export const professorLesonShowGet = asyncHandler(async (req: Request, res: Resp
 });
 
 export const professorCreateLesson = async (req: Request, res: Response) => {
+    const lessonData = plainToClass(LessonCreateDto, req.body)
     try {
+        await validateOrReject(lessonData);
+
         const sectionIds = req.body.section_id;
         const names = req.body.name;
         const types = req.body.type;
@@ -65,7 +71,12 @@ export const professorCreateLesson = async (req: Request, res: Response) => {
 
         res.redirect(`/professors/lessons`);
     } catch (error) {
-        res.status(400).render('error', { message: error.message });
+        if (Array.isArray(error) && error[0].constraints) {
+            const validationErrors = error.map(err => Object.values(err.constraints)).flat();
+            res.status(400).render('error', { message: req.t('course.update_error', { error: validationErrors.join(', ')  }) }); 
+          } else {
+            res.status(400).render("error", { error: error.message });
+        }
     }
 };
 

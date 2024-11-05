@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
+import { plainToClass } from 'class-transformer';
+import { validateOrReject } from "class-validator";
+import { UserRoleType, UserGenderType } from "src/enum/user.enum";
 import {
   userRegister,
   userLogin,
@@ -14,39 +17,27 @@ import {
   getSectionsWithLessons,
   countEnrolledUsersInCourse,
 } from "../service/course.service";
+import { UserRegisterDto, UserLoginDto } from 'src/entity/dto/user.dto';
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const {
-    name,
-    email,
-    password,
-    role,
-    phone_number,
-    avatar,
-    date_of_birth,
-    gender,
-    address,
-    identity_card,
-    additional_info,
-    department,
-    years_of_experience,
-  } = req.body;
+  const userRegisterData = plainToClass(UserRegisterDto, req.body);
 
   try {
+    await validateOrReject(userRegisterData);
     const user = await userRegister(
-      name,
-      email,
-      password,
-      role,
-      phone_number,
-      avatar,
-      date_of_birth,
-      gender,
-      address,
-      identity_card,
-      additional_info,
-      department,
-      years_of_experience
+      userRegisterData.name,
+      userRegisterData.email,
+      userRegisterData.password,
+      userRegisterData.role || UserRoleType.USER,
+      userRegisterData.phone_number,
+      userRegisterData.avatar || '',
+      userRegisterData.date_of_birth,
+      userRegisterData.gender || UserGenderType.MALE,
+      userRegisterData.address || '',
+      userRegisterData.identity_card || '',
+      userRegisterData.additional_info || '',
+      userRegisterData.department || '',
+      userRegisterData.years_of_experience || 0 
     );
 
     res
@@ -62,9 +53,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const userLoginData = plainToClass(UserLoginDto, req.body);
+
   try {
-    const { token, user } = await userLogin(email, password);
+    await validateOrReject(userLoginData);
+    const { token, user } = await userLogin(userLoginData.email, userLoginData.password);
 
     if (req.session) {
       req.session.accessToken = token;

@@ -5,14 +5,22 @@ import { getSectionsWithLessons, countEnrolledUsersInCourse, getCourseById, getP
 import { getAllCommentsByCourseId } from '../service/comment.service';
 import { getUserById } from '@src/service/user.service';
 import { getEnrollmentLesson } from '@src/service/enrollmentlesson.service';
+import { validateOrReject } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
+import { GetUserCourseEnrollmentsDto, UpdateLessonProgressDto } from '@src/entity/dto/entrollment.dto';
 
 
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {
   const  {courseId}  = req.params;
   const userId = req.session!.user?.id;
+  // validate
+  const dto = plainToInstance(GetUserCourseEnrollmentsDto, { courseId });
+  await validateOrReject(dto);
+
   const isLoggedIn = Boolean(userId);
   const userName = req.session!.user?.name;
   const userMail = req.session!.user?.email;
+  
   if (!userId || !courseId) {
     return res.status(400).render('error', { message: req.t('course.userid_courseid_required')  });
   }
@@ -67,6 +75,10 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
 export const updateLessonProgress = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const {  courseId, lessonId } = req.params;
   const userId = req.session!.user?.id;
+
+  // Validate request parameters
+  const dto = plainToInstance(UpdateLessonProgressDto, { courseId, lessonId });
+  await validateOrReject(dto);
   
   if (!userId || !courseId || !lessonId) {
     return res.status(404).render('error', { message: req.t('course.enrollment_not_found')  });
