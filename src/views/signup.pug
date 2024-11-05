@@ -12,6 +12,7 @@ block content
       button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
     .toast-body
       | #{t('signup.signup-success-msg')}
+
   #toastNoAutohideError.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
     .toast-header.text-danger
       i(data-feather='alert-octagon').me-2
@@ -28,6 +29,19 @@ block content
           form#registerForm.shadow.p-4.custom-width(action='/register' method='POST')
             .text-center.wow.fadeInUp(data-wow-delay='0.1s')
               h1.mb-5.bg-white.text-center.px-3 #{t('home.signup')}
+
+            .row.g-3
+              if errors && errors.length > 0
+                .col-12
+                  .alert.alert-danger
+                    p Vui lòng sửa lỗi:
+                    if (role === 'professor') 
+                      if errors.some(error => error.msg.includes('Bộ phận') || error.msg.includes('Số năm kinh nghiệm'))
+                        each error in errors
+                          p= error.msg
+                      each error in errors
+                        p= error.msg
+
             .row.g-3
               .col-12
                 .form-floating
@@ -63,11 +77,11 @@ block content
                     option(value='professor') #{t('admin-user.professor')}
                   label(for='role') #{t('signup.role')}
               .col-12.form-floating.department-field(style='display: none;')
-                 input#department.form-control(type='text' placeholder='Department' name='department')
-                 label(for='department') #{t('signup.department')}
+                input#department.form-control(type='text' placeholder='Department' name='department')
+                label(for='department') #{t('signup.department')}
               .col-12.form-floating.years-experience-field(style='display: none;')
-                 input#years_of_experience.form-control(type='number' placeholder='Years of Experience' name='years_of_experience')
-                 label(for='years_of_experience') #{t('signup.years-of-experience')}
+                input#years_of_experience.form-control(type='number' placeholder='Years of Experience' name='years_of_experience')
+                label(for='years_of_experience') #{t('signup.years-of-experience')}
               .col-12
                 .form-floating
                   input#password.form-control(type='password' placeholder='Password' name='password' required)
@@ -89,6 +103,7 @@ block content
   <!-- Signup End -->
 
   include partial/footer
+
   script.
     document.querySelector("#registerForm").addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -106,7 +121,6 @@ block content
         additional_info: formData.get("additional_info"),
         department: formData.get("department"),
         years_of_experience: formData.get("years_of_experience"),
-
       };
 
       try {
@@ -127,11 +141,13 @@ block content
       } catch (error) {
         const toastElement = document.getElementById("toastNoAutohideError");
         toastElement.style.removeProperty("display");
+        toastElement.querySelector('.toast-body').textContent = error.responseJSON.errors[0].msg; // Chỉ hiển thị lỗi đầu tiên
         setTimeout(() => {
           toastElement.style.display = "none";
         }, 2000);
       }
     });
+
     document.querySelector("#role").addEventListener("change", function () {
       const isProfessor = this.value === "professor";
       document.querySelector(".department-field").style.display = isProfessor ? "block" : "none";

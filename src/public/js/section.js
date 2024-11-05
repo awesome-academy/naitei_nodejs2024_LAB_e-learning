@@ -75,6 +75,13 @@ function confirmSectionDelete() {
 
 let courseIdToDelete = null;
 
+function showSections(courseId) {
+    document.getElementById(`sections-${courseId}`).classList.remove('hidden');
+}
+function hideSections(courseId) {
+    document.getElementById(`sections-${courseId}`).classList.add('hidden');
+}
+
 function showDeleteForm(id) {
     courseIdToDelete = id;
     $('#deleteModal').removeClass('hidden');
@@ -102,5 +109,25 @@ function confirmDelete() {
             }
         });
     }
+}
+
+function addSectionForm() {
+    const container = document.getElementById('sectionsContainer');
+    const newForm = document.createElement('div');
+    newForm.className = 'section-form';
+    newForm.innerHTML = `
+        <label for="name">Section Name</label>
+        <input type="text" name="name[]" required>
+        <label for="edit-courseId">Course</label>
+        <select name="course_id[]" required>
+            ${courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('')}
+        </select>
+        <label for="total_time">Total Time</label>
+        <input type="number" name="total_time[]" required>
+        <label for="total_lesson">Total Lesson</label>
+        <input type="number" name="total_lesson[]" required>
+        <button type="button" class="remove-btn" onclick="removeSectionForm(this)">Xóa</button>
+    `;
+    container.appendChild(newForm);
 }
 
