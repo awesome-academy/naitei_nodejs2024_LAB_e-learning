@@ -122,8 +122,12 @@ block content
                                           span.pdf-test #{lesson.content}
 
                                       form(method='POST', action=`/enrollments/${enrollment.course_id}/${lesson.id}`)
-                                        input(type='hidden' name='lessonId', value=lesson.id)
-                                        button.btn.btn-primary(type='submit') Mark as done
+                                        input(type='hidden' name='lessonId' value=lesson.id)
+                                        if lessonProgress!=null && lessonProgress.some(le => le.lesson_id === Number(lesson.id) && le.progress === 100)
+                                          p Done
+                                        else
+                                          button.btn.btn-primary(type='submit' id=`markAsDoneBtn-${lesson.id}`) Mark as done
+
                               else
                                 p #{t('course.course_lesson_error')} 
                 #Instructor.container

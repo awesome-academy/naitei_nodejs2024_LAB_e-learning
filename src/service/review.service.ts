@@ -10,6 +10,37 @@ export const getReviewByCourseId = (courseId: number) => {
   });
 };
 
+export const getReviewsWithDetails = async () => {
+  return await reviewRepository.find({
+    relations: {
+      user: true,     
+      course: true,    
+      comments: {
+        user: true,    
+      },
+    },
+    select: {
+      id: true,
+      rating: true,
+      created_at: true,
+      user: {
+        name: true,
+      },
+      course: {
+        name: true,
+      },
+      comments: {
+        id: true,
+        comment_text: true,
+        created_at: true,
+        user: {
+          name: true,
+        },
+      },
+    },
+  });
+};
+
 export const createReview = (
   user_id: number,
   rating: number,

@@ -252,6 +252,8 @@
     "price": "Price",
     "rating": "Averaged rating",
     "categoryId": "Category Id",
+    "view-sections": "View",
+    "view-lessons": "View",
     "categoryName": "Category Name",
     "paymentCount": "Payment Count",
     "enrollmentCount": "Enrollment Count",
@@ -288,6 +290,27 @@
     "amount": "Total time",
     "status": "Content",
     "payment-date": "Payment time"
+  },
+  "admin-comment": {
+    "management": "Comments management",
+    "#": "#",
+    "id": "Comment ID",
+    "user": "User",
+    "course": "Course",
+    "text": "Content",
+    "date": "Date created",
+    "NA": "N/A"
+  },
+  "admin-review": {
+    "management":"Reviews management",
+    "#": "#",
+    "id": "Review ID",
+    "user": "User",
+    "course": "Course",
+    "rating": "Rating",
+    "date": "Date created",
+    "no-user": "No user",
+    "no-course": "No course"
   },
   "cart": {
     "title": "Shopping Cart",

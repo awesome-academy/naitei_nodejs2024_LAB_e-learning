@@ -27,6 +27,27 @@ export const createComment = async (
   });
 };
 
+export const getCommentsWithDetails = async () => {
+  return await commentRepository.find({
+    relations: {
+      user: true,
+      course: true,  
+    },
+    select: {
+      id: true,
+      comment_text: true,
+      created_at: true,
+      user: {
+        name: true,
+      },
+      course: {
+        name: true,  
+      },
+    },
+  });
+};
+
+
 export const getAllCommentsByCourseId = async (courseId: number) => {
   const comments = await commentRepository.find({
     where: { review: { course_id: courseId } },
