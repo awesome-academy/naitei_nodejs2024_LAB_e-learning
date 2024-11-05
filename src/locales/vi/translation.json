@@ -289,6 +289,27 @@
     "status": "Trạng thái",
     "payment-date": "Ngày thanh toán"
   },
+  "admin-comment": {
+    "management": "Quản lý bình luận",
+    "#": "#",
+    "id": "ID",
+    "user": "Người dùng",
+    "course": "Khóa học",
+    "text": "Nội dung",
+    "date": "Ngày đăng",
+    "NA": "N/A"
+  },
+  "admin-review": {
+    "management":"Quản lý review",
+    "#": "#",
+    "id": "Review ID",
+    "user": "Người dùng",
+    "course": "Khóa học",
+    "rating": "Đánh giá",
+    "date": "Ngày đăng",
+    "no-user": "Không có người dùng",
+    "no-course": "Không có khóa học"
+  },
   "cart": {
     "title": "Giỏ hàng",
     "your_cart": "Giỏ hàng của bạn",

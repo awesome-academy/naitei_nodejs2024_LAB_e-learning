@@ -21,6 +21,8 @@ block content
                   th #{t('admin-course.professorId')}
                   th #{t('admin-course.price')}
                   th #{t('admin-course.average_rating')}
+                  th #{t('admin.sections')}
+                  th #{t('admin.lessons')}
               tbody
                 each course, index in courses
                   tr(id=`courseRow-${course.id}`)
@@ -32,3 +34,40 @@ block content
                     td #{course.professorId}
                     td $#{course.price}
                     td #{course.average_rating || 'N/A'}
+                    td
+                      .view-btn
+                        button(onclick=`showViewSections('${course.id}')`) #{t('admin-course.view-sections')}
+                    td
+                      .view-btn
+                        button(onclick=`showViewLessons('${course.id}')`) #{t('admin-course.view-lessons')}
+  <!-- Section View Modal -->
+  #viewSectionsModal.hidden
+    .modal-content-admin
+      h3 #{t('admin-course.view_sections')}
+      table.admin-table
+        thead
+          tr
+            th #{t('section.#')}
+            th #{t('section.id')}
+            th #{t('section.name')}
+            th #{t('section.description')}
+        tbody#sectionTableBody
+
+      .btn-group-admin
+        .close-btn: button(type="button" onclick="hideViewSections()") #{t('admin.close')}
+    <!-- Lesson View -->  
+    #lessonsModal.hidden
+      .modal-content-admin
+        h3 #{t('admin-course.view-lessons')}
+        table.admin-table
+          thead
+            tr
+              th #{t('admin-lesson.#')}
+              th #{t('admin-lesson.name')}
+              th #{t('admin-lesson.description')}
+              th #{t('admin-lesson.type')}
+              th #{t('admin-lesson.time')}
+          tbody#lessonsTable
+            //- Rows will be added dynamically here
+        .btn-group-admin
+          .close-btn: button(type="button" onclick="hideLessonsModal()") #{t('admin.close')}

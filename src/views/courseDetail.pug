@@ -137,6 +137,106 @@ block content
                             .comment-info
                               h6.mb-0 #{child.user.name}
                               small.text-muted #{child.user.email}
+                          p.mt-3.mb-1.px-5 #{child.comment_text}
+
+          .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
+            .image.text-center
+              img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
+            .buttons
+              if paidCourse
+                a.text-decoration-none.text-white.btn.p-3.w-100.mb-2(href=`/enrollments/${course.id}`) #{t('home.Enroll')}
+              else
+                h4.mt-2.p-2
+                | $
+                small
+                  del #{course.price}
+                form(action=`/cart/add`, method='POST')
+                  input(type='hidden', name='courseId', value=course.id)
+                  button.text-decoration-none.text-white.btn.p-3.w-100.mb-2(type='submit') #{t('home.Add_to_cart')}
+            .list.mt-2
+              .list1.d-flex.justify-content-between.pt-2.border-bottom
+                p
+                  | Start at the beginning by learning HTML basics &mdash; an important foundation for building and editing web pages.
+                .d-flex
+                  .px-2: small
+                    i.fa.fa-star.text-warning  
+                    |  #{course.average_rating}
+                  .px-2: small
+                    i.fa.fa-user-graduate
+                    |  #{totalStudents} 
+                    |  #{t('course.student')}
+                  .px-2: small
+                    i.fa.fa-user
+                    |  #{t('course.begin')}
+                  .px-2: small
+                    i.fa.fa-clock.me-2
+                    |  #{totalHours}h
+                .image-div.text-left.mt-3
+                  img(src='/img/testimonial-2.jpg' alt='', )
+                  span
+                    b #{t('course.instructor_name')} - #{name}
+          .container-fluid.wow.fadeInUp.mt-5.tabs
+            .tab-content.mt-4
+              #Overview.tab-pane.container.active
+                h2 #{t('course.about_course')}
+                p 
+                  | #{course.description}
+                h2.mt-4
+                  | #{t('course.skill')}
+                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Structure pages with HTML
+                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Present data with tables
+                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Write cleaner HTML
+              #Curriculum.container
+                h2.mt-4
+                  | #{t('course.section')}
+                  #accordionFlushExample.accordion.accordion-flush
+                    each section in sectionsWithLessons
+                      .accordion-item
+                        h2.accordion-header
+                          - var sectionId = 'flush-collapse' + section.id
+                          button.accordion-button.collapsed.fs-5(type='button' data-bs-toggle='collapse', data-bs-target=`#${sectionId}`, aria-expanded='false', aria-controls=sectionId)
+                            | #{section.name}
+                        .accordion-collapse.collapse(id=sectionId, data-bs-parent='#accordionFlushExample')
+                          .accordion-body
+                            if section.lessons.length > 0
+                              ul
+                                each lesson in section.lessons
+                                  li
+                                    .custom-lesson.py-2
+                                      i.fa.fa-video.text-danger
+                                      |   #{lesson.name} - #{lesson.time} #{t('course.hours')} 
+                            else
+                              .custom-lesson.py-2 #{t('course.course_lesson_error')} 
+              #Instructor.container
+                h2.mt-4 #{t('course.course_professor')}
+                .image-div.text-left.mt-4
+                  .row
+                    .col-lg-3.col-md-6
+                      img(src='/img/testimonial-2.jpg' alt='')
+                    .col-lg-9.col-md-6.mt-2
+                      h5 #{name}
+                      p #{t('course.professor_job')}
+                      .row
+                        .col-6
+                          p
+                            i.fa.fa-star
+                              |   4.87 #{t('course.professor_rating')}
+                        .col-6
+                          p
+                            i.fa.fa-check
+                              |   1,533 #{t('course.professor_review')}
+                      .row
+                        .col-6
+                          p
+                            i.fa.fa-user
+                              |   #{totalStudents} #{t('course.professor_student')}
+                        .col-6
+                          p
+                            i.fa.fa-video
+                              |   29 #{t('course.professor_course')}
+                  .des.mt-4.mb-5
+                    | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
+        .col-lg-3.col-md-6.shadow.wow.fadeInUp(data-wow-delay='0.3s')
                           p.mt-3.px-5 #{child.comment_text}
         .col-lg-3.col-md-6.shadow.wow.fadeInUp.custom-h(data-wow-delay='0.3s')
           .image.text-center

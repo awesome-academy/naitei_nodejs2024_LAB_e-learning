@@ -22,6 +22,13 @@ export const getSectionsByCourseIds = async (courseIds: number[]) => {
   });
 };
 
+export const getSectionsByCourseId = async (courseId: number) => {
+  return await sectionRepository.find({
+    where: { course: { id: courseId } },
+    relations: ['course'], 
+  });
+};
+
 export async function createSection(data: Partial<Section>): Promise<Section> {
     const newSection = sectionRepository.create({
         name: data.name,
