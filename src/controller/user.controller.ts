@@ -14,8 +14,15 @@ import {
   getSectionsWithLessons,
   countEnrolledUsersInCourse,
 } from "../service/course.service";
+const { validationResult } = require('express-validator');
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+     res.status(400).json({ status: 400, errors: errors.array() });
+     return;
+  }
+
   const {
     name,
     email,
