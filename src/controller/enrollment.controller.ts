@@ -3,11 +3,11 @@ import asyncHandler from 'express-async-handler';
 import { updateEnrollmentProgress, enrollUserInCourse, getEnrollment, markLessonAsDone, hasUserPurchasedCourse, getEnrollmentWithCourseAndUser } from '../service/enrollment.service';
 import { getProfessorAndCourseCountByCourseId, getSectionsWithLessons, countEnrolledUsersInCourse, getCourseById, getProfessorByCourse   } from '../service/course.service';
 import { getAllCommentsByCourseId } from '../service/comment.service';
-import { getUserById } from '@src/service/user.service';
-import { getEnrollmentLesson } from '@src/service/enrollmentlesson.service';
+import { getUserById } from 'src/service/user.service';
+import { getEnrollmentLesson } from 'src/service/enrollmentlesson.service';
 import { validateOrReject } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { GetUserCourseEnrollmentsDto, UpdateLessonProgressDto } from '@src/entity/dto/entrollment.dto';
+import { GetUserCourseEnrollmentsDto, UpdateLessonProgressDto } from 'src/entity/dto/entrollment.dto';
 
 
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {

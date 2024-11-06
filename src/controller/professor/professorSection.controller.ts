@@ -25,9 +25,9 @@ export const professorCreateSection = async (req: Request, res: Response) => {
 
       const sectionData = new CreateSectionDto();
       sectionData.name = names[i];
-      sectionData.total_lesson = totalLessons[i];
+      sectionData.total_lesson = totalLessons[i] ? totalLessons[i] : undefined;
       sectionData.course_id = courseId;
-      sectionData.total_time = totalTimes[i];
+      sectionData.total_time = totalTimes[i] ? totalTimes[i] : undefined;
 
       const errors = await validate(sectionData);
 
@@ -61,8 +61,13 @@ export const professorUpdateSection = async (req: Request, res: Response) => {
       return;
     }
 
-    const sectionDto = plainToInstance(UpdateSectionDto, req.body);
-    const errors = await validate(sectionDto);
+    const sectionData = new UpdateSectionDto()
+    sectionData.id = sectionId
+    sectionData.name = req.body.name ? req.body.name : undefined
+    sectionData.total_lesson = req.body.total_lesson ? req.body.total_lesson : undefined
+    sectionData.total_time = req.body.total_time ? req.body.total_time : undefined
+    
+    const errors = await validate(sectionData);
 
     if (errors.length > 0) {
       const messages = errors.map((err) => Object.values(err.constraints || {})).flat();

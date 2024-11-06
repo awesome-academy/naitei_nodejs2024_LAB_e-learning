@@ -3,8 +3,7 @@ import asyncHandler from 'express-async-handler';
 import { getLessonsBySectionIds, createLesson, updateLesson, deleteLesson } from 'src/service/lession.service';
 import { getCoursesByUserId  } from 'src/service/course.service';
 import { getSectionsByCourseIds } from 'src/service/section.service';
-import { LessonCreateDto } from 'src/entity/dto/lesson.dto';
-import { plainToClass } from 'class-transformer';
+import { LessonCreateDto, LessonUpdateDto } from 'src/entity/dto/lesson.dto';
 import { validateOrReject } from 'class-validator';
 
 export const professorLesonShowGet = asyncHandler(async (req: Request, res: Response) => {
@@ -41,7 +40,14 @@ export const professorLesonShowGet = asyncHandler(async (req: Request, res: Resp
 });
 
 export const professorCreateLesson = async (req: Request, res: Response) => {
-    const lessonData = plainToClass(LessonCreateDto, req.body)
+    const lessonData = new LessonCreateDto()
+    lessonData.content = req.body.content
+    lessonData.description = req.body.description
+    lessonData.name = req.body.name
+    lessonData.progress = req.body.progress ? parseInt(req.body.progress) : 0
+    lessonData.section_id = req.body.section_id ? parseInt(req.body.section_id) : 0
+    lessonData.time = req.body.time ? parseInt(req.body.time) : 0
+    lessonData.type = req.body.type
     try {
         await validateOrReject(lessonData);
 
@@ -88,6 +94,14 @@ export const professorUpdateLesson = async (req: Request, res: Response) => {
             res.status(400).render('error', { message: 'Invalid lesson ID or section ID.' });
             return;
         }
+
+        const lessonData = new LessonUpdateDto()
+        lessonData.content = req.body.content ? req.body.content : undefined
+        lessonData.description = req.body.description ? req.body.description : undefined
+        lessonData.name = req.body.name ? req.body.name : undefined
+        lessonData.progress = req.body.progress ? parseInt(req.body.progress) : 0
+        lessonData.time = req.body.time ? parseInt(req.body.time)  : 0
+        lessonData.type = req.body.type ? req.body.type : undefined
 
         const updatedLesson = await updateLesson(lessonId, req.body);
         

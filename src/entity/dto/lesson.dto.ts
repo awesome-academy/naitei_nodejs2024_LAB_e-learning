@@ -11,7 +11,7 @@ export class LessonCreateDto {
   @IsInt()
   @Min(0)
   @Max(100)
-  progress!: number | null;
+  progress!: number;
 
   @IsNotEmpty()
   @IsEnum(LessonType)
@@ -44,7 +44,7 @@ export class LessonUpdateDto {
   @IsInt()
   @Min(0)
   @Max(100)
-  progress?: number | null;
+  progress?: number;
 
   @IsOptional()
   @IsEnum(LessonType)

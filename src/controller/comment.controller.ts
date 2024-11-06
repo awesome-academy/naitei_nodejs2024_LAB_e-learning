@@ -63,7 +63,7 @@ export const updateCommentPost = asyncHandler(
     }
 
     const commentData = new CommentDTO();
-    commentData.comment_text = updatedText;
+    commentData.parent_id = undefined;
 
     // Update comment and save to database
     comment.comment_text = updatedText;
@@ -92,7 +92,7 @@ export const createCommentPost = asyncHandler(
     commentData.review_id = review_id;
     commentData.user_id = user_id;
     commentData.comment_text = reply;
-    commentData.parent_id = parent_id;
+    commentData.parent_id = parent_id ? parent_id : undefined;
     commentData.course_id = course_id;
 
     try {

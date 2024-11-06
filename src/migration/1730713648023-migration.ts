@@ -12,5 +12,4 @@ export class Migration1730713648023 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`comments\` DROP FOREIGN KEY \`FK_8510ab448f65396f69cc54c858c\``);
         await queryRunner.query(`ALTER TABLE \`comments\` DROP COLUMN \`course_id\``);
     }
-
 }

@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { plainToClass } from 'class-transformer';
 import { validateOrReject } from "class-validator";
-import { UserRoleType, UserGenderType } from "src/enum/user.enum";
 import {
   userRegister,
   userLogin,
@@ -11,6 +9,7 @@ import {
   saveUserDetails,
   getPurchasedCoursesWithDetails,
   updateUserPassword,
+  formatFieldName
 } from "../service/user.service";
 import { getEnrollmentWithCourseAndUser } from "../service/enrollment.service";
 import {
@@ -18,44 +17,89 @@ import {
   countEnrolledUsersInCourse,
   getCoursesByUserId,
 } from "../service/course.service";
-import { UserRegisterDto, UserLoginDto } from 'src/entity/dto/user.dto';
+import { UserRegisterDto, UserLoginDto, UpdateUserDto } from 'src/entity/dto/user.dto';
+import { UserGenderType, UserRoleType } from "src/enum/user.enum";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const userRegisterData = plainToClass(UserRegisterDto, req.body);
+  const userData = new UserRegisterDto();
+  userData.name = req.body.name
+  userData.email = req.body.email
+  userData.password = req.body.password
+  userData.role = req.body.role ? req.body.role : UserRoleType.USER
+  userData.phone_number = req.body.phone_number
+  userData.date_of_birth = req.body.date_of_birth
+  userData.gender = req.body.gender ? req.body.gender : UserGenderType.MALE
+  userData.address = req.body.address ? req.body.address : undefined
+  userData.identity_card = req.body.identity_card ? req.body.identity_card : undefined
+  userData.additional_info = req.body.additional_info ? req.body.additional_info : undefined
+  if (userData.role == UserRoleType.PROFESSOR) {
+    userData.department = req.body.department ? req.body.department : undefined
+    userData.years_of_experience = req.body.years_of_experience ? parseInt(req.body.years_of_experience) : 0
+  } else {
+    userData.department = undefined
+    userData.years_of_experience = undefined
+  }
+
+  const {
+    name,
+    email,
+    password,
+    role,
+    phone_number,
+    avatar,
+    date_of_birth,
+    gender,
+    address,
+    identity_card,
+    additional_info,
+    department,
+    years_of_experience,
+  } = req.body;
 
   try {
-    await validateOrReject(userRegisterData);
+    await validateOrReject(userData)
+    
     const user = await userRegister(
-      userRegisterData.name,
-      userRegisterData.email,
-      userRegisterData.password,
-      userRegisterData.role || UserRoleType.USER,
-      userRegisterData.phone_number,
-      userRegisterData.avatar || '',
-      userRegisterData.date_of_birth,
-      userRegisterData.gender || UserGenderType.MALE,
-      userRegisterData.address || '',
-      userRegisterData.identity_card || '',
-      userRegisterData.additional_info || '',
-      userRegisterData.department || '',
-      userRegisterData.years_of_experience || 0 
+      name,
+      email,
+      password,
+      role,
+      phone_number,
+      avatar,
+      date_of_birth,
+      gender,
+      address,
+      identity_card,
+      additional_info,
+      department,
+      years_of_experience
     );
 
     res
       .status(201)
       .json({ status: 201, message: req.t("signup.signup-success"), user });
   } catch (error) {
-    const message =
-      error.message === req.t("user.user_error")
-        ? error.message
-        : req.t("signup.signup-failure");
-    res.status(400).json({ status: 400, message });
+    if (Array.isArray(error) && error[0].constraints) {
+      const validationErrors = error.reduce((acc, err) => {
+        acc[err.property] = Object.values(err.constraints).join(", ");
+        return acc;
+      }, {});
+      // console.log(validationErrors)
+      res.status(400).json({ status: 400, errors: validationErrors });
+    } else {
+      const message =
+        error.message === req.t("user.user_error")
+          ? error.message
+          : req.t("signup.signup-failure");
+      res.status(400).json({ status: 400, message });  
+    }
   }
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const userLoginData = plainToClass(UserLoginDto, req.body);
-
+  const userLoginData = new UserLoginDto()
+  userLoginData.email = req.body.email
+  userLoginData.password = req.body.password
   try {
     await validateOrReject(userLoginData);
     const { token, user } = await userLogin(userLoginData.email, userLoginData.password);
@@ -72,9 +116,20 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       user,
     });
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, message: req.t("login.login-failure") });
+    if (Array.isArray(error) && error[0].constraints) {
+      const validationErrors = error.reduce((acc, err) => {
+        acc[err.property] = Object.values(err.constraints).join(", ");
+        return acc;
+      }, {});
+      // console.log(validationErrors)
+      res.status(400).json({ status: 400, errors: validationErrors });
+    } else {
+      const message =
+        error.message === req.t("user.user_error")
+          ? error.message
+          : req.t("signup.signup-failure");
+      res.status(400).json({ status: 400, message });  
+    }  
   }
 });
 
@@ -232,6 +287,18 @@ export const updateUserDetails = asyncHandler(
         .status(404)
         .render("error", { message: req.t("user.user_authenticated") });
     }
+    const userData = new UpdateUserDto()
+    userData.additional_info = req.body.additional_info ? req.body.additional_info : undefined
+    userData.address = req.body.address ? req.body.address : undefined
+    userData.avatar = req.body.avatar ? req.body.avatar : undefined
+    userData.date_of_birth = req.body.date_of_birth ? req.body.date_of_birth : undefined
+    userData.department = req.body.department ? req.body.department : undefined
+    userData.gender = req.body.gender ? req.body.gender : undefined
+    userData.identity_card = req.body.identity_card ? req.body.identity_card : undefined
+    userData.name = req.body.name ? req.body.name : undefined
+    userData.phone_number = req.body.phone_number ? req.body.phone_number : undefined 
+    userData.years_of_experience = req.body.years_of_experience ? parseInt(req.body.years_of_experience) : 0
+
     const {
       name,
       phone_number,
@@ -246,6 +313,7 @@ export const updateUserDetails = asyncHandler(
     } = req.body;
 
     try {
+      await validateOrReject(userData)
       const user = await getUserById(parseInt(userId));
       if (user) {
         user.name = name;
@@ -270,9 +338,17 @@ export const updateUserDetails = asyncHandler(
           .render("error", { message: req.t("user.user_not_found") });
       }
     } catch (error) {
-      return res
-        .status(404)
-        .render("error", { message: req.t("user.update_user_error") });
+      if (Array.isArray(error) && error[0].constraints) {
+        const validationErrors = error.reduce((acc, err) => {
+          acc[err.property] = Object.values(err.constraints).join(", ");
+          return acc;
+        }, {});
+        res.status(400).json({ status: 400, errors: validationErrors });
+      } else {
+        return res
+          .status(404)
+          .render("error", { message: req.t("user.update_user_error") });
+      }
     }
   }
 );

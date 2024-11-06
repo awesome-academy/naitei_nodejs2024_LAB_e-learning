@@ -41,11 +41,12 @@ export const professorCreateCourse = async (req: Request, res: Response) => {
       throw new Error(req.t('course.invalid_professor_id')); 
     }
     const courseData = new CreateCourseDto();
-    courseData.average_rating = req.body.average_rating
-    courseData.category_id = req.body.category_id
+    courseData.average_rating = req.body.average_rating ? parseInt(req.body.average_rating) : 0
+    courseData.category_id = req.body.category_id ? parseInt(req.body.category_id) : 0
     courseData.description = req.body.description
     courseData.name = req.body.name
-    courseData.price = req.body.price
+    courseData.price = req.body.price ? parseInt(req.body.category_id) : 0
+    console.log(courseData)
 
     await validateOrReject(courseData)
 
@@ -62,6 +63,7 @@ export const professorCreateCourse = async (req: Request, res: Response) => {
   } catch (error) {
     if (Array.isArray(error) && error[0].constraints) {
       const validationErrors = error.map(err => Object.values(err.constraints)).flat();
+      console.log(validationErrors)
       res.status(400).render('error', { message: req.t('course.update_error', { error: validationErrors.join(', ')  }) }); 
     } else {
       res.status(400).render("error", { error: error.message });
@@ -84,11 +86,11 @@ export const professorUpdateCourse = async (req: Request, res: Response) => {
     }
 
     const courseData = new CreateCourseDto();
-    courseData.average_rating = req.body.average_rating
-    courseData.category_id = req.body.category_id
-    courseData.description = req.body.description
-    courseData.name = req.body.name
-    courseData.price = req.body.price
+    courseData.average_rating = req.body.average_rating ? parseInt(req.body.average_rating) : 0
+    courseData.category_id = req.body.category_id ? parseInt(req.body.category_id) : 0
+    courseData.description = req.body.description ? req.body.description : undefined
+    courseData.name = req.body.name ? req.body.name : undefined
+    courseData.price = req.body.price ? parseInt(req.body.price) : 0
 
     await validateOrReject(courseData)
 

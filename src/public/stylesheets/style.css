@@ -2027,6 +2027,15 @@ input[type="radio"] {
   height: fit-content;
 }
 
+.error-message {
+  color: #dc3545; 
+  font-size: 0.9em;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
 .status-overlay {
   position: absolute;
   top: 10px;

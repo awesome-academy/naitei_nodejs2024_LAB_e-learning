@@ -15,14 +15,14 @@ export const createReviewPost = asyncHandler(
     }
 
     const reviewDto = new CreateReviewDto();
-    reviewDto.user_id = user_id;
-    reviewDto.course_id = course_id;
-    reviewDto.rating = rating;
+    reviewDto.user_id = parseInt(user_id);
+    reviewDto.course_id = parseInt(course_id);
+    reviewDto.rating = parseInt(rating);
 
     const commentDto = new CreateCommentDto();
     commentDto.review_id = 0;
-    commentDto.user_id = user_id;
-    commentDto.parent_id = parent_id;
+    commentDto.user_id = parseInt(user_id);
+    commentDto.parent_id = parent_id ? parseInt(parent_id) : 0;
     commentDto.comment = comment;
 
     try {

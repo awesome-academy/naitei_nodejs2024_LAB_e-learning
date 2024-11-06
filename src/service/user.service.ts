@@ -157,3 +157,9 @@ export const updateUserPassword = async (userId: number, newPassword: string): P
   await userRepository.save(user);
   return true;
 };
+
+export function formatFieldName(fieldName: string): string {
+  return fieldName
+    .replace(/_/g, " ")         
+    .replace(/\b\w/g, (char) => char.toUpperCase()); 
+}

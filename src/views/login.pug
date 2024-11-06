@@ -78,10 +78,25 @@ block content
           }, 2000);
         }
       } catch (error) {
-        const toastElement = document.getElementById("toastNoAutohideError");
-        toastElement.style.removeProperty("display");
-        setTimeout(() => {
-          toastElement.style.display = "none";
-        }, 2000);
+        if (error.responseJSON && error.responseJSON.errors) {
+          // Display each validation error next to the input field
+          const errors = error.responseJSON.errors;
+          for (const [field, message] of Object.entries(errors)) {
+            const inputField = document.querySelector(`#${field}`);
+            if (inputField) {
+              const errorElement = document.createElement("div");
+              errorElement.className = "error-message text-danger mt-1";
+              errorElement.textContent = message;
+              inputField.parentNode.appendChild(errorElement);
+            }
+          }
+        } else {
+          // Show a generic toast message if there's no specific error
+          const toastElement = document.getElementById("toastNoAutohideError");
+          toastElement.style.removeProperty("display");
+          setTimeout(() => {
+            toastElement.style.display = "none";
+          }, 2000);
+        }
       }
     });
