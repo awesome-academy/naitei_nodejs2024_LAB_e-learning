@@ -239,7 +239,9 @@
     "new_password": "Mật khẩu mới",
     "confirm_password": "Xác nhận mật khẩu",
     "reset_password": "Đổi mật khẩu",
-    "updateInfo": "Cập nhật thông tin"
+    "updateInfo": "Cập nhật thông tin",
+    "department": "Chuyên ngành",
+    "years_of_experience": "Năm kinh nghiệm"
   },
   "admin-course": {
     "management": "Quản lý khóa học",
@@ -324,6 +326,7 @@
   },
   "professor": {
     "update_error": "Bạn không được phép cập nhật khóa học này.",
-    "section_not_found": "Không tìm thấy mục"
+    "section_not_found": "Không tìm thấy mục",
+    "course": "Quản Lý"
   }
 }

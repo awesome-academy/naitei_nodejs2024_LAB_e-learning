@@ -3,9 +3,10 @@ import asyncHandler from "express-async-handler";
 import {
   getCoursesWithSectionsAndHours,
   getUserPurchasedCourses,
+  getSectionsWithLessons,
 } from "../service/course.service";
 import { getAmountOfCartItems } from "../service/cart.service";
-
+import { calculateTotalTimeAndLessons } from "../service/lession.service";
 export const renderHomePage = asyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -22,6 +23,7 @@ export const renderHomePage = asyncHandler(
       const purchasedCourses = courses.filter((course) =>
         purchasedCourseIds.includes(course.id)
       );
+
       res.render("index", {
         title: req.t("home.home"),
         message: { message: req.t("home.message") },
@@ -30,6 +32,7 @@ export const renderHomePage = asyncHandler(
         t: req.t,
         purchasedCourses,
         isLoggedIn,
+        user: req.session!.user
       });
     } catch (error) {
       res

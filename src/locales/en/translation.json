@@ -239,7 +239,9 @@
     "new_password": "New Password",
     "confirm_password": "Confirm Password",
     "reset_password": "Reset Password",
-    "updateInfo": "Update Info"
+    "updateInfo": "Update Info",
+    "department": "Department",
+    "years_of_experience": "Year of Experience"
   },
   "admin-course": {
     "management": "Course management",
@@ -326,6 +328,7 @@
   },
   "professor": {
     "update_error": "You are not authorized to update this course.",
-    "section_not_found": "Section not found"
+    "section_not_found": "Section not found",
+    "course": "My Course"
   }
 }

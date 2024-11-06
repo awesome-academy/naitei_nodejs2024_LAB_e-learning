@@ -9,9 +9,9 @@ block content
       span.navbar-toggler-icon
     #navbarCollapse.collapse.navbar-collapse
       .navbar-nav.ms-auto.p-4.p-lg-0
-        a.nav-item.nav-link(href="/professors/users") #{t('admin.user')}
-        a.nav-item.nav-link(href="/professors/courses") #{t('admin.course')}
-        a.nav-item.nav-link(href="/professors/payments") #{t('admin.payment')}
+        a.nav-item.nav-link(href="/") #{t('home.home')}
+        a.nav-item.nav-link(href="/courses") #{t('home.course')}
+        a.nav-item.nav-link(href="/professors/courses") #{t('home.course')}
         a.nav-item.nav-link(href='' id='userDropdown')
           i.fa.fa-user
         ul.dropdown-menu-nav-notLoggedIn(class= isLoggedIn ? '' : 'active')

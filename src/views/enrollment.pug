@@ -156,7 +156,7 @@ block content
                           .col-6
                             p
                               i.fa.fa-video
-                                | 29 #{t('course.professor_course')}
+                                | #{professorCourseCount}  #{t('course.professor_course')}
                     .des.mt-4.mb-5
                       | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
             #Comment.container
@@ -181,7 +181,7 @@ block content
                       p.mt-3.mb-1.px-5 #{comment.comment_text}
                       .custom-container.px-5.mb-2.mt-2
                         small: button.mb-2.reply-btn(data-id=`${comment.id}`) #{t('course.reply')}
-                        if comment.user_id === userId
+                        if comment.user_id === userId || user.role === 'professor' 
                           small: button.mb-2.edit-btn(data-id=`${comment.id}` data-action='edit') #{t('course.edit')}
                           small: button.mb-2.delete-btn(data-id=`${comment.id}` data-action='delete') #{t('course.delete')}
                       .edit-input.hidden(data-id=`${comment.id}`)

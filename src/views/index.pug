@@ -174,17 +174,22 @@ block content
                       | #{course.average_rating}
                     small.flex-fill.text-left.p-2
                       i.fa.fa-clock.me-2
-                      | #{totalHours}#{t('home.Hrs')}
+                      | #{course.totalHours}#{t('home.Hrs')}
                     small.text-primary.py-1.px-2.fw-bold.fs-6
                       if isLoggedIn
-                        if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
+                        if user.role === 'professor' 
                           a(href=`/enrollments/${course.id}`)
                             | #{t('home.Enroll')}  
                             i.fa.fa-chevron-right.me-2.fs-10
                         else
-                          a(href=`/cart/add?courseId=${course.id}`, class='link-style')
-                            | #{t('home.Add_to_cart')}
-                            i.fa.fa-chevron-right.me-2.fs-10
+                          if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
+                            a(href=`/enrollments/${course.id}`)
+                              | #{t('home.Enroll')}  
+                              i.fa.fa-chevron-right.me-2.fs-10
+                          else
+                            a(href=`/cart/add?courseId=${course.id}`, class='link-style')
+                              | #{t('home.Add_to_cart')}
+                              i.fa.fa-chevron-right.me-2.fs-10
                       else
                         a(href=`/login`) 
                           | #{course.price}$  #{t('home.Add_to_cart')}  
