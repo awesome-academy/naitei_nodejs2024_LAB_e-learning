@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { createLesson, deleteLesson, findLessonById, getAllLessons, saveLesson } from '../service/lession.service';
-import { plainToInstance } from 'class-transformer';
-import { LessonCreateDto, LessonUpdateDto } from '@src/entity/dto/lesson.dto';
-import { validate } from 'class-validator';
 
 // Get the list of lessons
 export const lessonList = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -16,14 +13,7 @@ export const lessonCreateGet = asyncHandler(async (req: Request, res: Response):
   });
 
 export const lessonCreatePost = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const lessonData = plainToInstance(LessonCreateDto, req.body);
-  const errors = await validate(lessonData);
-
-  if (errors.length > 0) {
-    const messages = errors.map((err) => Object.values(err.constraints || {})).flat();
-    res.status(400).render('error', { message: messages.join(', ') });
-  }
-  const { name, progress, type, content, description, time, section_id } = lessonData;
+  const { name, progress, type, content, description, time, section_id } = req.body;
 
   const lesson = createLesson({
     name,
@@ -57,7 +47,6 @@ export const lessonUpdateGet = asyncHandler(async (req: Request, res: Response):
     res.json(lesson);
   });
 
-// Update an existing lesson
 export const lessonUpdatePost = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const lesson = await findLessonById(parseInt(req.params.id))
 
@@ -65,22 +54,14 @@ export const lessonUpdatePost = asyncHandler(async (req: Request, res: Response)
     return res.status(404).render('error', { message: req.t('course.lesson_not_found')  });
   }
 
-  const lessonData = plainToInstance(LessonUpdateDto, req.body);
-  const errors = await validate(lessonData);
+  const { name, progress, type, content, description, time } = req.body;
 
-  if (errors.length > 0) {
-    const messages = errors.map((err) => Object.values(err.constraints || {})).flat();
-    res.status(400).render('error', { message: messages.join(', ') });
-  }
-
-  const { name, progress, type, content, description, time } = lessonData;
-
-  if (name) lesson.name = name;
-  if (progress !== undefined) lesson.progress = progress;
-  if (type) lesson.type = type;
-  if (content) lesson.content = content;
-  if (description) lesson.description = description;
-  if (time) lesson.time = time;
+  lesson.name = name;
+  lesson.progress = progress;
+  lesson.type = type;
+  lesson.content = content;
+  lesson.description = description;
+  lesson.time = time;
 
   await saveLesson(lesson)
   res.json(lesson);

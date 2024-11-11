@@ -18,6 +18,9 @@ block content
             | #{cartAmount}
         if user && user.role === 'professor'
           a.nav-item.nav-link(href='/professors/courses') #{t('professor.course')}
+          a.nav-item.nav-link(href='/professors/users') #{t('professor.student')}
+        if user && user.role === 'admin'
+          a.nav-item.nav-link(href='/admins/users') #{t('admin.user')}
         a.nav-item.nav-link(href='' id='userDropdown' data-bs-toggle='dropdown')
           i.fa.fa-user
         ul.dropdown-menu-nav-notLoggedIn(aria-labelledby='userDropdown')

@@ -63,9 +63,7 @@ export const updateSection = async (id: number, body: any) => {
     throw new Error(`Section with ID ${id} not found.`);
   }
 
-  section.name = body['section-name'];
-  section.total_time = Number(body['total-time']); 
-  section.total_lesson = Number(body['total-lessons']); 
+  section.name = body.name;
 
   const newCourse = await courseRepository.findOne({ where: { id: body.course_id } });
   if (!newCourse) {

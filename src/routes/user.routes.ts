@@ -16,7 +16,7 @@ router.get("/login", (req, res) => {
 router.post("/login", userController.login);
 router.post("/verify", userController.verifyUser);
 
-router.get("/logout", userController.logout);
+router.post("/logout", userController.logout);
 
 router.get('/account', userController.getUserDetails);
 router.post('/account/edit', userController.updateUserDetails);

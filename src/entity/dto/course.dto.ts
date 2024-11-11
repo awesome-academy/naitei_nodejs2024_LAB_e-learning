@@ -1,17 +1,30 @@
-import { IsString, IsNumber, IsOptional, IsEnum, Min, Max, IsNotEmpty } from 'class-validator';
+import { IsString,IsEnum, IsNotEmpty, IsInt, Min, IsNumber, IsOptional, Max, Validate, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
 import { CourseStatus, CourseSortingFields } from 'src/enum/course.enum';
+
+@ValidatorConstraint({ name: 'isNotNumericString', async: false })
+class IsNotNumericString implements ValidatorConstraintInterface {
+  validate(text: string, args: ValidationArguments) {
+    return isNaN(Number(text)); 
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `${args.property} should not be a numeric value`;
+  }
+}
 
 export class CreateCourseDto {
     @IsString()
     @IsNotEmpty()
+    @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
     name!: string;
-  
+
     @IsString()
     @IsNotEmpty()
+    @Validate(IsNotNumericString, { message: 'Description should not be a numeric value' }) 
     description!: string;
   
-    @IsNumber()
-    @Min(0)
+    @IsInt()
+    @Min(0, { message: 'Price must be a non-negative integer' }) 
     price!: number;
   
     @IsNumber()
@@ -26,18 +39,19 @@ export class CreateCourseDto {
   }
 
   export class UpdateCourseDto {
-    @IsOptional()
     @IsString()
-    name?: string;
-  
-    @IsOptional()
+    @IsNotEmpty()
+    @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' })
+    name!: string;
+
     @IsString()
-    description?: string;
+    @IsNotEmpty()
+    @Validate(IsNotNumericString, { message: 'Description should not be a numeric value' })
+    description!: string;
   
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    price?: number;
+    @IsInt()
+    @Min(0, { message: 'Price must be a non-negative integer' }) 
+    price!: number;
   
     @IsOptional()
     @IsNumber()

@@ -4,6 +4,7 @@ import { Enrollment } from "../entity/Enrollment";
 import { Section } from "../entity/Section";
 import { Lesson } from "../entity/Lesson";
 import { Payment } from "../entity/Payment";
+import { Review } from "../entity/Review";
 import { Category } from "./../entity/Category";
 import { In } from "typeorm";
 import { User } from "../entity/User";
@@ -15,6 +16,7 @@ const sectionRepository = AppDataSource.getRepository(Section);
 const lessonRepository = AppDataSource.getRepository(Lesson);
 const paymentRepository = AppDataSource.getRepository(Payment);
 const userRepository = AppDataSource.getRepository(User);
+const reviewRepository = AppDataSource.getRepository(Review);
 
 export async function getAllCourses() {
   return await courseRepository.find({
@@ -212,7 +214,7 @@ export async function createCourse(data: Partial<Course>): Promise<Course> {
       description: data.description,
       price: data.price, 
       category_id: data.category_id,
-      average_rating: data.average_rating, 
+      average_rating: 0, 
       professor_id: data.professor_id,
   });
 
@@ -243,7 +245,6 @@ export const updateCourse = async (id: number, courseData: any) => {
   course.category_id = courseData.category_id;
   course.description = courseData.description; 
   course.price = courseData.price; 
-  course.average_rating = courseData.average_rating; 
 
   return await courseRepository.save(course);
 }
@@ -266,6 +267,27 @@ export const updateStatus = async (courseId: number) => {
   }
 };
 
+export const updateCourseAverageRating = async (courseId: number) => {
+  try {
+    const reviews = await reviewRepository.find({
+      where: { course_id: courseId },
+      select: ['rating']
+    });
+
+    const totalRatings = reviews.length;
+    const sumRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
+
+    const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+
+    await courseRepository.update(
+      { id: courseId },
+      { average_rating: averageRating }
+    );
+
+  } catch (error) {
+    console.error(`Failed to update average rating for course ID ${courseId}:`, error);
+  }
+};
 
 export async function deleteCourse(id: number): Promise<boolean> {
   const result = await courseRepository.delete(id);

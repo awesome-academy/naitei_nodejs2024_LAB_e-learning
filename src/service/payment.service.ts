@@ -3,6 +3,7 @@ import { User } from '../entity/User';
 import { Course } from '../entity/Course';
 import { Payment } from '../entity/Payment';
 import { ALL } from 'dns';
+import { In } from 'typeorm'; 
 
 const courseRepository = AppDataSource.getRepository(Course);
 const userRepository = AppDataSource.getRepository(User);
@@ -29,6 +30,20 @@ export async function createPayment(userId: number, courseId: number, amount: nu
     return paymentRepository.save(payment);
 }
 
+export async function getPaymentsByCourseIds(courseIds: number[]): Promise<Payment[]> {
+  if (!courseIds || courseIds.length === 0) {
+    return []; 
+  }
+
+  const payments = await paymentRepository.find({
+    where: {
+      course_id: In(courseIds)
+    },
+    relations: ['user'], 
+  });
+
+  return payments; 
+}
 export async function completePaymentByUserAndCourse(userId: number, courseId: number): Promise<Payment | null> {
     const payment = await paymentRepository.findOne({
       where: {

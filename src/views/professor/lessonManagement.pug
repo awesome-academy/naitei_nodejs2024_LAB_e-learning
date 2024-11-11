@@ -1,0 +1,222 @@
+﻿extends ../layout
+
+block content
+  include ../partial/professorPanel
+  .container-xxl.py-2.mt-4 
+    .container
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
+        h2 #{t('admin-lesson.management')}
+        .admin-container
+          .create-btn
+            button(onclick="showCreateForm()") #{t('admin.create')}
+          center
+            table.admin-table
+              thead
+                tr
+                  th #{t('admin-lesson.#')}
+                  th #{t('admin-lesson.ID')}
+                  th #{t('admin-lesson.name')}
+                  th #{t('admin-lesson.section')}
+                  th #{t('admin-lesson.description')}
+                  th #{t('admin-lesson.type')}
+                  th #{t('admin-lesson.content')}
+                  th #{t('admin-lesson.time')}
+                  th #{t('admin.edit')}
+                  th #{t('admin.delete')}
+              tbody
+                each lesson, index in lessons
+                  tr(id=`lessonRow-${lesson.id}`)
+                    td #{index + 1}
+                    td #{lesson.id}
+                    td #{lesson.name}
+                    td #{lesson.section.name}
+                    td #{lesson.description}
+                    td #{lesson.type}
+                    td #{lesson.content}
+                    td #{lesson.time}
+                    td 
+                      .edit-btn
+                        button(onclick=`showEditForm('${lesson.id}', '${lesson.name}', '${lesson.section_id}', '${lesson.description}', '${lesson.type}', '${lesson.content}', '${lesson.time}')`) #{t('admin.edit')}
+                    td 
+                      .delete-btn
+                        button(onclick=`showDeleteForm(${lesson.id})`) #{t('admin.delete')}
+    
+    <!-- Create Form start -->
+  #createModal.hidden
+    .modal-content-admin
+      h3 #{t('admin.create-lesson')}
+      form(id="createLessonForm", action="/professors/lessons/create" method="POST")
+        .form-group#lessonsContainer
+          .lesson-form
+            label(for="name") #{t('admin-lesson.name')}
+            input(type="text" name="name[]" required)
+
+            label(for="section_id") #{t('admin-lesson.section')}
+            select(name="section_id[]" required)
+              each section in sections
+                option(value=section.id) #{section.name}
+
+            label(for="type") #{t('admin-lesson.type')}
+            select(name="type[]" required)
+              option(value="", disabled, selected) #{t('admin-lesson.type')}
+              option(value="video") Video
+              option(value="pdf") PDF
+              option(value="text") Text
+              option(value="url") URL
+
+            label(for="content") #{t('admin-lesson.content')}
+            input(type="text" name="content[]" required)
+
+            label(for="description") #{t('admin-lesson.description')}
+            input(type="text" name="description[]" required)
+
+            label(for="time") #{t('admin-lesson.time')}
+            input(type="number" name="time[]" required)
+
+        .btn-group-admin
+          .add-btn: button(type="button" onclick="addLessonForm()") #{t('admin.add-more')}
+          .save-btn: button(type="submit") #{t('admin.save')}
+          .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
+
+      script.
+        const sections = !{JSON.stringify(sections)};
+
+        function addLessonForm() {
+          const container = document.getElementById('lessonsContainer');
+          const newForm = document.createElement('div');
+          newForm.className = 'lesson-form';
+          newForm.innerHTML = `
+            <label for="name">${'#{t('admin-lesson.name')}'}</label>
+            <input type="text" name="name[]" required>
+
+            <label for="section_id">${'#{t('admin-lesson.section')}'}</label>
+            <select name="section_id[]" required>
+              ${sections.map(section => `<option value="${section.id}">${section.name}</option>`).join('')}
+            </select>
+
+            <label for="type">${'#{t('admin-lesson.type')}'}</label>
+            <select name="type[]" required>
+              <option value="" disabled selected>${'#{t('admin.selectType')}'}</option>
+              <option value="video">Video</option>
+              <option value="pdf">PDF</option>
+              <option value="text">Text</option>
+              <option value="url">URL</option>
+            </select>
+
+            <label for="content">${'#{t('admin-lesson.content')}'}</label>
+            <input type="text" name="content[]" required>
+
+            <label for="description">${'#{t('admin-lesson.description')}'}</label>
+            <input type="text" name="description[]" required>
+
+            <label for="time">${'#{t('admin-lesson.time')}'}</label>
+            <input type="number" name="time[]" required>
+
+            <button type="button" class="remove-btn" onclick="removeLessonForm(this)">${'#{t('admin.delete')}'}</button>
+          `;
+          container.appendChild(newForm);
+        }
+
+        function removeLessonForm(button) {
+          const form = button.closest('.lesson-form');
+          if (document.querySelectorAll('.lesson-form').length > 1) {
+            form.remove();
+          } else {
+            alert('Không thể xóa bài học cuối cùng!');
+          }
+        }
+
+        function showCreateForm() {
+          document.getElementById('createModal').classList.remove('hidden');
+        }
+
+        function hideCreateForm() {
+          document.getElementById('createModal').classList.add('hidden');
+        }
+  <!-- Create Form end -->
+
+  <!-- Edit Form start -->
+  #editModal.hidden
+    .modal-content-admin
+      h3 #{t('admin.edit')}
+      form(action="/professors/lessons/edit" method="POST")
+        input(type="hidden" name="id" id="edit-lesson-id") 
+        .form-group
+          label(for="edit-lesson-name") #{t('admin-lesson.name')}
+          input(type="text" name="lesson-name" id="edit-lesson-name" required)
+        .form-group
+          label(for="edit-section") #{t('admin-lesson.section')}
+          select(name="section_id" id="edit-section" required)
+            each section in sections
+              option(value=section.id) #{section.name}
+        .form-group
+          label(for="edit-description") #{t('admin-lesson.description')}
+          input(type="text" name="description" id="edit-description" required)
+        .form-group
+          label(for="edit-type") #{t('admin-lesson.type')}
+          select(name="type" id="edit-type" required)
+            option(value="", disabled=true, selected=true) #{t('admin.selectType')}
+            option(value="video") Video
+            option(value="pdf") PDF
+            option(value="text") Text
+            option(value="url") URL
+        .form-group
+          label(for="edit-content") #{t('admin-lesson.content')}
+          input(type="text" name="content" id="edit-content" required)
+        .form-group
+          label(for="edit-time") #{t('admin-lesson.time')}
+          input(type="number" name="time" id="edit-time" required)          
+        .btn-group-admin
+          .save-btn: button(type="submit") #{t('admin.save')}
+          .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
+
+  script.
+    function showEditForm(id, lessonName, sectionId, description, type, content, time) {
+      document.getElementById('edit-lesson-id').value = id; 
+      document.getElementById('edit-lesson-name').value = lessonName;
+      document.getElementById('edit-section').value = sectionId; 
+      document.getElementById('edit-description').value = description;
+      document.getElementById('edit-type').value = type;
+      document.getElementById('edit-content').value = content;
+      document.getElementById('edit-time').value = time;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function hideEditForm() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+  <!-- Edit Form end -->
+
+  <!-- Delete Form start -->
+    #deleteModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-delete-lesson')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
+
+  script.
+    let lessonIdToDelete = null;  
+    function showDeleteForm(lessonId) {
+      lessonIdToDelete = lessonId;  
+      document.getElementById('deleteModal').classList.remove('hidden');  
+    }
+    function hideDeleteForm() {
+      document.getElementById('deleteModal').classList.add('hidden');  
+    }
+    function confirmDelete() {
+      if (lessonIdToDelete) {
+        fetch(`/professors/lessons/delete/${lessonIdToDelete}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              const row = document.getElementById(`lessonRow-${lessonIdToDelete}`);
+              row.remove();
+            } else {
+              console.error('Failed to delete lesson');
+            }
+          });
+      }
+      hideDeleteForm();
+    }
+  <!-- Delete Form end -->

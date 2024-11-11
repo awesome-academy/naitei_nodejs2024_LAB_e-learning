@@ -4,6 +4,22 @@ block content
   include partial/navbar
   include partial/header
 
+  #toastNoAutohideRemoveSuccess.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-success
+      i(data-feather='check-circle').me-2
+      strong.me-auto #{t('cart.item-remove-success')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('cart.item-remove-success-msg')}
+  #toastNoAutohideRemoveItemFailure.toast(role='alert' aria-live='assertive' aria-atomic='true' data-bs-delay="2000" style='opacity: 1; display: none')
+    .toast-header.text-danger
+      i(data-feather='x-circle').me-2
+      strong.me-auto #{t('cart.item-remove-failure')}
+      button.ms-2.mb-1.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+    .toast-body
+      | #{t('cart.item-remove-failure-msg')}
+
+
   if cartItems.length
     - let totalAmount = 0
 
@@ -20,9 +36,7 @@ block content
               td #{item.course.name}
               td $#{item.course.price.toFixed(2)}
               td
-                form(action=`/cart/remove`, method="post" style="display: inline;")
-                  input(type="hidden" name="itemId", value=item.id)
-                  .delete-btn: button(type="submit") #{t('cart.remove')}
+                button.remove-item-btn(data-id=`${item.id}` data-action='delete') #{t('cart.remove')}
 
             - totalAmount += item.course.price 
 
@@ -41,3 +55,55 @@ block content
     p #{t('cart.empty')}
 
   include partial/footer
+  script.
+    function showToastRemoveSuccess(message) {
+      const $toastElement = $("#toastNoAutohideRemoveSuccess");
+      if ($toastElement.length) {
+        $toastElement.find(".toast-body").text(message);
+        $toastElement.css("display", "block");
+        const toast = new bootstrap.Toast($toastElement[0]);
+        toast.show();
+        setTimeout(() => {
+          $toastElement.fadeTo(1000, 0, function () {
+            $toastElement.css("display", "none").css("opacity", 1);
+          });
+        }, 1000);
+      }
+    }
+
+    function showToastRemoveFailure(message) {
+      const $toastElement = $("#toastNoAutohideRemoveFailure");
+      if ($toastElement.length) {
+        $toastElement.find(".toast-body").text(message);
+        $toastElement.css("display", "block");
+        const toast = new bootstrap.Toast($toastElement[0]);
+        toast.show();
+        setTimeout(() => {
+          $toastElement.fadeTo(1000, 0, function () {
+            $toastElement.css("display", "none").css("opacity", 1);
+          });
+        }, 1000);
+      }
+    }
+
+    $(document).ready(function () {
+      $(".remove-item-btn").on("click", function (event) {
+        const itemId = $(this).data("id");
+        if (confirm("Are you sure you want to remove this course?")) {
+          $.ajax({
+            url: `/cart/${itemId}`,
+            type: "DELETE",
+            success: function (response) {
+              $(`.card[data-id='${itemId}']`).remove();
+              showToastRemoveSuccess();
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
+            },
+            error: function (error) {
+              showToastRemoveFailure();
+            },
+          });
+        }
+      });
+    });

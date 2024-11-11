@@ -102,7 +102,6 @@
 
 
 function showUpdateForm(id, name, phoneNumber, dateOfBirth, gender, address, identityCard, additionalInfo) {
-  console.log('showUpdateForm called');
   document.getElementById('update-id').value = id;
   document.getElementById('update-name').value = name || '';
   document.getElementById('update-phone_number').value = phoneNumber || '';
@@ -119,7 +118,6 @@ function hideUpdateForm() {
 }
 
 function showResetPasswordPopup() {
-  console.log('showResetPasswordPopup called');
   document.getElementById('resetPasswordModal').classList.remove('hidden');
 }
 

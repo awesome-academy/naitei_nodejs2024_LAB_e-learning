@@ -16,7 +16,7 @@ export const viewCart = asyncHandler(async (req: Request, res: Response) => {
   const cartData = new CartDTO();
   cartData.userId = parseInt(userId);
   try {
-    await validateOrReject(cartData)
+    // await validateOrReject(cartData)
     const cartItems = await getCart(userId);
     req.session!.cart = cartItems;
     res.render("cart", {
@@ -49,7 +49,7 @@ export const addItemToCartGet = asyncHandler(
     }
 
     try {
-      await validateOrReject(cartData)
+      // await validateOrReject(cartData)
       const existingItem = await getItemByUserAndCourseId(userId, courseId);
       if (existingItem) {
         // item already exists
@@ -79,7 +79,7 @@ export const addItemToCart = asyncHandler(
     cartData.courseId = courseId;
 
     try {
-      await validateOrReject(cartData) // validate data
+      // await validateOrReject(cartData) // validate data
       const existingItem = await getItemByUserAndCourseId(userId, courseId);
       if (existingItem) {
         // item already exists
@@ -101,10 +101,10 @@ export const addItemToCart = asyncHandler(
 
 export const removeItemFromCart = asyncHandler(
   async (req: Request, res: Response) => {
-    const itemId = req.body.itemId;
+    const itemId = parseInt(req.params.id);
     try {
-      await removeFromCart(parseInt(itemId));
-      res.json({ success: true, message: req.t("cart.remove_msg") });
+      await removeFromCart(itemId);
+      res.json({ success: true, message: req.t("cart.item-remove-success") });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
     }

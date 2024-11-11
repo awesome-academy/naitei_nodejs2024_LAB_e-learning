@@ -10,17 +10,17 @@ block content
     #navbarCollapse.collapse.navbar-collapse
       .navbar-nav.ms-auto.p-4.p-lg-0
         a.nav-item.nav-link(href="/") #{t('home.home')}
-        a.nav-item.nav-link(href="/courses") #{t('home.course')}
-        a.nav-item.nav-link(href="/professors/courses") #{t('home.course')}
-        a.nav-item.nav-link(href='' id='userDropdown')
+        a.nav-item.nav-link(href="/professors/users") #{t('professor.student')}
+        a.nav-item.nav-link(href="/professors/courses") #{t('professor.course')}
+        a.nav-item.nav-link(href='' id='userDropdown' data-bs-toggle='dropdown')
           i.fa.fa-user
-        ul.dropdown-menu-nav-notLoggedIn(class= isLoggedIn ? '' : 'active')
+        ul.dropdown-menu-nav-notLoggedIn(aria-labelledby='userDropdown')
           li
             a(href='/login') #{t('home.login')}
           li
             a(href='/signup') #{t('home.signup')}
 
-        ul.dropdown-menu-nav-loggedIn(class= isLoggedIn ? 'active' : '')
+        ul.dropdown-menu-nav-loggedIn(aria-labelledby='userDropdown')
           li
             a(href='/account') #{t('home.account')}
           li

@@ -78,10 +78,23 @@ block content
           }, 2000);
         }
       } catch (error) {
-        const toastElement = document.getElementById("toastNoAutohideError");
-        toastElement.style.removeProperty("display");
-        setTimeout(() => {
-          toastElement.style.display = "none";
-        }, 2000);
+        if (error.responseJSON && error.responseJSON.errors) {
+          const errors = error.responseJSON.errors;
+          for (const [field, message] of Object.entries(errors)) {
+            const inputField = document.querySelector(`#${field}`);
+            if (inputField) {
+              const errorElement = document.createElement("div");
+              errorElement.className = "error-message text-danger mt-1";
+              errorElement.textContent = message;
+              inputField.parentNode.appendChild(errorElement);
+            }
+          }
+        } else {
+          const toastElement = document.getElementById("toastNoAutohideError");
+          toastElement.style.removeProperty("display");
+          setTimeout(() => {
+            toastElement.style.display = "none";
+          }, 2000);
+        }
       }
     });

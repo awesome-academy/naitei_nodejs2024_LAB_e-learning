@@ -1,14 +1,14 @@
 extends ../layout
 
 block content
-  include ../partial/adminPanel
+  include ../partial/professorPanel
   .container-xxl.py-2.mt-4
     .container
-      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
+      .row.g-4.wow.fadeInUp(data-wow-delay='0.5s')
         h2 #{t('admin-user.management')}
         .admin-container
           center
-            table.admin-table
+            table.admin-table.table
               thead
                 tr
                   th #{t('admin-user.#')}
@@ -21,6 +21,9 @@ block content
                   th #{t('admin-user.address')}
                   th #{t('admin-user.identity_card')}
                   th #{t('admin-user.additional_info')}
+                  th #{t('admin-user.course_name')} 
+                  th #{t('admin-user.progress')} 
+
               tbody
                 each user, index in users
                   tr(id=`userRow-${user.id}`)
@@ -32,5 +35,7 @@ block content
                     td #{user.date_of_birth} 
                     td #{user.gender}
                     td #{user.address}
-                    td #{user.identity_id}
-                    td #{user.additional_info || 'N/A'} 
+                    td #{user.identity_card}
+                    td #{user.additional_info || 'N/A'}
+                    td #{user.course ? user.course.name : 'N/A'} 
+                    td #{user.enrollment ? user.enrollment.progress : '0'} 
