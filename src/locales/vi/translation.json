@@ -71,7 +71,7 @@
     "mostEnrolledCourse": "khóa học được đăng ký nhiều nhất",
     "no_course_available": "Không có khóa học nào",
     "cart": "Giỏ hàng",
-    "Add_to_cart": "Thêm vào giỏ hàng",
+    "Add_to_cart": "Thêm",
     "enroll": "Đăng ký",
     "payment": "Thanh toán"
   },
@@ -134,6 +134,7 @@
     "yes": "Có",
     "share": "Chia sẻ khóa học này",
     "progress": "Tiến độ",
+    "category": "Danh Mục",
     "progress_error": "Lỗi cập nhật tiến độ",
     "userid_courseid_required": "Yêu cầu UserID và CourseID",
     "purchase_course_error": "Bạn chưa mua khóa học này",
@@ -204,6 +205,7 @@
     "create": "Tạo mới",
     "view": "Xem",
     "add-more": "Thêm",
+    "close": "Đóng",
     "selectCategory": "Chọn danh mục",
     "confirm-delete": "Xác nhận xóa",
     "confirm-message-user": "Bạn có chắc chắn muốn xóa người dùng này không?",
@@ -241,7 +243,9 @@
     "reset_password": "Đổi mật khẩu",
     "updateInfo": "Cập nhật thông tin",
     "department": "Chuyên ngành",
-    "years_of_experience": "Năm kinh nghiệm"
+    "years_of_experience": "Năm kinh nghiệm",
+    "course_name": "Tên khóa học",
+    "progress": "Tiến độ"
   },
   "admin-course": {
     "management": "Quản lý khóa học",

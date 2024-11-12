@@ -5,18 +5,11 @@ import { getProfessorAndCourseCountByCourseId, getSectionsWithLessons, countEnro
 import { getAllCommentsByCourseId } from '../service/comment.service';
 import { getUserById } from '@src/service/user.service';
 import { getEnrollmentLesson } from '@src/service/enrollmentlesson.service';
-import { validateOrReject } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
-import { GetUserCourseEnrollmentsDto, UpdateLessonProgressDto } from '@src/entity/dto/entrollment.dto';
-
+import { getCategoryById } from '@src/service/category.service';
 
 export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: Response) => {
   const { courseId } = req.params;
   const userId = req.session!.user?.id;
-  // validate
-  const dto = plainToInstance(GetUserCourseEnrollmentsDto, { courseId });
-  await validateOrReject(dto);
-
   const isLoggedIn = Boolean(userId);
   const userName = req.session!.user?.name;
   const userMail = req.session!.user?.email;
@@ -34,8 +27,11 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
     }
   }
 
-  let enrollment = await getEnrollmentWithCourseAndUser(Number(userId), Number(courseId));
 
+  let enrollment = await getEnrollmentWithCourseAndUser(
+    Number(userId),
+    Number(courseId)
+  );
   if (!enrollment) {
     enrollment = await enrollUserInCourse(userId, Number(courseId));
   }
@@ -43,6 +39,7 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
   const course = await getCourseById(Number(courseId));
   const professor = await getProfessorByCourse(Number(courseId));
   const sectionsWithLessons = await getSectionsWithLessons(Number(courseId));
+  const lessonProgress = await getEnrollmentLesson(enrollment.id)
 
   const totalHours = sectionsWithLessons.reduce((sum, section) => sum + section.total_time, 0);
   const totalLessons = sectionsWithLessons.reduce((sum, section) => sum + section.lessons.length, 0);
@@ -50,6 +47,10 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
   const allComments = await getAllCommentsByCourseId(Number(courseId));
 
   const professorCourseCount = await getProfessorAndCourseCountByCourseId(Number(courseId));
+  let category
+  if (course != null)
+    category = await getCategoryById(Number(course.category_id))
+
   res.status(200).render('enrollment', {
     course,
     enrollment,
@@ -60,14 +61,16 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
     sectionsWithLessons,
     totalLessons,
     totalStudents,
+    lessonProgress,
     allComments,
+    category,
     userName,
     userMail,
     professorCourseCount,
     isLoggedIn,
     t: req.t,
     userId: req.session!.user?.id,
-    user: req.session!.user
+    user: req.session!.user,
   });
 });
 
@@ -75,10 +78,6 @@ export const getUserCourseEnrollments = asyncHandler(async (req: Request, res: R
 export const updateLessonProgress = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const {  courseId, lessonId } = req.params;
   const userId = req.session!.user?.id;
-
-  // Validate request parameters
-  const dto = plainToInstance(UpdateLessonProgressDto, { courseId, lessonId });
-  await validateOrReject(dto);
   
   if (!userId || !courseId || !lessonId) {
     return res.status(404).render('error', { message: req.t('course.enrollment_not_found')  });

@@ -17,13 +17,16 @@ export const createComment = async (
   review_id: number,
   user_id: number,
   parent_id: number,
-  comment_text: string
+  comment_text: string,
+  course_id: number
 ) => {
+
   return await commentRepository.save({
     review_id,
     user_id,
     parent_id,
     comment_text,
+    course_id
   });
 };
 

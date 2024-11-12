@@ -1,28 +1,35 @@
-// lesson.dto.ts
-import { IsNotEmpty, IsInt, IsOptional, IsEnum, IsString, IsNumber, Min, Max } from 'class-validator';
+import { Validate, IsNotEmpty, IsInt, IsOptional, IsEnum, IsString, IsNumber, Min, Max, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
 import { LessonType } from 'src/enum/lesson.enum';
 
-export class LessonCreateDto {
-  @IsNotEmpty()
-  @IsString()
-  name!: string;
+@ValidatorConstraint({ name: 'isNotNumericString', async: false })
+class IsNotNumericString implements ValidatorConstraintInterface {
+  validate(text: string, args: ValidationArguments) {
+    return isNaN(Number(text)); 
+  }
 
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(100)
-  progress!: number | null;
+  defaultMessage(args: ValidationArguments) {
+    return `${args.property} should not be a numeric value`;
+  }
+}
+
+export class LessonCreateDto {
+  @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
+  name!: string;
 
   @IsNotEmpty()
   @IsEnum(LessonType)
   type!: LessonType;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Content should not be a numeric value' }) 
   content!: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Description should not be a numeric value' }) 
   description!: string;
 
   @IsNotEmpty()
@@ -36,26 +43,23 @@ export class LessonCreateDto {
 }
 
 export class LessonUpdateDto {
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
   name?: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(100)
-  progress?: number | null;
 
   @IsOptional()
   @IsEnum(LessonType)
   type?: LessonType;
 
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Content should not be a numeric value' }) 
   content?: string;
 
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Description should not be a numeric value' }) 
   description?: string;
 
   @IsOptional()

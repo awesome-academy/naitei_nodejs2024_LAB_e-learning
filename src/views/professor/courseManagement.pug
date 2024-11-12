@@ -40,30 +40,30 @@ block content
                     td #{course.paymentCount}
                     td #{course.enrollmentCount}
                     td $#{course.price}
-                    td #{course.average_rating || 'N/A'}
+                    td #{course.average_rating || 0}
                     td #{course.status}
                     td 
-                      .view-sections-btn
+                      .view-btn
                         button(onclick=`showSections(${course.id})`) #{t('admin.view')} 
                     td 
-                      .view-sections-btn
-                        button(onclick=`showSections(${course.id})`) #{t('admin.view')} 
+                      .view-btn
+                        button(onclick=`showLessons(${course.id})`) #{t('admin.view')} 
                     td 
                       .edit-btn
-                        button(onclick=`showEditForm('${course.id}', '${course.name}', '${course.category.id}', '${course.description}', '${course.price}', '${course.average_rating}')`) #{t('admin.edit')}
+                        button(onclick=`showEditForm('${course.id}', '${course.name}', '${course.category.id}', '${course.description}', '${course.price}')`) #{t('admin.edit')}
                     td 
                       .delete-btn
                         button(onclick=`showDeleteForm(${course.id})`) #{t('admin.delete')}
                     td
-                      if course.status === 'DRAFT' 
+                      if course.status === 'draft' 
                         form(action=`/professors/courses/${course.id}/update-status`, method="POST")
-                          input(type="hidden", name="status", value="PUBLIC") 
-                          .status-btn
+                          input(type="hidden" name="status" value="PUBLIC") 
+                          .public-btn
                             button(type="submit") #{t('admin-course.public')}
                       else
                         form(action=`/professors/courses/${course.id}/update-status`, method="POST")
-                          input(type="hidden", name="status", value="DRAFT") 
-                          .status-btn
+                          input(type="hidden" name="status" value="DRAFT") 
+                          .draft-btn
                             button(type="submit") #{t('admin-course.draft')}
 
   each course in courses
@@ -95,133 +95,256 @@ block content
                 td #{section.total_lesson}
                 td 
                   .edit-btn
-                    button(onclick=`showSectionEditForm('${section.id}', '${section.name}', '${section.total_time}', '${section.total_lesson}', '${section.course.id}')`) #{t('admin.edit')}
+                    button(onclick=`showSectionEditForm('${section.id}', '${section.name}', '${section.course.id}')`) #{t('admin.edit')}
                 td 
                   .delete-btn
                     button(onclick=`showSectionDeleteForm(${section.id})`) #{t('admin.delete')}
         .btn-group-admin
-          .close-btn: button(type="button" onclick=`hideSections(${course.id})`) #{t('admin.close')}
- 
-  #createSectionModal.hidden
+          .cancel-btn: button(type="button" onclick=`hideSections(${course.id})`) #{t('admin.close')}
+
+  each course in courses
+    .lessons-modal(id=`lessons-${course.id}`).hidden
+      .modal-content-admin
+        .admin-container
+          .create-btn
+            button(onclick=`showLessonCreateForm(${course.id})`) #{t('admin.create')}
+          h3 #{course.name} #{t('admin.course')}
+          table.admin-table
+            thead
+              tr
+                th #{t('admin-lesson.#')}
+                th #{t('admin-lesson.ID')}
+                th #{t('admin-lesson.name')}
+                th #{t('admin-lesson.section')}
+                th #{t('admin-lesson.description')}
+                th #{t('admin-lesson.type')}
+                th #{t('admin-lesson.content')}
+                th #{t('admin-lesson.time')}
+                th #{t('admin.edit')}
+                th #{t('admin.delete')}
+            tbody
+              each section in sections.filter(section => section.course_id === course.id)
+                if courseLessons[course.id] && courseLessons[course.id][section.id] && courseLessons[course.id][section.id].length > 0
+                  each lesson, index in courseLessons[course.id][section.id]
+                    tr(id=`lessonRow-${lesson.id}`)
+                      td #{index + 1}
+                      td #{lesson.id}
+                      td #{lesson.name}
+                      td #{lesson.section_id}
+                      td #{lesson.description}
+                      td #{lesson.type}
+                      td #{lesson.content}
+                      td #{lesson.time}
+                      td 
+                        .edit-btn
+                          button(onclick=`showLessonEditForm(${lesson.id}, '${lesson.name}', ${lesson.section_id}, '${lesson.description}', '${lesson.type}', '${lesson.content}', ${lesson.time}, ${course.id})`) #{t('admin.edit')}
+                      td 
+                        .delete-btn
+                          button(onclick=`showLessonDeleteForm(${lesson.id})`) #{t('admin.delete')}
+          .btn-group-admin
+            .cancel-btn: button(type="button" onclick=`hideLessons(${course.id})`) #{t('admin.close')}
+
+    #createSectionModal.hidden
       .modal-content-admin
         h3 #{t('admin.create')}
-        form(id="createSectionForm", action="/professors/sections/create" method="POST")
+        form#showSectionCreateForm(action="/professors/sections/create" method="POST")
           .form-group#sectionsContainer
-            .section-form
-              label(for="name") #{t('admin-section.name')}
-              input(type="text" name="name[]" required)
-              label(for="edit-courseId") #{t('admin-section.course')}
-              select(name="course_id[]" required)
-                each course in courses
-                  option(value=course.id) #{course.name}
-              label(for="total_time") #{t('admin-section.total-time')}
-              input(type="number" name="total_time[]" required)
-              label(for="total_lesson") #{t('admin-section.total-lesson')}
-              input(type="number" name="total_lesson[]" required)
-
-          .save-btn: button(type="button" onclick="addSectionForm()") #{t('admin.add-more')}
+            .section-form(data-index="0")
+              .section-form-content
+                label(for="name") #{t('admin-section.name')}
+                input(type="text" name="name[]" id="name" required data-index="0")
+                ul#create-section-error-name_0.error-messages(data-error="name" data-index="0")
+              .section-form-content
+                label(for="edit-courseId") #{t('admin-section.course')}
+                select(name="course_id" id="edit-courseId" required)
+                  each course in courses
+                    option(value=course.id) #{course.name}
+                ul#create-section-error-course_id_0.error-messages(data-error="courseId" data-index="0")
           .btn-group-admin
+            .save-more-btn: button(type="button" onclick="addSectionForm()") #{t('admin.add-more')}
             .save-btn: button(type="submit") #{t('admin.save')}
             .cancel-btn: button(type="button" onclick="hideSectionCreateForm()") #{t('admin.cancel')}
-  
-  #editSectionModal.hidden
+
+    .createLessonModal.hidden(id=`createLessonModal-${course.id}`)
+      .modal-content-admin
+        h3 #{t('admin.create')}
+        form#lessonCreateForm( action="/professors/lessons/create" method="POST")
+          .form-group#lessonsContainer
+            .lesson-form(data-index="0")
+              .lesson-form-content
+                label(for="name") #{t('admin-lesson.name')}
+                input(type="text" name="name[]" required)
+                ul#create-lesson-error-name_0.error-messages(data-error="name" data-index="0")
+              .lesson-form-content
+                label(for="section_id") #{t('admin-lesson.section')}
+                select(name="section_id[]" required)
+                  each section in sections
+                    if section.course_id === course.id
+                      option(value=section.id) #{section.name}
+                ul#create-lesson-error-course_id_0.error-messages(data-error="sectionId" data-index="0")
+              .lesson-form-content
+                label(for="type") #{t('admin-lesson.type')}
+                select(name="type[]" required)
+                  option(value="", disabled, selected) #{t('admin-lesson.type')}
+                  each type in lessonTypes
+                    option(value=type)= type.charAt(0).toUpperCase() + type.slice(1)
+                ul#create-lesson-error-type_0.error-messages(data-error="type" data-index="0")
+              .lesson-form-content
+                label(for="content") #{t('admin-lesson.content')}
+                input(type="text" name="content[]" required)
+                ul#create-lesson-error-content_0.error-messages(data-error="content" data-index="0")
+              .lesson-form-content
+                label(for="description") #{t('admin-lesson.description')}
+                input(type="text" name="description[]" required)
+                ul#create-lesson-error-description_0.error-messages(data-error="description" data-index="0")
+              .lesson-form-content
+                label(for="time") #{t('admin-lesson.time')}
+                input(type="number" name="time[]" required)
+                ul#create-lesson-error-time_0.error-messages(data-error="time" data-index="0")
+          .btn-group-admin
+            .save-more-btn: button(type="button" onclick="addLessonForm()") #{t('admin.add-more')}
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick=`hideLessonCreateForm(${course.id})`) #{t('admin.cancel')}
+    #editSectionModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.edit')}
+        form#updateSectionForm(action="/professors/sections/edit" method="POST")
+          input(type="hidden" name="id" id="edit-section-id")
+
+          .form-group
+            label(for="edit-section-name") #{t('admin-section.name')}
+            input(type="text" name="section-name" id="edit-section-name" required)
+            ul#edit-section-error-name.error-messages
+
+          .form-group
+            label(for="edit-courseId") #{t('admin-section.course')}
+            select(name="course_id" id="edit-courseId" required)
+              each course in courses
+                option(value=course.id) #{course.name}
+
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick="hideSectionEditForm()") #{t('admin.cancel')}
+    .editLessonModal(id=`${course.id}`).hidden
+      .modal-content-admin
+        h3 #{t('admin.edit-lesson')}
+        form(id="showLessonEditForm" action="/professors/lessons/edit" method="POST")
+          input(type="hidden" name="id" id="edit-lesson-id") 
+
+          .form-group
+            label(for="edit-lesson-name") #{t('admin-lesson.name')}
+            input(type="text" name="lesson-name" id="edit-lesson-name" required)
+
+          .form-group
+            label(for="edit-sectionId") #{t('admin-lesson.section')}
+            select(name="section_id[]" required)
+              each section in sections
+                if section.course_id === course.id 
+                  option(value=section.id) #{section.name}
+          .form-group
+            label(for="edit-type") #{t('admin-lesson.type')}
+            select(name="type" id="edit-type" required)
+              option(value="", disabled, selected) #{t('admin-lesson.type')}
+              each type in lessonTypes
+                option(value=type)= type.charAt(0).toUpperCase() + type.slice(1) 
+
+          .form-group
+            label(for="edit-content") #{t('admin-lesson.content')}
+            input(type="text" name="content" id="edit-content" required)
+
+          .form-group
+            label(for="edit-description") #{t('admin-lesson.description')}
+            input(type="text" name="description" id="edit-description" required)
+
+          .form-group
+            label(for="edit-time") #{t('admin-lesson.time')}
+            input(type="number" name="time" id="edit-time" required)
+
+          .btn-group-admin
+            .save-btn: button(type="submit") #{t('admin.save')}
+            .cancel-btn: button(type="button" onclick=`hideLessonEditForm(${course.id})`) #{t('admin.cancel')}
+
+    #deleteSectionModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-delete-section')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmSectionDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideSectionDeleteForm()") #{t('admin.cancel')}
+
+    .deleteLessonModal.hidden
+      .modal-content-admin
+        h3 #{t('admin.confirm-delete')}
+        p #{t('admin.confirm-delete-lesson')}
+        .btn-group-admin
+          .confirmDelete-btn: button(onclick="confirmLessonDelete()") #{t('admin.confirm-delete')}
+          .cancel-btn: button(type="button" onclick="hideLessonDeleteForm()") #{t('admin.cancel')}
+  <!-- Create Form -->
+    #createModal.hidden
+        .modal-content-admin
+          h3 #{t('admin.create')}
+          form#createCourseForm(action=`/professors/courses/create` method="POST")
+            .form-group
+                label(for="name") #{t('admin-course.name')}
+                input(type="text" name="name" id="course-name" required)  
+                ul#error-name.error-messages
+
+            .form-group
+              label(for="description") #{t('admin-course.description')}
+              input(type="text" name="description" id="course-description" required)
+              ul#error-description.error-messages
+
+            .form-group
+              label(for="edit-categoryId") #{t('admin-course.categoryName')}
+              select(name="category_id" id="categoryId" required)  
+                option(value="", disabled=true, selected=true) #{t('admin.selectCategory')}
+                each category in categories
+                  option(value=category.id) #{category.name}
+              ul#error-category_id.error-messages 
+
+            .form-group
+              label(for="price") #{t('admin-course.price')}
+              input(type="number" name="price" id="price" required)
+              ul#error-price.error-messages
+
+            .btn-group-admin
+              .save-btn: button(type="submit") #{t('admin.save')}
+              .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
+  <!-- Edit Form -->
+  #editModal.hidden
     .modal-content-admin
       h3 #{t('admin.edit')}
-      form(action="/professors/sections/edit" method="POST")
-        input(type="hidden" name="id" id="edit-section-id") 
+      form#updateCourseForm(action="/professors/courses/edit" method="POST")
+        input(type="hidden" name="id" id="edit-id")
 
         .form-group
-          label(for="edit-section-name") #{t('admin-section.name')}
-          input(type="text" name="section-name" id="edit-section-name" required)
+          label(for="edit-name") #{t('admin-course.name')}
+          input(type="text" name="name" id="edit-name" required)
+          ul#edit-error-name.error-messages 
 
         .form-group
-          label(for="edit-courseId") #{t('admin-section.course')}
-          select(name="course_id", id="edit-courseId" required)
-            each course in courses
-              option(value=course.id) #{course.name}
+          label(for="edit-description") #{t('admin-course.description')}
+          textarea(name="description" id="edit-course-description" required)
+          ul#edit-error-description.error-messages
 
         .form-group
-          label(for="edit-total-time") #{t('admin-section.total-time')}
-          input(type="number" name="total-time" id="edit-total-time" required)
+          label(for="edit-categoryId") #{t('admin-course.categoryName')}
+          select(name="category_id" id="edit-categoryId" required)
+            option(value="", disabled=true, selected=true) #{t('admin.selectCategory')}
+            each category in categories
+              option(value=category.id) #{category.name}
+          ul#edit-error-category_id.error-messages
 
         .form-group
-          label(for="edit-total-lessons") #{t('admin-section.total-lesson')}
-          input(type="number" name="total-lessons" id="edit-total-lessons" required)
+          label(for="edit-price") #{t('admin-course.price')}
+          input(type="number" name="price" id="edit-price" required)
+          ul#edit-error-price.error-messages
 
         .btn-group-admin
           .save-btn: button(type="submit") #{t('admin.save')}
-          .cancel-btn: button(type="button" onclick="hideSectionEditForm()") #{t('admin.cancel')}
+          .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
 
-  #deleteSectionModal.hidden
-    .modal-content-admin
-      h3 #{t('admin.confirm-delete')}
-      p #{t('admin.confirm-delete-section')}
-      .btn-group-admin
-        .confirmDelete-btn: button(onclick="confirmSectionDelete()") #{t('admin.confirm-delete')}
-        .cancel-btn: button(type="button" onclick="hideSectionDeleteForm()") #{t('admin.cancel')}
-  script.
-    function showSections(courseId) {
-      document.getElementById(`sections-${courseId}`).classList.remove('hidden');
-    }
-    function hideSections(courseId) {
-      document.getElementById(`sections-${courseId}`).classList.add('hidden');
-    }
-
-  <!-- Create Form -->
-    #createModal.hidden
-      .modal-content-admin
-        h3 #{t('admin.create')}
-        form(action=`/professors/courses/create` method="POST")
-          .form-group
-            label(for="name") #{t('admin-course.name')}
-            input(type="text" name="name" id="name" required)
-          .form-group
-            label(for="description") #{t('admin-course.description')}
-            textarea(name="description" id="description" required)
-          .form-group
-            label(for="edit-categoryI") #{t('admin-course.categoryName')}
-            select(name="category_id" id="categoryId" required)  
-              option(value="", disabled=true, selected=true) #{t('admin.selectCategory')}
-              each category in categories
-                option(value=category.id) #{category.name}
-          .form-group
-            label(for="price") #{t('admin-course.price')}
-            input(type="number" name="price" id="price" required)
-          .form-group
-            label(for="average_rating") #{t('admin-course.rating')}
-            input(type="number" step="0.1" name="average_rating" id="average_rating" required)
-          .btn-group-admin
-            .save-btn: button(type="submit") #{t('admin.save')}
-            .cancel-btn: button(type="button" onclick="hideCreateForm()") #{t('admin.cancel')}
-
-  <!-- Edit Form -->
-    #editModal.hidden
-      .modal-content-admin
-        h3 #{t('admin.edit')}
-        form(action="/professors/courses/edit" method="POST")
-          input(type="hidden" name="id" id="edit-id")
-          .form-group
-            label(for="edit-name") #{t('admin-course.name')}
-            input(type="text" name="name" id="edit-name" required)
-          .form-group
-            label(for="edit-description") #{t('admin-course.description')}
-            textarea(name="description" id="edit-description" required)
-          .form-group
-            label(for="edit-categoryId") #{t('admin-course.categoryName')}
-            select(name="categoryId" id="edit-categoryId" required)
-              each category in categories
-                option(value=category.id, selected=(category.id == editCategoryId)) #{category.name}
-          .form-group
-            label(for="edit-price") #{t('admin-course.price')}
-            input(type="number" name="price" id="edit-price" required)
-          .form-group
-            label(for="edit-average_rating") #{t('admin-course.average_rating')}
-            input(type="number" step="0.1" name="average_rating" id="edit-average_rating" required)
-          .btn-group-admin
-            .save-btn: button(type="submit") #{t('admin.save')}
-            .cancel-btn: button(type="button" onclick="hideEditForm()") #{t('admin.cancel')}
-
-  <!-- Delete Form -->
+    <!-- Delete Form -->
   #deleteModal.hidden
     .modal-content-admin
       h3 #{t('admin.confirm-delete')}
@@ -229,25 +352,8 @@ block content
       .btn-group-admin
         .confirmDelete-btn: button(onclick="confirmDelete()") #{t('admin.confirm-delete')}
         .cancel-btn: button(type="button" onclick="hideDeleteForm()") #{t('admin.cancel')}
-
   script.
-    const courses = JSON.parse('!{JSON.stringify(courses)}'); 
-    function addSectionForm() {
-        const container = document.getElementById('sectionsContainer');
-        const newForm = document.createElement('div');
-        newForm.className = 'section-form';
-        newForm.innerHTML = `
-            <label for="name">Section Name</label>
-            <input type="text" name="name[]" required>
-            <label for="edit-courseId">Course</label>
-            <select name="course_id[]" required>
-                ${courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('')}
-            </select>
-            <label for="total_time">Total Time</label>
-            <input type="number" name="total_time[]" required>
-            <label for="total_lesson">Total Lesson</label>
-            <input type="number" name="total_lesson[]" required>
-            <button type="button" class="remove-btn" onclick="removeSectionForm(this)">Xóa</button>
-        `;
-        container.appendChild(newForm);
-    }
+    const courses = !{JSON.stringify(courses)};
+    const sections = !{JSON.stringify(sections)};
+
+

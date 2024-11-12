@@ -22,13 +22,25 @@
       }
     });
 
-  $("#logout")
+    $("#logout")
     .off("click")
     .on("click", function (e) {
       e.preventDefault();
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("user.id");
-      sessionStorage.removeItem("user.name");
-      window.location.href = "/login";
+      
+      $.ajax({
+        url: "/logout",
+        method: "POST",
+        success: function () {
+          sessionStorage.removeItem("accessToken");
+          sessionStorage.removeItem("user.id");
+          sessionStorage.removeItem("user.name");
+
+          window.location.href = "/login";
+        },
+        error: function (error) {
+          console.error("Logout failed:", error);
+          alert("Logout failed. Please try again.");
+        },
+      });
     });
 });

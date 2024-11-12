@@ -8,8 +8,6 @@ import {
 import { getCourseById } from "../service/course.service";
 import { hasUserPurchasedCourse } from "../service/enrollment.service";
 import { getItemByCourseId, removeFromCart } from "@src/service/cart.service";
-import { ProcessPaymentDto, SubmitPaymentDto } from "@src/entity/dto/payment.dto";
-import { validateOrReject } from "class-validator";
 
 export const processPayment = asyncHandler(
   async (req: Request, res: Response) => {
@@ -19,15 +17,6 @@ export const processPayment = asyncHandler(
       return res
         .status(400)
         .render("error", { message: req.t("payment.error_invalid_data") });
-    }
-
-    const dto = new ProcessPaymentDto();
-    dto.courseIds = courseIds; 
-    
-    try {
-      await validateOrReject(dto);
-    } catch (errors) {
-      return res.status(400).render("error", { message: req.t("payment.error_invalid_data"), errors });
     }
 
     const paymentDetails = [];
@@ -87,15 +76,6 @@ export const submitPayment = asyncHandler(
         .status(400)
         .render("error", { message: req.t("payment.error_invalid_data") });
     }
-
-    const dto = new SubmitPaymentDto();
-  dto.courseIds = courseIds;
-
-  try {
-    await validateOrReject(dto);
-  } catch (errors) {
-    return res.status(400).render("error", { message: req.t("payment.error_invalid_data"), errors });
-  }
 
     try {
       for (const courseId of courseIds) {

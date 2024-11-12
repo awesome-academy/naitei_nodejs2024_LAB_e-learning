@@ -29,8 +29,6 @@ block content
             .row.g-5.justify-content-center
               .col-lg-12.wow.fadeInUp(data-wow-delay='0.3s')
                 h2 #{course ? course.name : 'Course not found'}
-                p
-                  | Start at the beginning by learning HTML basics &mdash; an important foundation for building and editing web pages.
                 .d-flex-custom
                   small
                     i.fa.fa-star.text-warning.px-1  
@@ -56,10 +54,8 @@ block content
                 p 
                   | #{course.description}
                 h2.mt-4
-                  | #{t('course.skill')}
-                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Structure pages with HTML
-                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Present data with tables
-                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 Write cleaner HTML
+                  | #{t('course.category')}
+                span.badge.rounded-pill.text-white.bg-primary.px-4.py-2.m-2 #{category.name}
               #Curriculum.container
                 h2.mt-4
                   | #{t('course.section')}
@@ -106,7 +102,7 @@ block content
                         .col-6
                           p
                             i.fa.fa-video
-                              | 29 #{t('course.professor_course')}
+                              | #{professorCourseCount} #{t('course.professor_course')}
                   .des.mt-4.mb-5
                     | Curriculum Director at Codecademy and creative technologist. She has designed a range of Codecademy courses, including Learn HTML, Learn C#, Learn Alexa, and the beginner-friendly Learn How to Code.
           #Comment.container
@@ -142,7 +138,7 @@ block content
           .image.text-center
             img.img-fluid.mt-2(src='/img/course-1.jpg' alt='')
           .buttons
-            if isProfessorCourse || paidCourse
+            if isProfessorCourse || paidCourse || isAdmin
               a.text-decoration-none.text-white.btn.p-3.w-100.mb-2(href=`/enrollments/${course.id}`) #{t('home.Enroll')}
             else
               h4.mt-2.p-2

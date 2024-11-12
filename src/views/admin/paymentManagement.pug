@@ -7,14 +7,11 @@ block content
       .row.g-4.wow.fadeInUp(data-wow-delay='0.5s ')
         h2 #{t('admin-payment.management')}
         .admin-container
-          .create-btn
-            button(onclick="showCreateForm()") #{t('admin.create')}
           center
             table.admin-table
               thead
                 tr
                   th #{t('admin-payment.#')}
-                  th #{t('admin-payment.ID')}
                   th #{t('admin-payment.user')}
                   th #{t('admin-payment.course')}
                   th #{t('admin-payment.amount')}

@@ -1,42 +1,27 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsString,IsEnum, IsNotEmpty, IsInt, Min, IsNumber, IsOptional, Max, Validate, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
+
+@ValidatorConstraint({ name: 'isNotNumericString', async: false })
+class IsNotNumericString implements ValidatorConstraintInterface {
+  validate(text: string, args: ValidationArguments) {
+    return isNaN(Number(text)); 
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `${args.property} should not be a numeric value`;
+  }
+}
 
 export class CreateSectionDto {
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
   name!: string;
 
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  course_id!: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  total_time!: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  total_lesson!: number | null;
 }
 
 export class UpdateSectionDto {
-  @IsNotEmpty()
-  @IsInt()
-  id!: number;
-
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
+  @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
   name!: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  total_time!: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  total_lesson!: number | null;
 }

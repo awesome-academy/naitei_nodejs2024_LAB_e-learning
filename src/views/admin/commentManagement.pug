@@ -23,6 +23,6 @@ block content
                     td #{index + 1}
                     td #{comment.id}
                     td #{comment.user.name}
-                    td #{comment.course ? comment.course.name : #{t('admin-comment.NA')}
+                    td #{comment.course ? comment.course.name : t('admin-comment.NA')}
                     td #{comment.comment_text}
                     td #{comment.created_at.toLocaleString()}

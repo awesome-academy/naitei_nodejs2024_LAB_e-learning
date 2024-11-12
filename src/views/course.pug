@@ -59,15 +59,22 @@ block content
           
           if (response.courses && response.courses.length > 0) {
             response.courses.forEach(course => {
-              const enrollLink = response.isLoggedIn && response.user?.role === 'professor'
-                ? `/enrollments/${course.id}`
-                : `/cart/add?courseId=${course.id}`;
-              
-              const buttonText = response.isLoggedIn && response.user?.role === 'professor'
-                ? '#{t("home.enroll")}'
-                : `${course.price} $ #{t("home.Add_to_cart")}`;
+              const enrollLink = !response.isLoggedIn 
+                  ? `/login` 
+                  : (course.paidCourse || 
+                    response.user?.role === 'admin' || 
+                    (response.user?.role === 'professor' && course.professorId === response.user.id))
+                    ? `/enrollments/${course.id}` 
+                    : `/cart/add?courseId=${course.id}`; 
 
-              courseHtml += `
+              const buttonText = !response.isLoggedIn 
+                  ? 'Add to Cart'
+                  : (course.paidCourse || 
+                    response.user?.role === 'admin' || 
+                    (response.user?.role === 'professor' && course.professorId === response.user.id))
+                    ? 'Enroll Now' 
+                    : `$${course.price} Add to Cart`;
+                courseHtml += `
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                   <div class="course-item shadow">
                     <div class="position-relative overflow-hidden text-light image">

@@ -7,6 +7,7 @@ import { Lesson } from '../entity/Lesson';
 import { Section } from '@src/entity/Section';
 import { getEnrollmentLesson, upsertEnrollmentLesson } from './enrollmentlesson.service';
 import { Enrollmentlesson } from '@src/entity/EnrollmentLesson';
+import { In } from "typeorm";
 
 
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
@@ -102,6 +103,23 @@ export async function getEnrollment(userId: number, courseId: number): Promise<E
 
     return enrollment; 
 }
+
+
+export async function getEnrollmentProgress(userId: number, courseIds: number[]): Promise<any[]> {
+    const enrollments = await enrollmentRepository.find({
+      where: {
+        user_id: userId,
+        course_id: In(courseIds), 
+      },
+      relations: ['course'], 
+    });
+  
+    return enrollments.map(enrollment => ({
+      course_id: enrollment.course_id,
+      progress: enrollment.progress, 
+      course_name: enrollment.course?.name || 'N/A', 
+    }));
+  }
 
 export async function getLessons(courseId: number) {
     const sections = await sectionRepository.find({

@@ -33,20 +33,21 @@ block content
                   p.mb-4.pb-2
                     | #{mostEnrolledCourse.description} 
                   a.btn.text-light.py-3.px-5.mt-2(href=`/courses/${mostEnrolledCourse.id}`) #{t('home.Enroll')}
-      - const lastCourse = courses[courses.length - 1];
-      .owl-carousel-item.position-relative
-        img.img-fluid(src='img/carousel-3.jpg' alt=lastCourse.name)
-        .position-absolute.top-0.start-0.w-100.h-100.d-flex.align-items-center
-          .container
-            .row.justify-content-start
-              .col-sm-10.col-lg-8
-                h5.text-uppercase.mb-3.animated.slideInDown.custom-color
-                  | #{t('home.newest-course')}
-                h1.display-3.animated.slideInDown
-                  | #{lastCourse.name}  
-                p.mb-4.pb-2
-                  | #{lastCourse.description}  
-                a.btn.text-light.py-3.px-5.mt-2(href=`/courses/${lastCourse.id}`) #{t('home.Enroll')} 
+        - const lastCourse = courses[courses.length - 1];
+        .owl-carousel-item.position-relative
+          img.img-fluid(src='img/carousel-3.jpg' alt=lastCourse.name)
+          .position-absolute.top-0.start-0.w-100.h-100.d-flex.align-items-center
+            .container
+              .row.justify-content-start
+                .col-sm-10.col-lg-8
+                  h5.text-uppercase.mb-3.animated.slideInDown.custom-color
+                    | #{t('home.newest-course')}
+                  h1.display-3.animated.slideInDown
+                    | #{lastCourse.name}  
+                  p.mb-4.pb-2
+                    | #{lastCourse.description}  
+                  a.btn.text-light.py-3.px-5.mt-2(href=`/courses/${lastCourse.id}`) #{t('home.Enroll')} 
+
   <!-- Carousel End -->
 
   <!-- Service Start -->
@@ -174,26 +175,26 @@ block content
                       | #{course.average_rating}
                     small.flex-fill.text-left.p-2
                       i.fa.fa-clock.me-2
-                      | #{course.totalHours}#{t('home.Hrs')}
+                      | | #{course.totalHours}#{t('home.Hrs')}
                     small.text-primary.py-1.px-2.fw-bold.fs-6
-                      if isLoggedIn
-                        if user.role === 'professor' 
+                    if isLoggedIn
+                      if isProfessor  && course.professorId === user.id || isAdmin
+                        a(href=`/enrollments/${course.id}`)
+                          | #{t('home.Enroll')}
+                          i.fa.fa-chevron-right.me-2.fs-10
+                      else
+                        if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
                           a(href=`/enrollments/${course.id}`)
-                            | #{t('home.Enroll')}  
+                            | #{t('home.Enroll')}
                             i.fa.fa-chevron-right.me-2.fs-10
                         else
-                          if purchasedCourses.some(purchasedCourse => purchasedCourse.id === course.id)
-                            a(href=`/enrollments/${course.id}`)
-                              | #{t('home.Enroll')}  
-                              i.fa.fa-chevron-right.me-2.fs-10
-                          else
-                            a(href=`/cart/add?courseId=${course.id}`, class='link-style')
-                              | #{t('home.Add_to_cart')}
-                              i.fa.fa-chevron-right.me-2.fs-10
-                      else
-                        a(href=`/login`) 
-                          | #{course.price}$  #{t('home.Add_to_cart')}  
-                          i.fa.fa-chevron-right.me-2.fs-10
+                          a(href=`/cart/add?courseId=${course.id}`, class='link-style')
+                            | #{t('home.Add_to_cart')}
+                            i.fa.fa-chevron-right.me-2.fs-10
+                    else
+                      a(href=`/login`) 
+                        | #{course.price}$ #{t('home.Add_to_cart')}
+                        i.fa.fa-chevron-right.me-2.fs-10
           else
             p.text-center #{t('home.NoCoursesAvailable')}
   .container.text-center

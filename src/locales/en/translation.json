@@ -71,7 +71,7 @@
     "mostEnrolledCourse": "the most enrolled course",
     "no_course_available": "No Courses Available",
     "cart": "Cart",
-    "Add_to_cart": "Add to cart",
+    "Add_to_cart": "Add",
     "enroll": "Enroll",
     "payment": "Payment"
   },
@@ -134,6 +134,7 @@
     "yes": "Yes",
     "share": "Share this Course",
     "progress": "Progress",
+    "category": "Category",
     "progress_error": "Error updating lesson progress",
     "userid_courseid_required": "User ID and Course ID are required",
     "purchase_course_error": "You do not have access to this course",
@@ -204,6 +205,7 @@
     "create": "Create",
     "add-more": "Add",
     "view": "View",
+    "close": "Close",
     "selectCategory": "Select Category",
     "confirm-delete": "Confirm delete",
     "confirm-delete-user": "Are you sure you want to delete this user?",
@@ -241,7 +243,9 @@
     "reset_password": "Reset Password",
     "updateInfo": "Update Info",
     "department": "Department",
-    "years_of_experience": "Year of Experience"
+    "years_of_experience": "Year of Experience",
+    "course_name": "Course Name",
+    "progress": "Progress"
   },
   "admin-course": {
     "management": "Course management",
@@ -287,8 +291,8 @@
     "management": "Payment management",
     "#": "#",
     "ID": "ID",
-    "user": "Lesson name",
-    "course": "Section name",
+    "user": "User name",
+    "course": "Course name",
     "amount": "Total time",
     "status": "Content",
     "payment-date": "Payment time"
@@ -329,6 +333,7 @@
   "professor": {
     "update_error": "You are not authorized to update this course.",
     "section_not_found": "Section not found",
-    "course": "My Course"
+    "course": "My Course",
+    "student": "Students"
   }
 }
