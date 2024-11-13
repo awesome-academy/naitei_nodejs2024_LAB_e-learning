@@ -2,6 +2,8 @@ dist/
 **/**/*.log
 env/*.env
 *.sql
+src/app/
+src/test/BasicUtils.spec.ts
 
 # Logs
 logs
