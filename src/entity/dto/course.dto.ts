@@ -36,6 +36,10 @@ export class CreateCourseDto {
     @Min(0)
     @Max(5)
     average_rating?: number;
+
+    @IsNumber()
+    @IsOptional()
+    professor_id?: number
   }
 
   export class UpdateCourseDto {

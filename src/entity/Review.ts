@@ -31,10 +31,10 @@ export class Review {
   @Column("integer")
   rating!: number;
 
-  @Column({ type: "bigint" })
+  @Column({ type: "bigint", nullable: true })
   user_id!: number;
 
-  @Column({ type: "bigint" })
+  @Column({ type: "bigint", nullable: true })
   course_id!: number;
 
   @CreateDateColumn({ type: "datetime" })

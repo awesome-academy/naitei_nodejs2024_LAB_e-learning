@@ -16,7 +16,7 @@ export class Comment {
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id!: number;
 
-  @ManyToOne(() => Review)
+  @ManyToOne(() => Review, (review) => review.comments)
   @JoinColumn({ name: "review_id" })
   review!: Review;
 
