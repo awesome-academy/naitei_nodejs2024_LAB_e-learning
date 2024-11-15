@@ -5,7 +5,6 @@ import { Section } from "../entity/Section";
 import { Lesson } from "../entity/Lesson";
 import { Payment } from "../entity/Payment";
 import { Review } from "../entity/Review";
-import { Category } from "./../entity/Category";
 import { In } from "typeorm";
 import { User } from "../entity/User";
 import { CourseStatus } from "../enum/course.enum"

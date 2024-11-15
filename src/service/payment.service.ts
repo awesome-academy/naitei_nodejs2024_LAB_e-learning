@@ -2,7 +2,6 @@ import { AppDataSource } from '../repos/db';
 import { User } from '../entity/User';
 import { Course } from '../entity/Course';
 import { Payment } from '../entity/Payment';
-import { ALL } from 'dns';
 import { In } from 'typeorm'; 
 
 const courseRepository = AppDataSource.getRepository(Course);

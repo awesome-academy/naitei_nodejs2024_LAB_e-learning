@@ -7,7 +7,7 @@ import Jwt from "jsonwebtoken";
 
 
 import { calculateTotalTimeAndLessons } from "../service/lession.service";
-import { getSectionsWithLessons, getUserPurchasedCourses } from "../service/course.service";
+import { getSectionsWithLessons } from "../service/course.service";
 
 const userRepository = AppDataSource.getRepository(User);
 const courseRepository = AppDataSource.getRepository(Course);
@@ -64,6 +64,10 @@ export const userLogin = async (email: string, password: string) => {
   if (!user) {
     throw new Error("Invalid email or password");
   }
+
+  // Log the passwords for debugging
+  console.log("Password from request: ", password);
+  console.log("Hashed password in DB: ", user.password);
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
