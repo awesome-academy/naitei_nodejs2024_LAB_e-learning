@@ -3,10 +3,10 @@ import { Review } from "../entity/Review";
 
 const reviewRepository = AppDataSource.getRepository(Review);
 
-export const getReviewByCourseId = (courseId: number) => {
-  return reviewRepository.find({
-    where: { course_id: courseId },
-    relations: ["course", "user", "comments"],
+export const getReviewByCourseId = async (courseId: number): Promise<Review[]> => {
+  return await AppDataSource.getRepository(Review).find({
+    where: { course: { id: courseId } },
+    relations: ["user", "comments", "course"], 
   });
 };
 

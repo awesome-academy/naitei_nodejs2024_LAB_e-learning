@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsOptional, IsString, Length, IsDateString, IsInt } from 'class-validator';
-import { UserRoleType, UserGenderType } from 'src/enum/user.enum';
+import { UserRoleType, UserGenderType } from '../../enum/user.enum';
 
 export class UserRegisterDto {
   @IsString()

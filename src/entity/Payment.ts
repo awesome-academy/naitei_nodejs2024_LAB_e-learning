@@ -25,8 +25,8 @@ export class Payment {
     @Column('double')
       amount!: number;
 
-    @Column({ type: 'date' })
-      payment_date!: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    payment_date!: Date;
 
     @Column({
       type: 'enum',

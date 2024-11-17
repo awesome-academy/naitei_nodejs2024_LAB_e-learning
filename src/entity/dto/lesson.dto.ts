@@ -1,5 +1,5 @@
 import { Validate, IsNotEmpty, IsInt, IsOptional, IsEnum, IsString, IsNumber, Min, Max, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator';
-import { LessonType } from 'src/enum/lesson.enum';
+import { LessonType } from '../../enum/lesson.enum';
 
 @ValidatorConstraint({ name: 'isNotNumericString', async: false })
 class IsNotNumericString implements ValidatorConstraintInterface {

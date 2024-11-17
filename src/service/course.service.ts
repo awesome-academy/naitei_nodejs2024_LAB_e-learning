@@ -18,21 +18,12 @@ const paymentRepository = AppDataSource.getRepository(Payment);
 const userRepository = AppDataSource.getRepository(User);
 const reviewRepository = AppDataSource.getRepository(Review);
 
-export async function getAllCourses() {
-  return await courseRepository.find({
-    where: {  status: CourseStatus.PUBLIC }, 
-    select: [
-      "id",
-      "name",
-      "price",
-      "description",
-      "average_rating",
-      "created_at",
-      "updated_at",
-    ],
-    order: { name: "ASC" },
+export const getAllCourses = async (): Promise<Course[]> => {
+  return courseRepository.find({
+    where: { status: CourseStatus.PUBLIC }, 
+    select: ["id", "name", "status"], 
   });
-}
+};
 
 export const getPaymentsByUserId = async (userId: number): Promise<Payment[]> => {  
   return await paymentRepository.find({
@@ -59,32 +50,34 @@ export async function getUserPurchasedCourses(
   return payments;
 }
 
-export async function getProfessorByCourse(courseId: number) {
-  const course = await courseRepository.findOne({
-    where: { id: courseId },
-    relations: { professor: true },
-  });
-  return course?.professor;
-}
+export const getProfessorByCourse = async (courseId: number): Promise<User> => {
+  const course = await courseRepository.findOne({ where: { id: courseId }, relations: ['professor'] });
+  
+  if (!course) {
+    throw new Error("Course not found");
+  }
 
-export async function getProfessorAndCourseCountByCourseId(courseId: number): Promise<number> {
-  const course = await courseRepository.findOne({
-    where: { id: courseId },
-    relations: { professor: true },
-  });
-
-  if (!course || !course.professor) {
+  if (!course.professor) {
     throw new Error(`Professor not found for course with ID ${courseId}`);
   }
 
-  const professorId = course.professor.id;
+  return course.professor;
+};
 
-  const professorCourseCount = await courseRepository.count({
-    where: { professor: { id: professorId } },
-  });
+export const getProfessorAndCourseCountByCourseId = async (courseId: number): Promise<number> => {
+  const course = await courseRepository.findOne({ where: { id: courseId }, relations: ['professor'] });
+  
+  if (!course) {
+    throw new Error("Course not found");
+  }
 
-  return professorCourseCount;
-}
+  if (!course.professor) {
+    throw new Error(`Professor not found for course with ID ${courseId}`);
+  }
+
+  const count = await courseRepository.count({ where: { professor_id: course.professor.id } });
+  return count;
+};
 
 export const getCoursesByUserId = async (userId: number) => {
   return await courseRepository.find({ where: { professor_id: userId } });
@@ -125,13 +118,19 @@ export async function getCoursesInfo(professorId: number): Promise<any[]> {
   return coursesWithEnrollmentAndPaymentCount;
 }
 
-export async function getCategoryByCourse(courseId: number) {
-  const course = await courseRepository.findOne({
-    where: { id: courseId },
-    relations: { category: true },
-  });
-  return course?.category;
-}
+export const getCategoryByCourse = async (courseId: number): Promise<Category> => {
+  const course = await courseRepository.findOne({ where: { id: courseId }, relations: ['category'] });
+  
+  if (!course) {
+    throw new Error("Course not found");
+  }
+
+  if (!course.category) {
+    throw new Error(`Category not found for course with ID ${courseId}`);
+  }
+
+  return course.category;
+};
 
 export const getCoursesWithSectionsAndHours = async () => {
   const courses = await getAllCourses();
@@ -177,7 +176,6 @@ export async function getSectionsWithLessons(courseId: number) {
           "name",
           "type",
           "content",
-          "progress",
           "description",
           "time",
           "created_at",
@@ -271,11 +269,11 @@ export const updateCourseAverageRating = async (courseId: number) => {
   try {
     const reviews = await reviewRepository.find({
       where: { course_id: courseId },
-      select: ['rating']
+      select: ["rating"],
     });
 
-    const totalRatings = reviews.length;
-    const sumRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const totalRatings = reviews?.length || 0;
+    const sumRatings = reviews?.reduce((sum, review) => sum + review.rating, 0);
 
     const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
 
@@ -283,11 +281,12 @@ export const updateCourseAverageRating = async (courseId: number) => {
       { id: courseId },
       { average_rating: averageRating }
     );
-
   } catch (error) {
     console.error(`Failed to update average rating for course ID ${courseId}:`, error);
+    throw error;
   }
 };
+
 
 export async function deleteCourse(id: number): Promise<boolean> {
   const result = await courseRepository.delete(id);
@@ -314,11 +313,17 @@ export const filterAndSortCourses = async (
   page: number = 1,
   limit: number = 10
 ) => {
+  // Ensure `courseRepository` is defined
+  if (!courseRepository || !courseRepository.createQueryBuilder) {
+    throw new Error("Course repository or QueryBuilder is not initialized.");
+  }
+
   const query = courseRepository
     .createQueryBuilder("course")
     .innerJoinAndSelect("course.category", "category")
     .where("course.status = :status", { status: CourseStatus.PUBLIC });
 
+  // Apply filters
   if (filters.professorId) {
     query.andWhere("course.professor_id = :professorId", {
       professorId: filters.professorId,
@@ -338,55 +343,34 @@ export const filterAndSortCourses = async (
   if (filters.name) {
     query.andWhere("course.name LIKE :name", { name: `%${filters.name}%` });
   }
-
-  // Apply sorting
-  if (sorting.sortBy) {
-    query.orderBy(`course.${sorting.sortBy}`, sorting.order || "ASC");
-  }
-
   if (filters.category) {
     query.andWhere("category.name LIKE :category", {
       category: `%${filters.category}%`,
     });
   }
 
-  // Apply pagination (offset and limit)
+  // Validate and apply sorting
+  const validSortByFields = ["name", "price", "average_rating", "created_at"];
+  const sortBy = sorting.sortBy && validSortByFields.includes(sorting.sortBy) ? sorting.sortBy : "name";
+  const order = sorting.order === "ASC" || sorting.order === "DESC" ? sorting.order : "ASC";
+
+  query.orderBy(`course.${sortBy}`, order);
+
+  // Apply pagination
   const offset = (page - 1) * limit;
   query.skip(offset).take(limit);
 
   // Execute the query and get results
   const [courses, total] = await query.getManyAndCount();
 
-  const results = await Promise.all(
-    courses.map(async (course) => {
-      const sectionsWithLessons = await getSectionsWithLessons(course.id);
-      const totalHours = sectionsWithLessons.reduce(
-        (sum, section) => sum + section.total_time,
-        0
-      );
-
-      const professor = await getProfessorByCourse(course.id);
-      const professorName = professor?.name || "Unknown";
-      const professorId = professor?.id || "Unknown";
-
-      return {
-        ...course,
-        professorName,
-        professorId,
-        sectionsWithLessons,
-        totalHours,
-      };
-    })
-  );
-
-  // Return paginated result along with total count
   return {
-    courses: results,
+    courses,
     total,
     page,
     pageCount: Math.ceil(total / limit),
   };
 };
+
 
 export async function getCourseById(id: number) {
   return await courseRepository.findOne({
