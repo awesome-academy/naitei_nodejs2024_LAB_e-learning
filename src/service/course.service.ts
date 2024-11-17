@@ -19,28 +19,35 @@ const userRepository = AppDataSource.getRepository(User);
 const reviewRepository = AppDataSource.getRepository(Review);
 
 export async function getAllCourses() {
+const courseRepository = AppDataSource.getRepository(Course);
+  if (!courseRepository) {
+      throw new Error("Repository is not initialized.");
+  }
+
   return await courseRepository.find({
-    where: {  status: CourseStatus.PUBLIC }, 
-    select: [
-      "id",
-      "name",
-      "price",
-      "description",
-      "average_rating",
-      "created_at",
-      "updated_at",
-    ],
-    order: { name: "ASC" },
+      where: { status: CourseStatus.PUBLIC },
+      select: [
+          "id",
+          "name",
+          "price",
+          "description",
+          "average_rating",
+          "created_at",
+          "updated_at",
+      ],
+      order: { name: "ASC" },
   });
 }
 
 export const getPaymentsByUserId = async (userId: number): Promise<Payment[]> => {  
+  const paymentRepository = AppDataSource.getRepository(Payment);
   return await paymentRepository.find({
     where: { id: userId },
   });
 };
 
 export const getCoursesByIds = async (courseIds: number[]): Promise<Course[]> => {
+  const courseRepository = AppDataSource.getRepository(Course);
   return await courseRepository.findBy({
     id: In(courseIds),
   });
@@ -49,6 +56,7 @@ export const getCoursesByIds = async (courseIds: number[]): Promise<Course[]> =>
 export async function getUserPurchasedCourses(
   userId: number
 ): Promise<Payment[]> {
+  const paymentRepository = AppDataSource.getRepository(Payment);
   const payments = await paymentRepository.find({
     where: {
       user_id: userId,
@@ -60,6 +68,7 @@ export async function getUserPurchasedCourses(
 }
 
 export async function getProfessorByCourse(courseId: number) {
+  const courseRepository = AppDataSource.getRepository(Course);
   const course = await courseRepository.findOne({
     where: { id: courseId },
     relations: { professor: true },
@@ -68,6 +77,7 @@ export async function getProfessorByCourse(courseId: number) {
 }
 
 export async function getProfessorAndCourseCountByCourseId(courseId: number): Promise<number> {
+  const courseRepository = AppDataSource.getRepository(Course);
   const course = await courseRepository.findOne({
     where: { id: courseId },
     relations: { professor: true },
@@ -87,10 +97,15 @@ export async function getProfessorAndCourseCountByCourseId(courseId: number): Pr
 }
 
 export const getCoursesByUserId = async (userId: number) => {
+  const courseRepository = AppDataSource.getRepository(Course);
   return await courseRepository.find({ where: { professor_id: userId } });
 };
 
 export async function getCoursesInfo(professorId: number): Promise<any[]> {
+  const userRepository = AppDataSource.getRepository(User);
+  const courseRepository = AppDataSource.getRepository(Course);
+  const enrollmentRepository = AppDataSource.getRepository(Enrollment);
+  const paymentRepository = AppDataSource.getRepository(Payment);
   const professor = await userRepository.findOne({
     where: { id: professorId, role: 'professor' },
   });
@@ -126,6 +141,7 @@ export async function getCoursesInfo(professorId: number): Promise<any[]> {
 }
 
 export async function getCategoryByCourse(courseId: number) {
+  const courseRepository = AppDataSource.getRepository(Course);
   const course = await courseRepository.findOne({
     where: { id: courseId },
     relations: { category: true },
@@ -164,6 +180,8 @@ export const getCoursesWithSectionsAndHours = async () => {
 };
 
 export async function getSectionsWithLessons(courseId: number) {
+  const sectionRepository = AppDataSource.getRepository(Section);
+  const lessonRepository = AppDataSource.getRepository(Lesson);
   const sections = await sectionRepository.find({
     where: { course: { id: courseId } },
   });
@@ -197,6 +215,7 @@ export async function getSectionsWithLessons(courseId: number) {
 export async function countEnrolledUsersInCourse(
   courseId: number
 ): Promise<number> {
+  const enrollmentRepository = AppDataSource.getRepository(Enrollment);
   const count = await enrollmentRepository.count({
     where: {
       course: { id: courseId },
@@ -209,6 +228,7 @@ export async function countEnrolledUsersInCourse(
 }
 
 export async function createCourse(data: Partial<Course>): Promise<Course> {
+  const courseRepository = AppDataSource.getRepository(Course);
   const newCourse = courseRepository.create({
       name: data.name,
       description: data.description,
@@ -222,6 +242,7 @@ export async function createCourse(data: Partial<Course>): Promise<Course> {
 }
 
 export const checkProfessorAuthorization = async (courseId: number, userId: number) => {
+  const courseRepository = AppDataSource.getRepository(Course);
   const course = await courseRepository.findOne({
     where: { id: courseId },
     relations: ['professor'],
@@ -235,6 +256,7 @@ export const checkProfessorAuthorization = async (courseId: number, userId: numb
 };
 
 export const updateCourse = async (id: number, courseData: any) => {
+  const courseRepository = AppDataSource.getRepository(Course);
   const course = await courseRepository.findOne({ where: { id }, relations: ['professor', 'sections'] });
 
   if (!course) {
@@ -252,6 +274,7 @@ export const updateCourse = async (id: number, courseData: any) => {
 
 export const updateStatus = async (courseId: number) => {
   try {
+    const courseRepository = AppDataSource.getRepository(Course);
     const course = await courseRepository.findOne({ where: { id: courseId } });
 
     if (!course) {
@@ -269,13 +292,16 @@ export const updateStatus = async (courseId: number) => {
 
 export const updateCourseAverageRating = async (courseId: number) => {
   try {
+    const reviewRepository = AppDataSource.getRepository(Review);
+    const courseRepository = AppDataSource.getRepository(Course); // Đảm bảo lấy đúng mock
+
     const reviews = await reviewRepository.find({
       where: { course_id: courseId },
-      select: ['rating']
+      select: ["rating"],
     });
 
-    const totalRatings = reviews.length;
-    const sumRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const totalRatings = reviews?.length || 0;
+    const sumRatings = reviews?.reduce((sum, review) => sum + review.rating, 0);
 
     const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
 
@@ -283,13 +309,15 @@ export const updateCourseAverageRating = async (courseId: number) => {
       { id: courseId },
       { average_rating: averageRating }
     );
-
   } catch (error) {
     console.error(`Failed to update average rating for course ID ${courseId}:`, error);
+    throw error;
   }
 };
 
+
 export async function deleteCourse(id: number): Promise<boolean> {
+  const courseRepository = AppDataSource.getRepository(Course);
   const result = await courseRepository.delete(id);
   return result.affected !== 0;
 }
@@ -314,11 +342,17 @@ export const filterAndSortCourses = async (
   page: number = 1,
   limit: number = 10
 ) => {
+  // Ensure `courseRepository` is defined
+  if (!courseRepository || !courseRepository.createQueryBuilder) {
+    throw new Error("Course repository or QueryBuilder is not initialized.");
+  }
+
   const query = courseRepository
     .createQueryBuilder("course")
     .innerJoinAndSelect("course.category", "category")
     .where("course.status = :status", { status: CourseStatus.PUBLIC });
 
+  // Apply filters
   if (filters.professorId) {
     query.andWhere("course.professor_id = :professorId", {
       professorId: filters.professorId,
@@ -338,57 +372,37 @@ export const filterAndSortCourses = async (
   if (filters.name) {
     query.andWhere("course.name LIKE :name", { name: `%${filters.name}%` });
   }
-
-  // Apply sorting
-  if (sorting.sortBy) {
-    query.orderBy(`course.${sorting.sortBy}`, sorting.order || "ASC");
-  }
-
   if (filters.category) {
     query.andWhere("category.name LIKE :category", {
       category: `%${filters.category}%`,
     });
   }
 
-  // Apply pagination (offset and limit)
+  // Validate and apply sorting
+  const validSortByFields = ["name", "price", "average_rating", "created_at"];
+  const sortBy = sorting.sortBy && validSortByFields.includes(sorting.sortBy) ? sorting.sortBy : "name";
+  const order = sorting.order === "ASC" || sorting.order === "DESC" ? sorting.order : "ASC";
+
+  query.orderBy(`course.${sortBy}`, order);
+
+  // Apply pagination
   const offset = (page - 1) * limit;
   query.skip(offset).take(limit);
 
   // Execute the query and get results
   const [courses, total] = await query.getManyAndCount();
 
-  const results = await Promise.all(
-    courses.map(async (course) => {
-      const sectionsWithLessons = await getSectionsWithLessons(course.id);
-      const totalHours = sectionsWithLessons.reduce(
-        (sum, section) => sum + section.total_time,
-        0
-      );
-
-      const professor = await getProfessorByCourse(course.id);
-      const professorName = professor?.name || "Unknown";
-      const professorId = professor?.id || "Unknown";
-
-      return {
-        ...course,
-        professorName,
-        professorId,
-        sectionsWithLessons,
-        totalHours,
-      };
-    })
-  );
-
-  // Return paginated result along with total count
   return {
-    courses: results,
+    courses,
     total,
     page,
     pageCount: Math.ceil(total / limit),
   };
 };
 
+
 export async function getCourseById(id: number) {
+  const courseRepository = AppDataSource.getRepository(Course);
   return await courseRepository.findOne({
     where: { id: id },
   });
