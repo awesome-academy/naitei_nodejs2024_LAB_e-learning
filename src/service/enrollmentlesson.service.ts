@@ -1,5 +1,5 @@
-﻿import { Enrollmentlesson } from "@src/entity/EnrollmentLesson";
-import { AppDataSource } from "@src/repos/db";
+﻿import { Enrollmentlesson } from "../entity/EnrollmentLesson";
+import { AppDataSource } from "../repos/db";
 
 const enrollmentlessonRepository =
   AppDataSource.getRepository(Enrollmentlesson);
