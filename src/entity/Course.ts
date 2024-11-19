@@ -7,24 +7,24 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
-} from 'typeorm';
-import { User } from './User';
-import { Section } from './Section';
-import { Category } from './Category'; 
-import { Cart } from './Cart';
-import { CourseStatus } from '../enum/course.enum';
+} from "typeorm";
+import { User } from "./User";
+import { Section } from "./Section";
+import { Category } from "./Category";
+import { Cart } from "./Cart";
+import { CourseStatus } from "../enum/course.enum";
 
-@Entity('courses')
+@Entity("courses")
 export class Course {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id!: number;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'professor_id' })
+  @JoinColumn({ name: "professor_id" })
   professor!: User;
 
   @ManyToOne(() => Category, (category) => category.courses)
-  @JoinColumn({ name: 'category_id' }) 
+  @JoinColumn({ name: "category_id" })
   category!: Category;
 
   @OneToMany(() => Section, (section) => section.course)
@@ -33,32 +33,32 @@ export class Course {
   @Column()
   name!: string;
 
-  @Column('double')
+  @Column("double")
   price!: number;
 
-  @Column('text')
+  @Column("text")
   description!: string;
 
-  @Column('float')
+  @Column({ type: "float", nullable: true })
   average_rating!: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: "bigint" })
   professor_id!: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: "bigint" })
   category_id!: number;
 
   @Column({
-    type: 'enum', 
+    type: "enum",
     enum: CourseStatus,
     default: CourseStatus.DRAFT,
   })
   status!: string;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: "datetime" })
   created_at!: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: "datetime" })
   updated_at!: Date;
 
   @OneToMany(() => Cart, (cart) => cart.course)

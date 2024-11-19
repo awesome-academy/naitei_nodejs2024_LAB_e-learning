@@ -6,17 +6,17 @@ const reviewRepository = AppDataSource.getRepository(Review);
 export const getReviewByCourseId = (courseId: number) => {
   return reviewRepository.find({
     where: { course_id: courseId },
-    relations: ["user", "comments"],
+    relations: ["course", "user", "comments"],
   });
 };
 
 export const getReviewsWithDetails = async () => {
   return await reviewRepository.find({
     relations: {
-      user: true,     
-      course: true,    
+      user: true,
+      course: true,
       comments: {
-        user: true,    
+        user: true,
       },
     },
     select: {
@@ -38,6 +38,7 @@ export const getReviewsWithDetails = async () => {
         },
       },
     },
+    order: { created_at: "DESC" },
   });
 };
 
@@ -46,6 +47,9 @@ export const createReview = (
   rating: number,
   course_id: number
 ) => {
+  if (course_id <= 0) {
+    return Promise.reject(new Error("Invalid course ID"));
+  }
   return reviewRepository.save({
     user_id,
     rating,

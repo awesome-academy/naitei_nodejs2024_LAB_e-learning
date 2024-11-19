@@ -7,6 +7,7 @@ import { Entity,
 } from 'typeorm';
 import { UserRoleType, UserGenderType } from '../enum/user.enum';
 import { Cart } from './Cart';
+import { Review } from './Review';
 
 @Entity('users')
 export class User {
@@ -65,6 +66,9 @@ export class User {
 
     @OneToMany(() => Cart, (cart) => cart.user)
     cart!: Cart[];
+
+    @OneToMany(() => Review, (review) => review.user)
+    review!: Review[];
 
     constructor(userData?: Partial<User>) {
       userData && Object.assign(this, userData);
