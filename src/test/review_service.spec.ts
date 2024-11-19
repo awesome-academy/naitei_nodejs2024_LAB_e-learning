@@ -122,15 +122,87 @@ describe("createReview", () => {
 });
 
 describe("getReviewByCourseId", () => {
-  it("should retrieve reviews with related user and comments for a given course id", async () => {
-    const course_id = 5;
-    const reviews = await getReviewByCourseId(course_id);
+  beforeEach(async () => {
+    await commentRepository.query("SET foreign_key_checks = 0;");
 
+    await commentRepository.clear();
+    await reviewRepository.clear();
+    await courseRepository.clear();
+    await categoryRepository.clear();
+    await userRepository.clear();
+
+    await commentRepository.query("SET foreign_key_checks = 1;");
+  });
+  const userRepository = AppDataSource.getRepository(User);
+  const courseRepository = AppDataSource.getRepository(Course);
+  const categoryRepository = AppDataSource.getRepository(Category);
+  const reviewRepository = AppDataSource.getRepository(Review);
+  const commentRepository = AppDataSource.getRepository(Comment);
+  it("should retrieve reviews with related user and comments for a given course id", async () => {
+    const userDto: UserRegisterDto = {
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      role: UserRoleType.USER,
+      phone_number: faker.string.numeric(10),
+      date_of_birth: faker.date.past(),
+      gender: UserGenderType.MALE,
+      address: faker.location.streetAddress(),
+      identity_card: faker.number
+        .int({ min: 100000000, max: 999999999 })
+        .toString(),
+      additional_info: faker.lorem.sentence(),
+      department: faker.commerce.department(),
+      years_of_experience: faker.number.int({ min: 1, max: 30 }),
+    };
+    const user = await userRepository.save(userDto);
+
+    const professorDto: UserRegisterDto = {
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      role: UserRoleType.PROFESSOR,
+      phone_number: faker.string.numeric(10),
+      date_of_birth: faker.date.past(),
+      gender: UserGenderType.FEMALE,
+      address: faker.location.streetAddress(),
+      identity_card: faker.number
+        .int({ min: 100000000, max: 999999999 })
+        .toString(),
+      additional_info: faker.lorem.sentence(),
+      department: faker.commerce.department(),
+      years_of_experience: faker.number.int({ min: 1, max: 30 }),
+    };
+    const professor = await userRepository.save(professorDto);
+
+    const category = await categoryRepository.save({
+      name: faker.commerce.department(),
+    });
+
+    const courseDto: CreateCourseDto = {
+      name: faker.commerce.productName(),
+      description: faker.lorem.paragraph(),
+      price: faker.number.int(),
+      category_id: category.id,
+      average_rating: faker.number.int({ min: 1, max: 5 }),
+      professor_id: professor.id,
+    };
+    const course = await courseRepository.save(courseDto);
+
+    const reviewDto: CreateReviewDto = {
+      user_id: user.id,
+      course_id: course.id,
+      rating: faker.number.int({ min: 1, max: 5 }),
+    };
+    const review = await reviewRepository.save(reviewDto);
+
+    const reviews = await getReviewByCourseId(reviewDto.course_id);
+    
     expect(reviews).toBeDefined();
     expect(reviews).not.toEqual([]);
     reviews.forEach((review) => {
       expect(review.course).toBeDefined();
-      expect(Number(review.course?.id)).toBe(course_id);
+      expect(review.course?.id).toBe(reviewDto.course_id);
     });
   });
 

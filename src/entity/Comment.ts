@@ -29,7 +29,7 @@ export class Comment {
   course!: Course;
 
   @Column({ type: "bigint", nullable: true })
-  parent_id!: number;
+  parent_id!: number | null;
 
   @Column("text")
   comment_text!: string;
