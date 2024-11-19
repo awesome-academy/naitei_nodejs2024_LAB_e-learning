@@ -19,3 +19,28 @@ export class UpdateLessonProgressDto {
   @Type(() => Number)
   lessonId!: number;
 }
+
+export class CreateEnrollmentDto {
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  user_id!: number;
+
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  course_id!: number;
+
+  @IsNotEmpty()
+  @Type(() => Date)
+  enrollment_date!: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  completion_date?: Date | null;
+
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  progress!: number;
+}

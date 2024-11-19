@@ -8,6 +8,7 @@ import { Entity,
 import { UserRoleType, UserGenderType } from '../enum/user.enum';
 import { Cart } from './Cart';
 import { Review } from './Review';
+import { Enrollment } from './Enrollment';
 
 @Entity('users')
 export class User {
@@ -69,6 +70,9 @@ export class User {
 
     @OneToMany(() => Review, (review) => review.user)
     review!: Review[];
+
+    @OneToMany(() => Enrollment, enrollment => enrollment.user)
+    enrollments!: Enrollment[];
 
     constructor(userData?: Partial<User>) {
       userData && Object.assign(this, userData);

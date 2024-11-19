@@ -13,6 +13,7 @@ import { Section } from "./Section";
 import { Category } from "./Category";
 import { Cart } from "./Cart";
 import { CourseStatus } from "../enum/course.enum";
+import { Enrollment } from "./Enrollment";
 
 @Entity("courses")
 export class Course {
@@ -63,6 +64,9 @@ export class Course {
 
   @OneToMany(() => Cart, (cart) => cart.course)
   cartItems!: Cart[];
+
+  @OneToMany(() => Enrollment, enrollment => enrollment.user)
+  enrollments!: Enrollment[];
 
   constructor(courseData?: Partial<Course>) {
     courseData && Object.assign(this, courseData);

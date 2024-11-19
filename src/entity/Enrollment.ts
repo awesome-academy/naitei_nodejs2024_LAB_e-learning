@@ -14,11 +14,11 @@ export class Enrollment {
     @PrimaryGeneratedColumn('increment', { type: 'bigint' })
       id!: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, user => user.enrollments)
     @JoinColumn({ name: 'user_id' })
       user!: User;
 
-    @ManyToOne(() => Course)
+    @ManyToOne(() => Course, course => course.enrollments)
     @JoinColumn({ name: 'course_id' })
       course!: Course;
 

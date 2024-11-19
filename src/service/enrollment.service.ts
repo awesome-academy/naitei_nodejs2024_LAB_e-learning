@@ -4,9 +4,9 @@ import { User } from '../entity/User';
 import { Course } from '../entity/Course';
 import { Payment } from '../entity/Payment';
 import { Lesson } from '../entity/Lesson';
-import { Section } from '@src/entity/Section';
+import { Section } from '../entity/Section';
 import { getEnrollmentLesson, upsertEnrollmentLesson } from './enrollmentlesson.service';
-import { Enrollmentlesson } from '@src/entity/EnrollmentLesson';
+import { Enrollmentlesson } from '../entity/EnrollmentLesson';
 import { In } from "typeorm";
 
 

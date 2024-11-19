@@ -17,6 +17,10 @@ export class CreateSectionDto {
   @Validate(IsNotNumericString, { message: 'Name should not be a numeric value' }) 
   name!: string;
 
+  @IsNotEmpty()
+  @IsInt()
+  course_id!: number;
+
 }
 
 export class UpdateSectionDto {
