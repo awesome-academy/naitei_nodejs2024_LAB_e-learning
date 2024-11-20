@@ -137,7 +137,6 @@ describe("getReviewByCourseId", () => {
   it("should return an empty array when course id does not exist", async () => {
     const course_id = -1;
     const reviews = await getReviewByCourseId(course_id);
-
     expect(reviews).toEqual([]);
   });
 });

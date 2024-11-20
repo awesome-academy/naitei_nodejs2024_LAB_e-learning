@@ -22,8 +22,8 @@ export class Enrollment {
     @JoinColumn({ name: 'course_id' })
       course!: Course;
 
-    @Column({ type: 'datetime' })
-      enrollment_date!: Date | null;
+      @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+      enrollment_date!: Date;
 
     @Column('integer')
       progress!: number;
