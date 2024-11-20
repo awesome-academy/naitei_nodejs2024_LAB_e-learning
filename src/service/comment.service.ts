@@ -16,11 +16,13 @@ export const getAllComments = async () => {
 export const createComment = async (
   review_id: number,
   user_id: number,
-  parent_id: number,
+  parent_id: number | null,
   comment_text: string,
   course_id: number
 ) => {
-
+  if (!review_id || !user_id || !course_id) {
+    throw new Error("Missing required fields for creating a comment.");
+  }
   return await commentRepository.save({
     review_id,
     user_id,
