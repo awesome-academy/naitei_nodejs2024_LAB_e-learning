@@ -1,6 +1,6 @@
 import { AppDataSource } from "../repos/db";
 import { Lesson } from "../entity/Lesson";
-import { Section } from "@src/entity/Section";
+import { Section } from "../entity/Section";
 import { In } from 'typeorm';
 
 const lessonRepository = AppDataSource.getRepository(Lesson)
